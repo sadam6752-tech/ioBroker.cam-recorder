@@ -43,7 +43,8 @@ start. Special characters in passwords are fine, the adapter encodes them for ff
 _Transport_ is TCP by default; it works reliably also from Docker containers. _Key frames only_ helps when snapshots
 of an H.265 camera come out grey.
 
-The camera name becomes the object id: `Haustür` → `cam-recorder.0.cameras.haustuer`.
+The camera name becomes the object id: `Front Door` → `cam-recorder.0.cameras.front_door`. Letters with
+diacritics are transliterated (`ü` → `ue`, `é` → `e`), other special characters become `_`.
 
 ### Triggers
 
@@ -143,7 +144,7 @@ The answer comes when the file is complete, so there is no need to wait a fixed 
 
 ```js
 on({ id: 'doorbird.0.Doorbell.1.trigger', change: 'any' }, () => {
-    sendTo('cam-recorder.0', 'record', { camera: 'Haustür', duration: 5, format: 'mp4' }, result => {
+    sendTo('cam-recorder.0', 'record', { camera: 'Front Door', duration: 5, format: 'mp4' }, result => {
         if (result.error) {
             log(result.error, 'warn');
             return;

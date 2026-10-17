@@ -299,7 +299,7 @@ class CamRecorder extends utils.Adapter {
         const wanted = new Set(this.cameras.map(c => `${this.namespace}.cameras.${c.id}`));
         const existing = await this.getObjectViewAsync('system', 'channel', {
             startkey: `${this.namespace}.cameras.`,
-            endkey: `${this.namespace}.cameras.香`,
+            endkey: `${this.namespace}.cameras.\u9999`,
         });
         for (const row of existing.rows) {
             if (!wanted.has(row.id)) {

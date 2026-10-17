@@ -13,7 +13,7 @@ const fakeDecrypt = v => Buffer.from(v.slice(2, -1), 'base64').toString();
 
 describe('maskSecrets', () => {
     it('hides the login of every URL', () => {
-        const text = 'rtsp://admin:Geheim@192.168.1.20:554/mpeg/media.amp: Connection refused';
+        const text = 'rtsp://admin:Secret@192.168.1.20:554/mpeg/media.amp: Connection refused';
         const out = maskSecrets(text);
         assert.equal(out, 'rtsp://***:***@192.168.1.20:554/mpeg/media.amp: Connection refused');
     });
@@ -71,15 +71,15 @@ describe('camera URL', () => {
 describe('camera passwords', () => {
     it('moves a login out of the URL and encrypts the password', () => {
         const { changed, cameras } = protectCameras(
-            [{ name: 'Eingang', url: 'rtsp://admin:geheim@1.2.3.4/x', username: '', password: '' }],
+            [{ name: 'Entrance', url: 'rtsp://admin:secret@1.2.3.4/x', username: '', password: '' }],
             fakeEncrypt,
         );
         assert.equal(changed, true);
         assert.equal(cameras[0].url, 'rtsp://1.2.3.4/x');
         assert.equal(cameras[0].username, 'admin');
         assert.ok(isProtected(cameras[0].password));
-        assert.ok(!JSON.stringify(cameras).includes('geheim'));
-        assert.equal(revealPassword(cameras[0].password, fakeDecrypt), 'geheim');
+        assert.ok(!JSON.stringify(cameras).includes('secret'));
+        assert.equal(revealPassword(cameras[0].password, fakeDecrypt), 'secret');
     });
 
     it('changes nothing on the second start', () => {
@@ -97,41 +97,41 @@ describe('camera passwords', () => {
 
 describe('configuration', () => {
     it('builds object ids from camera names', () => {
-        assert.equal(cameraId('Eingang Süd'), 'eingang_sued');
-        assert.equal(cameraId('  Garage (links) '), 'garage_links');
+        assert.equal(cameraId('Zürich Gate'), 'zuerich_gate');
+        assert.equal(cameraId('  Garage (left) '), 'garage_left');
         assert.equal(cameraId('***'), '');
     });
 
     it('skips inactive, nameless, duplicate and URL-less cameras with a reason', () => {
         const { cameras, problems } = normalizeCameras([
-            { name: 'Eingang', url: 'rtsp://h/1' },
-            { name: 'eingang', url: 'rtsp://h/2' },
+            { name: 'Entrance', url: 'rtsp://h/1' },
+            { name: 'entrance', url: 'rtsp://h/2' },
             { name: '', url: 'rtsp://h/3' },
-            { name: 'Garten', url: 'rtsp://' },
+            { name: 'Garden', url: 'rtsp://' },
             { name: 'Aus', url: 'rtsp://h/4', enabled: false },
         ]);
         assert.deepEqual(
             cameras.map(c => c.id),
-            ['eingang'],
+            ['entrance'],
         );
         assert.equal(problems.length, 3);
         assert.equal(cameras[0].transport, 'tcp');
     });
 
     it('finds a camera by name or id, case does not matter', () => {
-        const { cameras } = normalizeCameras([{ name: 'Eingang Süd', url: 'rtsp://h/1' }]);
-        assert.equal(findCamera(cameras, 'EINGANG SÜD')?.id, 'eingang_sued');
-        assert.equal(findCamera(cameras, 'eingang_sued')?.id, 'eingang_sued');
+        const { cameras } = normalizeCameras([{ name: 'Zürich Gate', url: 'rtsp://h/1' }]);
+        assert.equal(findCamera(cameras, 'ZÜRICH GATE')?.id, 'zuerich_gate');
+        assert.equal(findCamera(cameras, 'zuerich_gate')?.id, 'zuerich_gate');
         assert.equal(findCamera(cameras, 'nope'), undefined);
     });
 
     it('drops triggers of unknown cameras and fills defaults', () => {
-        const { cameras } = normalizeCameras([{ name: 'Eingang', url: 'rtsp://h/1' }]);
+        const { cameras } = normalizeCameras([{ name: 'Entrance', url: 'rtsp://h/1' }]);
         const { triggers, problems } = normalizeTriggers(
             [
-                { stateId: 'doorbird.0.Doorbell.1.trigger', camera: 'Eingang' },
-                { stateId: 'x.0.y', camera: 'Garten' },
-                { stateId: '', camera: 'Eingang' },
+                { stateId: 'doorbird.0.Doorbell.1.trigger', camera: 'Entrance' },
+                { stateId: 'x.0.y', camera: 'Garden' },
+                { stateId: '', camera: 'Entrance' },
             ],
             cameras,
         );
@@ -141,7 +141,7 @@ describe('configuration', () => {
             { ...triggers[0], camera: triggers[0].camera.id },
             {
                 stateId: 'doorbird.0.Doorbell.1.trigger',
-                camera: 'eingang',
+                camera: 'entrance',
                 action: 'record',
                 duration: 0,
                 format: '',
@@ -170,8 +170,8 @@ function gifArgsStartAtFirstPicture() {
 describe('ffmpeg arguments', () => {
     const settings = normalizeSettings({});
     const camera = {
-        id: 'eingang',
-        name: 'Eingang',
+        id: 'entrance',
+        name: 'Entrance',
         url: 'rtsp://1.2.3.4/x',
         username: 'u',
         password: 'p',
@@ -237,7 +237,7 @@ describe('triggers', () => {
     });
 
     it('fills the caption', () => {
-        assert.equal(formatCaption('{camera} {time}', 'Eingang', new Date(2026, 0, 2, 7, 5, 9)), 'Eingang 07:05:09');
+        assert.equal(formatCaption('{camera} {time}', 'Entrance', new Date(2026, 0, 2, 7, 5, 9)), 'Entrance 07:05:09');
         assert.equal(
             formatCaption('{camera} {date} {time}', 'DoorBird', new Date(2026, 9, 17, 13, 22, 12), 'DD.MM.YYYY'),
             'DoorBird 17.10.2026 13:22:12',

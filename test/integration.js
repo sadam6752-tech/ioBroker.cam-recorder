@@ -45,8 +45,8 @@ tests.integration(path.join(__dirname, '..'), {
                 await harness.changeAdapterConfig('cam-recorder', {
                     native: {
                         cameras: [
-                            { enabled: true, name: 'Haustür', url: source, username: '', password: 'Plain-Pw-123' },
-                            { enabled: true, name: 'Garten', url: source, username: '', password: '', prebuffer: 2 },
+                            { enabled: true, name: 'Café Door', url: source, username: '', password: 'Plain-Pw-123' },
+                            { enabled: true, name: 'Garden', url: source, username: '', password: '', prebuffer: 2 },
                         ],
                         prebufferEnabled: true,
                         prebufferDir: path.join(dir, 'prebuffer'),
@@ -102,21 +102,21 @@ tests.integration(path.join(__dirname, '..'), {
                 }
                 assert.ok(ready, 'info.connection never became true');
 
-                const clip = await send('record', { camera: 'Haustür' });
+                const clip = await send('record', { camera: 'Café Door' });
                 assert.ok(!clip.error, clip.error);
                 assert.equal(clip.format, 'mp4');
                 assert.ok(fs.statSync(clip.file).size > 1000);
 
-                const shot = await send('snapshot', 'haustuer');
+                const shot = await send('snapshot', 'cafe_door');
                 assert.ok(!shot.error, shot.error);
                 assert.equal(shot.format, 'jpg');
 
-                const lastVideo = await harness.states.getStateAsync('cam-recorder.0.cameras.haustuer.lastVideo');
+                const lastVideo = await harness.states.getStateAsync('cam-recorder.0.cameras.cafe_door.lastVideo');
                 assert.equal(lastVideo?.val, clip.file);
-                const status = await harness.states.getStateAsync('cam-recorder.0.cameras.haustuer.status');
+                const status = await harness.states.getStateAsync('cam-recorder.0.cameras.cafe_door.status');
                 assert.equal(status?.val, 'idle');
 
-                const unknown = await send('record', { camera: 'Keller' });
+                const unknown = await send('record', { camera: 'Cellar' });
                 assert.match(unknown.error, /Unknown camera/);
             });
 
@@ -124,7 +124,7 @@ tests.integration(path.join(__dirname, '..'), {
                 this.timeout(90_000);
                 let status;
                 for (let i = 0; i < 60; i++) {
-                    status = (await harness.states.getStateAsync('cam-recorder.0.cameras.garten.prebuffer'))?.val;
+                    status = (await harness.states.getStateAsync('cam-recorder.0.cameras.garden.prebuffer'))?.val;
                     if (status === 'running') {
                         break;
                     }
@@ -132,15 +132,15 @@ tests.integration(path.join(__dirname, '..'), {
                 }
                 assert.equal(status, 'running');
                 // the camera without pre-recording keeps its buffer off
-                const off = await harness.states.getStateAsync('cam-recorder.0.cameras.haustuer.prebuffer');
+                const off = await harness.states.getStateAsync('cam-recorder.0.cameras.cafe_door.prebuffer');
                 assert.equal(off?.val, 'off');
                 await new Promise(r => setTimeout(r, 3000));
 
-                const clip = await send('record', { camera: 'Garten', duration: 2 });
+                const clip = await send('record', { camera: 'Garden', duration: 2 });
                 assert.ok(!clip.error, clip.error);
                 assert.ok(clip.pre > 0 && clip.pre <= 2, `pre ${clip.pre}`);
                 assert.ok(clip.duration > 2, `duration ${clip.duration}`);
-                assert.ok(fs.readdirSync(path.join(dir, 'prebuffer', 'garten')).some(n => n.endsWith('.mkv')));
+                assert.ok(fs.readdirSync(path.join(dir, 'prebuffer', 'garden')).some(n => n.endsWith('.mkv')));
             });
         });
     },
