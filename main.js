@@ -6,12 +6,14 @@
 
 const path = require('node:path');
 const fs = require('node:fs/promises');
+const os = require('node:os');
 const utils = require('@iobroker/adapter-core');
 
 const { normalizeCameras, normalizeTriggers, normalizeSettings, findCamera } = require('./lib/config');
 const { protectCameras, revealPassword } = require('./lib/secrets');
 const { FfmpegRunner, probeFfmpeg, resolveFfmpegPath } = require('./lib/ffmpeg-runner');
 const { Recorder } = require('./lib/recorder');
+const { Prebuffer } = require('./lib/prebuffer');
 const { removePartials } = require('./lib/storage');
 const { shouldFire, formatCaption } = require('./lib/triggers');
 const { maskSecrets } = require('./lib/mask');
@@ -57,6 +59,17 @@ const CAMERA_STATES = [
         },
     },
     { id: 'lastError', common: { type: 'string', role: 'text', read: true, write: false, def: '' } },
+    {
+        id: 'prebuffer',
+        common: {
+            type: 'string',
+            role: 'text',
+            read: true,
+            write: false,
+            def: 'off',
+            states: { off: 'off', starting: 'starting', running: 'running', restarting: 'restarting' },
+        },
+    },
 ];
 
 class CamRecorder extends utils.Adapter {
@@ -80,6 +93,8 @@ class CamRecorder extends utils.Adapter {
         this.runner = null;
         /** @type {Recorder | null} */
         this.recorder = null;
+        /** @type {Map<string, Prebuffer>} */
+        this.prebuffers = new Map();
         this.settings = normalizeSettings({});
         this.storageId = '';
         this.dateFormat = 'DD.MM.YYYY';
@@ -165,11 +180,10 @@ class CamRecorder extends utils.Adapter {
                 runner: this.runner,
                 outputDir,
                 settings: this.settings,
-                withPassword: camera => ({
-                    ...camera,
-                    password: revealPassword(camera.password, value => this.decrypt(value)),
-                }),
+                withPassword: camera => this._withPassword(camera),
+                getPrebuffer: cameraId => this.prebuffers.get(cameraId),
             });
+            await this._startPrebuffers(ffmpegPath);
 
             await this.subscribeStatesAsync('cameras.*.record');
             await this.subscribeStatesAsync('cameras.*.snapshot');
@@ -209,6 +223,59 @@ class CamRecorder extends utils.Adapter {
             );
         } catch (err) {
             this.log.warn(`Could not store the camera passwords encrypted: ${maskSecrets(err.message)}`);
+        }
+    }
+
+    /**
+     * @param {Camera} camera - Camera as configured
+     * @returns {Camera} The camera with the plain password, only for ffmpeg
+     */
+    _withPassword(camera) {
+        return { ...camera, password: revealPassword(camera.password, value => this.decrypt(value)) };
+    }
+
+    /**
+     * Starts the pre-recording of every camera that has seconds set, if the main switch is on.
+     *
+     * @param {string} ffmpegPath - Path of ffmpeg
+     */
+    async _startPrebuffers(ffmpegPath) {
+        const wanted = this.cameras.filter(c => c.prebuffer > 0);
+        if (!wanted.length) {
+            return;
+        }
+        if (!this.settings.prebufferEnabled) {
+            this.log.info(
+                `Pre-recording is set for ${wanted.length} camera(s) but switched off (tab Recording), clips start at the event`,
+            );
+            return;
+        }
+        const base = this.settings.prebufferDir
+            ? path.resolve(this.settings.prebufferDir)
+            : path.join(os.tmpdir(), `iobroker-${this.namespace}-prebuffer`);
+        for (const camera of wanted) {
+            const buffer = new Prebuffer({
+                camera: this._withPassword(camera),
+                settings: this.settings,
+                seconds: camera.prebuffer,
+                dir: path.join(base, camera.id),
+                ffmpegPath,
+                timers: {
+                    setTimeout: (cb, ms) => this.setTimeout(cb, ms),
+                    clearTimeout: handle => this.clearTimeout(handle),
+                },
+                onStatus: status => void this.setState(`cameras.${camera.id}.prebuffer`, status, true),
+                onWarning: message => this.log.warn(message),
+            });
+            this.prebuffers.set(camera.id, buffer);
+            try {
+                await buffer.start();
+                this.log.info(
+                    `Pre-recording of camera "${camera.name}": ${camera.prebuffer} s, segments in ${buffer.dir}`,
+                );
+            } catch (err) {
+                this.log.warn(`Pre-recording of camera "${camera.name}" could not start: ${err.message}`);
+            }
         }
     }
 
@@ -253,6 +320,7 @@ class CamRecorder extends utils.Adapter {
                 });
             }
             await this.setState(`cameras.${camera.id}.status`, 'idle', true);
+            await this.setState(`cameras.${camera.id}.prebuffer`, 'off', true);
         }
         if (this.settings.copyToFiles) {
             this.storageId = `${this.namespace}.storage`;
@@ -288,7 +356,10 @@ class CamRecorder extends utils.Adapter {
             await this.setState(`${base}.${prefix}`, result.file, true);
             await this.setState(`${base}.${prefix}Time`, result.time, true);
             await this.setState(`${base}.lastError`, '', true);
-            const what = kind === 'record' ? `${result.format} clip (${result.duration} s)` : 'snapshot';
+            const seconds = result.pre
+                ? `${result.pre} s before + ${Math.round((result.duration - result.pre) * 10) / 10} s`
+                : `${result.duration} s`;
+            const what = kind === 'record' ? `${result.format} clip (${seconds})` : 'snapshot';
             const took = ((Date.now() - result.time) / 1000).toFixed(1);
             this.log.info(
                 `Camera "${camera.name}": ${what} saved, ${formatSize(result.size)} in ${took} s: ${path.basename(result.file)}`,
@@ -468,6 +539,10 @@ class CamRecorder extends utils.Adapter {
     onUnload(callback) {
         try {
             this.runner?.stopAll();
+            for (const buffer of this.prebuffers.values()) {
+                void buffer.stop();
+            }
+            this.prebuffers.clear();
             this.runner = null;
             this.recorder = null;
             void this.setState('info.connection', false, true);

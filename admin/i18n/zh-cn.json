@@ -54,5 +54,9 @@
     "Path of ffmpeg (empty = bundled ffmpeg)": "ffmpeg 路径（留空 = 内置 ffmpeg）",
     "ffmpeg processes at the same time": "同时运行的 ffmpeg 进程数",
     "Lower it on weak systems, 1 runs one recording after the other": "在性能较弱的系统上调低，1 表示依次录制",
-    "Camera timeout (s)": "摄像机超时（秒）"
+    "Camera timeout (s)": "摄像机超时（秒）",
+    "Pre-recording (s)": "预录（秒）",
+    "Pre-recording": "预录",
+    "Keeps the last seconds before an event. Each camera with pre-recording keeps one ffmpeg process running (stream copy, little CPU).": "保存事件发生前的最后几秒。每个启用预录的摄像机都会持续运行一个 ffmpeg 进程（直接复制码流，CPU 占用很少）。",
+    "Folder for the pre-recording (empty = temp folder of the system)": "预录文件夹（留空 = 系统临时文件夹）"
 }

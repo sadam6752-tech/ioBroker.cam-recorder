@@ -70,6 +70,25 @@ Clip length and format, and how MP4 files are made:
 
 GIF animations are always re-encoded (width and frame rate on the same tab).
 
+### Pre-recording
+
+A doorbell clip that starts when the button is pressed misses the person walking up to the door. With pre-recording
+the clip also contains the seconds **before** the event.
+
+- **Off by default.** Switch it on with _Pre-recording_ on the _Recording_ tab, then set _Pre-recording (s)_ (1 to 30)
+  for each camera that should use it. Cameras with 0 are not affected.
+- **What it costs.** For each such camera one ffmpeg process runs all the time. It copies the camera stream into
+  2-second pieces without re-encoding (little CPU, a few MB of disk in the temp folder) and deletes old pieces. The
+  camera keeps one stream open permanently — check that it allows a second stream for snapshots and live views.
+- **How a clip is made.** At the event the adapter waits until the seconds after the event are on disk, joins the
+  pieces and cuts the window _pre-recording + clip length_. A clip is therefore ready about 2 to 4 seconds later than
+  without pre-recording. The duration in the trigger table and in `sendTo` is the time **after** the event.
+- **When something fails** (camera offline, stream stalled for 20 s), the process is restarted after 5 s, 10 s, 30 s,
+  60 s, then every 5 minutes, with a warning in the log. While the buffer is not running, clips are recorded from the
+  event on as without pre-recording.
+- The pieces go to the system temp folder (`/tmp/iobroker-cam-recorder.0-prebuffer` on Linux) unless you enter a
+  folder. A RAM disk (tmpfs) is a good choice on systems with an SD card.
+
 ### Telegram
 
 Instance, user (empty = all users of the bot) and caption: `{camera}`, `{date}` and `{time}` are replaced, the date in
@@ -110,6 +129,7 @@ Per camera below `cam-recorder.0.cameras.<camera>`:
 | `lastSnapshotTime` | Time of the newest snapshot                     |
 | `status`           | `idle`, `recording`, `snapshot` or `error`      |
 | `lastError`        | Text of the last error, empty after a success   |
+| `prebuffer`        | `off`, `starting`, `running` or `restarting`    |
 
 `info.connection` is true when ffmpeg was found and works, `info.ffmpegVersion` shows its version.
 
@@ -129,13 +149,15 @@ on({ id: 'doorbird.0.Doorbell.1.trigger', change: 'any' }, () => {
 });
 ```
 
-| Command       | Message                                                                   | Answer                                                          |
-| ------------- | ------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| `record`      | `{ camera, duration?, format?: 'mp4' \| 'gif', width?, fps?, telegram? }` | `{ file, size, format, duration, camera, time }` or `{ error }` |
-| `snapshot`    | `{ camera, width?, telegram? }` or just the camera name                   | as above, `format: 'jpg'`                                       |
-| `listCameras` | –                                                                         | `[{ value, label }]`                                            |
+| Command       | Message                                                                         | Answer                                                               |
+| ------------- | ------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| `record`      | `{ camera, duration?, pre?, format?: 'mp4' \| 'gif', width?, fps?, telegram? }` | `{ file, size, format, duration, pre, camera, time }` or `{ error }` |
+| `snapshot`    | `{ camera, width?, telegram? }` or just the camera name                         | as above, `format: 'jpg'`                                            |
+| `listCameras` | –                                                                               | `[{ value, label }]`                                                 |
 
 `telegram: true` sends the result to the configured Telegram instance as well.
+`pre` limits the seconds before the event (at most the value set for the camera, `0` = no pre-recording for this
+clip); `duration` is always the time after the event, and the answer's `duration` is the whole clip.
 
 ## Security notes
 
@@ -147,10 +169,6 @@ on({ id: 'doorbird.0.Doorbell.1.trigger', change: 'any' }, () => {
   container this is usually acceptable; give the camera a user that may only view the stream.
 - Recorded files are not encrypted. Files copied into the ioBroker file storage can be opened by every admin user and,
   depending on its settings, through a `web` instance.
-
-## Planned
-
-- Pre-recording: keep the last seconds before the event (switchable per camera, off by default, for weak systems).
 
 ## ffmpeg license
 
@@ -164,6 +182,11 @@ adapter.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+
+### **WORK IN PROGRESS**
+
+- (sadam6752-tech) Pre-recording: clips can contain the seconds before the event (off by default, set per camera,
+  stream copy without re-encoding, restarted automatically when the camera fails)
 
 ### 0.1.0 (2026-10-17)
 

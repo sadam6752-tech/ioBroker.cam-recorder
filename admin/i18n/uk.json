@@ -54,5 +54,9 @@
     "Path of ffmpeg (empty = bundled ffmpeg)": "Шлях до ffmpeg (порожньо = вбудований ffmpeg)",
     "ffmpeg processes at the same time": "Одночасних процесів ffmpeg",
     "Lower it on weak systems, 1 runs one recording after the other": "Зменште на слабких системах, 1 записує по черзі",
-    "Camera timeout (s)": "Тайм-аут камери (с)"
+    "Camera timeout (s)": "Тайм-аут камери (с)",
+    "Pre-recording (s)": "Попередній запис (с)",
+    "Pre-recording": "Попередній запис",
+    "Keeps the last seconds before an event. Each camera with pre-recording keeps one ffmpeg process running (stream copy, little CPU).": "Зберігає останні секунди перед подією. Для кожної камери з попереднім записом постійно працює один процес ffmpeg (копіювання потоку, мало CPU).",
+    "Folder for the pre-recording (empty = temp folder of the system)": "Тека для попереднього запису (порожньо = тимчасова тека системи)"
 }

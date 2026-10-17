@@ -54,5 +54,9 @@
     "Path of ffmpeg (empty = bundled ffmpeg)": "Ruta de ffmpeg (vacío = ffmpeg incluido)",
     "ffmpeg processes at the same time": "Procesos ffmpeg simultáneos",
     "Lower it on weak systems, 1 runs one recording after the other": "Redúzcalo en sistemas débiles, 1 graba uno tras otro",
-    "Camera timeout (s)": "Tiempo límite de la cámara (s)"
+    "Camera timeout (s)": "Tiempo límite de la cámara (s)",
+    "Pre-recording (s)": "Pregrabación (s)",
+    "Pre-recording": "Pregrabación",
+    "Keeps the last seconds before an event. Each camera with pre-recording keeps one ffmpeg process running (stream copy, little CPU).": "Guarda los últimos segundos antes de un evento. Cada cámara con pregrabación mantiene un proceso ffmpeg en marcha (copia del flujo, poca CPU).",
+    "Folder for the pre-recording (empty = temp folder of the system)": "Carpeta de la pregrabación (vacío = carpeta temporal del sistema)"
 }

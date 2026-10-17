@@ -41,7 +41,10 @@ tests.integration(path.join(__dirname, '..'), {
                     native: {
                         cameras: [
                             { enabled: true, name: 'Haustür', url: source, username: '', password: 'Plain-Pw-123' },
+                            { enabled: true, name: 'Garten', url: source, username: '', password: '', prebuffer: 2 },
                         ],
+                        prebufferEnabled: true,
+                        prebufferDir: path.join(dir, 'prebuffer'),
                         outputDir: path.join(dir, 'media'),
                         recordDuration: 2,
                     },
@@ -50,8 +53,12 @@ tests.integration(path.join(__dirname, '..'), {
                 await harness.enableSendTo();
             });
 
-            after(() => {
-                fs.rmSync(dir, { recursive: true, force: true });
+            after(async function () {
+                this.timeout(60_000);
+                // the unload must end the ffmpeg of the pre-recording; on Windows a running
+                // process would keep the source file locked and the removal would fail
+                await harness.stopAdapter();
+                fs.rmSync(dir, { recursive: true, force: true, maxRetries: 5, retryDelay: 500 });
             });
 
             /**
@@ -104,8 +111,31 @@ tests.integration(path.join(__dirname, '..'), {
                 const status = await harness.states.getStateAsync('cam-recorder.0.cameras.haustuer.status');
                 assert.equal(status?.val, 'idle');
 
-                const unknown = await send('record', { camera: 'Garten' });
+                const unknown = await send('record', { camera: 'Keller' });
                 assert.match(unknown.error, /Unknown camera/);
+            });
+
+            it('runs the pre-recording and puts the seconds before the event into the clip', async function () {
+                this.timeout(90_000);
+                let status;
+                for (let i = 0; i < 60; i++) {
+                    status = (await harness.states.getStateAsync('cam-recorder.0.cameras.garten.prebuffer'))?.val;
+                    if (status === 'running') {
+                        break;
+                    }
+                    await new Promise(r => setTimeout(r, 500));
+                }
+                assert.equal(status, 'running');
+                // the camera without pre-recording keeps its buffer off
+                const off = await harness.states.getStateAsync('cam-recorder.0.cameras.haustuer.prebuffer');
+                assert.equal(off?.val, 'off');
+                await new Promise(r => setTimeout(r, 3000));
+
+                const clip = await send('record', { camera: 'Garten', duration: 2 });
+                assert.ok(!clip.error, clip.error);
+                assert.ok(clip.pre > 0 && clip.pre <= 2, `pre ${clip.pre}`);
+                assert.ok(clip.duration > 2, `duration ${clip.duration}`);
+                assert.ok(fs.readdirSync(path.join(dir, 'prebuffer', 'garten')).some(n => n.endsWith('.ts')));
             });
         });
     },

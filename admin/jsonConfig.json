@@ -24,41 +24,74 @@
                     "lg": 12,
                     "xl": 12,
                     "items": [
-                        { "type": "checkbox", "attr": "enabled", "title": "Active", "width": "6%", "default": true },
-                        { "type": "text", "attr": "name", "title": "Name", "width": "14%", "default": "" },
+                        {
+                            "type": "checkbox",
+                            "attr": "enabled",
+                            "title": "Active",
+                            "width": "5%",
+                            "default": true
+                        },
+                        {
+                            "type": "text",
+                            "attr": "name",
+                            "title": "Name",
+                            "width": "13%",
+                            "default": ""
+                        },
                         {
                             "type": "text",
                             "attr": "url",
                             "title": "RTSP URL",
-                            "width": "34%",
+                            "width": "30%",
                             "default": "rtsp://"
                         },
-                        { "type": "text", "attr": "username", "title": "User", "width": "12%", "default": "" },
+                        {
+                            "type": "text",
+                            "attr": "username",
+                            "title": "User",
+                            "width": "11%",
+                            "default": ""
+                        },
                         {
                             "type": "password",
                             "attr": "password",
                             "title": "Password",
-                            "width": "12%",
+                            "width": "11%",
                             "default": ""
                         },
                         {
                             "type": "select",
                             "attr": "transport",
                             "title": "Transport",
-                            "width": "10%",
+                            "width": "9%",
                             "default": "tcp",
                             "noTranslation": true,
                             "options": [
-                                { "label": "TCP", "value": "tcp" },
-                                { "label": "UDP", "value": "udp" }
+                                {
+                                    "label": "TCP",
+                                    "value": "tcp"
+                                },
+                                {
+                                    "label": "UDP",
+                                    "value": "udp"
+                                }
                             ]
                         },
                         {
                             "type": "checkbox",
                             "attr": "keyframesOnly",
                             "title": "Key frames only",
-                            "width": "12%",
+                            "width": "10%",
                             "default": false
+                        },
+                        {
+                            "type": "number",
+                            "attr": "prebuffer",
+                            "title": "Pre-recording (s)",
+                            "width": "11%",
+                            "min": 0,
+                            "max": 30,
+                            "default": 0
                         }
                     ]
                 },
@@ -96,8 +129,20 @@
                     "lg": 12,
                     "xl": 12,
                     "items": [
-                        { "type": "checkbox", "attr": "enabled", "title": "Active", "width": "5%", "default": true },
-                        { "type": "objectId", "attr": "stateId", "title": "State", "width": "25%", "default": "" },
+                        {
+                            "type": "checkbox",
+                            "attr": "enabled",
+                            "title": "Active",
+                            "width": "5%",
+                            "default": true
+                        },
+                        {
+                            "type": "objectId",
+                            "attr": "stateId",
+                            "title": "State",
+                            "width": "25%",
+                            "default": ""
+                        },
                         {
                             "type": "autocompleteSendTo",
                             "attr": "camera",
@@ -114,9 +159,18 @@
                             "width": "13%",
                             "default": "record",
                             "options": [
-                                { "label": "Video clip", "value": "record" },
-                                { "label": "Snapshot", "value": "snapshot" },
-                                { "label": "Snapshot and video clip", "value": "both" }
+                                {
+                                    "label": "Video clip",
+                                    "value": "record"
+                                },
+                                {
+                                    "label": "Snapshot",
+                                    "value": "snapshot"
+                                },
+                                {
+                                    "label": "Snapshot and video clip",
+                                    "value": "both"
+                                }
                             ]
                         },
                         {
@@ -135,9 +189,18 @@
                             "width": "10%",
                             "default": "",
                             "options": [
-                                { "label": "Default", "value": "" },
-                                { "label": "MP4 video", "value": "mp4" },
-                                { "label": "GIF animation", "value": "gif" }
+                                {
+                                    "label": "Default",
+                                    "value": ""
+                                },
+                                {
+                                    "label": "MP4 video",
+                                    "value": "mp4"
+                                },
+                                {
+                                    "label": "GIF animation",
+                                    "value": "gif"
+                                }
                             ]
                         },
                         {
@@ -147,8 +210,14 @@
                             "width": "11%",
                             "default": "truthy",
                             "options": [
-                                { "label": "Value is true", "value": "truthy" },
-                                { "label": "Every write", "value": "any" }
+                                {
+                                    "label": "Value is true",
+                                    "value": "truthy"
+                                },
+                                {
+                                    "label": "Every write",
+                                    "value": "any"
+                                }
                             ]
                         },
                         {
@@ -160,7 +229,13 @@
                             "max": 3600,
                             "default": 10
                         },
-                        { "type": "checkbox", "attr": "telegram", "title": "Telegram", "width": "7%", "default": true }
+                        {
+                            "type": "checkbox",
+                            "attr": "telegram",
+                            "title": "Telegram",
+                            "width": "7%",
+                            "default": true
+                        }
                     ]
                 }
             }
@@ -184,8 +259,14 @@
                     "type": "select",
                     "label": "Clip format",
                     "options": [
-                        { "label": "MP4 video", "value": "mp4" },
-                        { "label": "GIF animation", "value": "gif" }
+                        {
+                            "label": "MP4 video",
+                            "value": "mp4"
+                        },
+                        {
+                            "label": "GIF animation",
+                            "value": "gif"
+                        }
                     ],
                     "xs": 12,
                     "sm": 6,
@@ -199,8 +280,14 @@
                     "help": "Copy needs H.264 from the camera and ignores width and frame rate",
                     "newLine": true,
                     "options": [
-                        { "label": "Re-encode (smaller file, uses CPU)", "value": "transcode" },
-                        { "label": "Copy the camera stream (almost no CPU)", "value": "copy" }
+                        {
+                            "label": "Re-encode (smaller file, uses CPU)",
+                            "value": "transcode"
+                        },
+                        {
+                            "label": "Copy the camera stream (almost no CPU)",
+                            "value": "copy"
+                        }
                     ],
                     "xs": 12,
                     "sm": 12,
@@ -267,6 +354,28 @@
                     "md": 4,
                     "lg": 3,
                     "xl": 3
+                },
+                "prebufferEnabled": {
+                    "type": "checkbox",
+                    "label": "Pre-recording",
+                    "help": "Keeps the last seconds before an event. Each camera with pre-recording keeps one ffmpeg process running (stream copy, little CPU).",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 8,
+                    "lg": 6,
+                    "xl": 6
+                },
+                "prebufferDir": {
+                    "type": "text",
+                    "label": "Folder for the pre-recording (empty = temp folder of the system)",
+                    "disabled": "!data.prebufferEnabled",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 8,
+                    "lg": 6,
+                    "xl": 6
                 }
             }
         },

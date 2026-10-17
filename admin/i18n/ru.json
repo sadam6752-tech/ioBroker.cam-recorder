@@ -54,5 +54,9 @@
     "Path of ffmpeg (empty = bundled ffmpeg)": "Путь к ffmpeg (пусто = встроенный ffmpeg)",
     "ffmpeg processes at the same time": "Одновременных процессов ffmpeg",
     "Lower it on weak systems, 1 runs one recording after the other": "Уменьшите на слабых системах, 1 записывает по очереди",
-    "Camera timeout (s)": "Тайм-аут камеры (с)"
+    "Camera timeout (s)": "Тайм-аут камеры (с)",
+    "Pre-recording (s)": "Предзапись (с)",
+    "Pre-recording": "Предзапись",
+    "Keeps the last seconds before an event. Each camera with pre-recording keeps one ffmpeg process running (stream copy, little CPU).": "Хранит последние секунды перед событием. Для каждой камеры с предзаписью постоянно работает один процесс ffmpeg (копирование потока, мало CPU).",
+    "Folder for the pre-recording (empty = temp folder of the system)": "Папка для предзаписи (пусто = временная папка системы)"
 }

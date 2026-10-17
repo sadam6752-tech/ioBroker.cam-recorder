@@ -16,6 +16,8 @@ export interface Camera {
     transport: 'tcp' | 'udp';
     /** Decode snapshots from key frames only */
     keyframesOnly: boolean;
+    /** Seconds kept before an event (pre-recording), 0 = off */
+    prebuffer: number;
 }
 
 /** A trigger row of the settings after normalization */
@@ -72,6 +74,10 @@ export interface Settings {
     telegramUser: string;
     /** Caption with `{camera}`, `{date}` and `{time}` */
     telegramCaption: string;
+    /** Main switch of the pre-recording, off by default */
+    prebufferEnabled: boolean;
+    /** Folder of the segments, empty = temp folder of the system */
+    prebufferDir: string;
 }
 
 /** What a clip is made of */
@@ -90,8 +96,10 @@ export interface ClipOptions {
 
 /** Options of a record request (sendTo, trigger) */
 export interface RecordRequest {
-    /** Seconds, default from the settings */
+    /** Seconds after the event, default from the settings */
     duration?: number;
+    /** Seconds before the event (pre-recording), default: the setting of the camera */
+    pre?: number;
     /** `mp4` or `gif`, default from the settings */
     format?: string;
     /** Width in pixels */
@@ -108,11 +116,13 @@ export interface RecordResult {
     size: number;
     /** File type */
     format: 'mp4' | 'gif' | 'jpg';
-    /** Seconds, 0 for a snapshot */
+    /** Seconds, 0 for a snapshot (with pre-recording: before plus after the event) */
     duration: number;
+    /** Seconds before the event that the clip contains */
+    pre: number;
     /** Camera name */
     camera: string;
-    /** Start of the recording in ms */
+    /** Time of the first picture in ms (with pre-recording: before the event) */
     time: number;
 }
 

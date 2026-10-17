@@ -54,5 +54,9 @@
     "Path of ffmpeg (empty = bundled ffmpeg)": "Chemin de ffmpeg (vide = ffmpeg fourni)",
     "ffmpeg processes at the same time": "Processus ffmpeg simultanés",
     "Lower it on weak systems, 1 runs one recording after the other": "À réduire sur les systèmes faibles, 1 enregistre l'un après l'autre",
-    "Camera timeout (s)": "Délai de la caméra (s)"
+    "Camera timeout (s)": "Délai de la caméra (s)",
+    "Pre-recording (s)": "Pré-enregistrement (s)",
+    "Pre-recording": "Pré-enregistrement",
+    "Keeps the last seconds before an event. Each camera with pre-recording keeps one ffmpeg process running (stream copy, little CPU).": "Conserve les dernières secondes avant un événement. Chaque caméra avec pré-enregistrement garde un processus ffmpeg actif (copie du flux, peu de CPU).",
+    "Folder for the pre-recording (empty = temp folder of the system)": "Dossier du pré-enregistrement (vide = dossier temporaire du système)"
 }

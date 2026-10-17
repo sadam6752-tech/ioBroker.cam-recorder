@@ -87,6 +87,8 @@
         "gifWidth": 480,
         "gifFps": 8,
         "snapshotWidth": 0,
+        "prebufferEnabled": false,
+        "prebufferDir": "",
         "telegramInstance": "",
         "telegramUser": "",
         "telegramCaption": "{camera} {date} {time}",

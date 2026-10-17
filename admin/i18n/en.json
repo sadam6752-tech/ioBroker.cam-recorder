@@ -54,5 +54,9 @@
     "Path of ffmpeg (empty = bundled ffmpeg)": "Path of ffmpeg (empty = bundled ffmpeg)",
     "ffmpeg processes at the same time": "ffmpeg processes at the same time",
     "Lower it on weak systems, 1 runs one recording after the other": "Lower it on weak systems, 1 runs one recording after the other",
-    "Camera timeout (s)": "Camera timeout (s)"
+    "Camera timeout (s)": "Camera timeout (s)",
+    "Pre-recording (s)": "Pre-recording (s)",
+    "Pre-recording": "Pre-recording",
+    "Keeps the last seconds before an event. Each camera with pre-recording keeps one ffmpeg process running (stream copy, little CPU).": "Keeps the last seconds before an event. Each camera with pre-recording keeps one ffmpeg process running (stream copy, little CPU).",
+    "Folder for the pre-recording (empty = temp folder of the system)": "Folder for the pre-recording (empty = temp folder of the system)"
 }
