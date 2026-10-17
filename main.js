@@ -345,6 +345,7 @@ class CamRecorder extends utils.Adapter {
             throw new Error('ffmpeg is not available, see the log of the adapter start');
         }
         const base = `cameras.${camera.id}`;
+        const began = Date.now();
         this.busy.set(camera.id, (this.busy.get(camera.id) || 0) + 1);
         await this.setState(`${base}.status`, kind === 'record' ? 'recording' : 'snapshot', true);
         let failed = false;
@@ -360,8 +361,9 @@ class CamRecorder extends utils.Adapter {
             const seconds = result.pre
                 ? `${result.pre} s before + ${Math.round((result.duration - result.pre) * 10) / 10} s`
                 : `${result.duration} s`;
-            const what = kind === 'record' ? `${result.format} clip (${seconds})` : 'snapshot';
-            const took = ((Date.now() - result.time) / 1000).toFixed(1);
+            const real = result.realDuration === null ? '' : `, file ${result.realDuration.toFixed(1)} s`;
+            const what = kind === 'record' ? `${result.format} clip (${seconds}${real})` : 'snapshot';
+            const took = ((Date.now() - began) / 1000).toFixed(1);
             this.log.info(
                 `Camera "${camera.name}": ${what} saved, ${formatSize(result.size)} in ${took} s: ${path.basename(result.file)}`,
             );

@@ -67,6 +67,9 @@ Clip length and format, and how MP4 files are made:
 - **Re-encode** (default): the clip is scaled (default width 640 px) and encoded with H.264, small files that Telegram
   plays everywhere. This uses CPU for the length of the clip.
 - **Copy the camera stream**: almost no CPU, original resolution. The camera has to send H.264.
+  A copied stream can only start at a key frame, while the clip length counts from the connection: with a camera
+  that sends a key frame every few seconds, a copied clip is shorter by up to that interval. Re-encoded clips start
+  their length at the first picture and keep the full length.
 
 GIF animations are always re-encoded (width and frame rate on the same tab).
 
@@ -187,6 +190,9 @@ adapter.
 
 - (sadam6752-tech) Pre-recording: clips can contain the seconds before the event (off by default, set per camera,
   stream copy without re-encoding, restarted automatically when the camera fails)
+- (sadam6752-tech) Fixed: re-encoded clips were shorter than set (a 5 s clip of a DoorBird held about 3 s), because the
+  length counted from the connection and not from the first picture after the next key frame
+- (sadam6752-tech) The log line of a clip names the length of the written file
 
 ### 0.1.0 (2026-10-17)
 

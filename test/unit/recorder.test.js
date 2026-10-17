@@ -6,8 +6,8 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const { execFileSync } = require('node:child_process');
-const { FfmpegRunner, probeFfmpeg, resolveFfmpegPath } = require('../../lib/ffmpeg-runner');
+const { execFileSync, spawn } = require('node:child_process');
+const { FfmpegRunner, probeFfmpeg, resolveFfmpegPath, mediaDuration } = require('../../lib/ffmpeg-runner');
 const { Recorder } = require('../../lib/recorder');
 const { normalizeSettings } = require('../../lib/config');
 const { uniqueFile, pruneFiles, removePartials, timeStamp } = require('../../lib/storage');
@@ -110,6 +110,63 @@ describe('ffmpeg runner and recorder (real ffmpeg)', function () {
         const head = fs.readFileSync(jpg.file).subarray(0, 2);
         assert.equal(head[0], 0xff);
         assert.equal(head[1], 0xd8);
+    });
+
+    it('keeps the full clip length when the live stream is joined between two key frames', async () => {
+        // a "camera" that sends a key frame every 4 s; the recorder connects 1.3 s after it started
+        const live = path.join(dir, 'gop4.ts');
+        execFileSync(ffmpegPath, [
+            '-hide_banner',
+            '-loglevel',
+            'error',
+            '-f',
+            'lavfi',
+            '-i',
+            'testsrc=size=320x240:rate=10',
+            '-t',
+            '30',
+            '-c:v',
+            'libx264',
+            '-g',
+            '40',
+            '-keyint_min',
+            '40',
+            '-sc_threshold',
+            '0',
+            '-pix_fmt',
+            'yuv420p',
+            '-f',
+            'mpegts',
+            '-y',
+            live,
+        ]);
+        const port = 20000 + Math.floor(Math.random() * 20000);
+        const sender = spawn(
+            String(ffmpegPath),
+            [
+                '-hide_banner',
+                '-loglevel',
+                'quiet',
+                '-re',
+                '-i',
+                live,
+                '-c',
+                'copy',
+                '-f',
+                'mpegts',
+                `udp://127.0.0.1:${port}?pkt_size=1316`,
+            ],
+            { stdio: 'ignore', windowsHide: true },
+        );
+        try {
+            await new Promise(r => setTimeout(r, 1300));
+            const { recorder } = makeRecorder();
+            const clip = await recorder.record(camera(`udp://127.0.0.1:${port}`), { duration: 3 });
+            assert.ok(clip.realDuration !== null && clip.realDuration >= 2.8, `file has ${clip.realDuration} s`);
+            assert.equal(clip.realDuration, await mediaDuration(String(ffmpegPath), clip.file));
+        } finally {
+            sender.kill('SIGKILL');
+        }
     });
 
     it('shares one run between two overlapping requests of the same kind', async () => {

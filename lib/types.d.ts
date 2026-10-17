@@ -120,6 +120,8 @@ export interface RecordResult {
     duration: number;
     /** Seconds before the event that the clip contains */
     pre: number;
+    /** Length of the written file in seconds as ffmpeg reads it, null if unknown */
+    realDuration: number | null;
     /** Camera name */
     camera: string;
     /** Time of the first picture in ms (with pre-recording: before the event) */

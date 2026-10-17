@@ -161,6 +161,12 @@ describe('configuration', () => {
     });
 });
 
+/** @returns {boolean} True when the gif filter also resets the clock first */
+function gifArgsStartAtFirstPicture() {
+    const gif = clipArgs({ duration: 3, format: 'gif', mode: 'transcode', width: 480, fps: 8 }, 'x');
+    return gif[gif.indexOf('-vf') + 1].startsWith('setpts=PTS-STARTPTS,');
+}
+
 describe('ffmpeg arguments', () => {
     const settings = normalizeSettings({});
     const camera = {
@@ -191,7 +197,10 @@ describe('ffmpeg arguments', () => {
 
     it('builds an mp4, a copied mp4 and a gif', () => {
         const mp4 = clipArgs({ duration: 5, format: 'mp4', mode: 'transcode', width: 640, fps: 10 }, 'out.part');
-        assert.ok(mp4.includes('libx264') && mp4.includes('scale=640:-2') && mp4.includes('yuv420p'));
+        assert.ok(mp4.includes('libx264') && mp4.includes('yuv420p'));
+        // the clip length starts at the first picture, then the picture is scaled
+        assert.ok(mp4.includes('setpts=PTS-STARTPTS,scale=640:-2'), mp4.join(' '));
+        assert.ok(gifArgsStartAtFirstPicture());
         const copy = clipArgs({ duration: 5, format: 'mp4', mode: 'copy', width: 640, fps: 10 }, 'out.part');
         assert.ok(copy.includes('copy') && !copy.includes('libx264') && !copy.join(' ').includes('scale'));
         const gif = clipArgs({ duration: 3, format: 'gif', mode: 'transcode', width: 480, fps: 8 }, 'out.part');
