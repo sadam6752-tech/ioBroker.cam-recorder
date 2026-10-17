@@ -200,6 +200,7 @@ adapter.
 - (sadam6752-tech) Snapshots come from the pre-recording while it runs: instant, without a second stream, and showing
   the moment of the event; `live: true` in `sendTo` asks the camera
 - (sadam6752-tech) Examples in README, code and tests are English only, guarded by a test
+- (sadam6752-tech) js-controller 7.0.7 or newer is required
 
 ### 0.2.0 (2026-10-17)
 
