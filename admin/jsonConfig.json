@@ -1,0 +1,409 @@
+{
+    "i18n": true,
+    "type": "tabs",
+    "items": {
+        "_camerasTab": {
+            "type": "panel",
+            "label": "Cameras",
+            "items": {
+                "_camerasHelp": {
+                    "type": "staticText",
+                    "text": "One row per camera. A login typed into the URL is moved into the user and password fields at the next start, and passwords are stored encrypted.",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "cameras": {
+                    "type": "table",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12,
+                    "items": [
+                        { "type": "checkbox", "attr": "enabled", "title": "Active", "width": "6%", "default": true },
+                        { "type": "text", "attr": "name", "title": "Name", "width": "14%", "default": "" },
+                        {
+                            "type": "text",
+                            "attr": "url",
+                            "title": "RTSP URL",
+                            "width": "34%",
+                            "default": "rtsp://"
+                        },
+                        { "type": "text", "attr": "username", "title": "User", "width": "12%", "default": "" },
+                        {
+                            "type": "password",
+                            "attr": "password",
+                            "title": "Password",
+                            "width": "12%",
+                            "default": ""
+                        },
+                        {
+                            "type": "select",
+                            "attr": "transport",
+                            "title": "Transport",
+                            "width": "10%",
+                            "default": "tcp",
+                            "noTranslation": true,
+                            "options": [
+                                { "label": "TCP", "value": "tcp" },
+                                { "label": "UDP", "value": "udp" }
+                            ]
+                        },
+                        {
+                            "type": "checkbox",
+                            "attr": "keyframesOnly",
+                            "title": "Key frames only",
+                            "width": "12%",
+                            "default": false
+                        }
+                    ]
+                },
+                "_keyframesHelp": {
+                    "type": "staticText",
+                    "text": "Key frames only: use it when snapshots of an H.265 camera come out grey.",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                }
+            }
+        },
+        "_triggersTab": {
+            "type": "panel",
+            "label": "Triggers",
+            "items": {
+                "_triggersHelp": {
+                    "type": "staticText",
+                    "text": "A trigger starts a recording when a state is written, e.g. the doorbell or motion state of the DoorBird adapter. Every write counts, the cooldown ignores further writes for some seconds. Duration 0 and format Default use the values of the Recording tab.",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "triggers": {
+                    "type": "table",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12,
+                    "items": [
+                        { "type": "checkbox", "attr": "enabled", "title": "Active", "width": "5%", "default": true },
+                        { "type": "objectId", "attr": "stateId", "title": "State", "width": "25%", "default": "" },
+                        {
+                            "type": "autocompleteSendTo",
+                            "attr": "camera",
+                            "title": "Camera",
+                            "width": "13%",
+                            "command": "listCameras",
+                            "freeSolo": true,
+                            "default": ""
+                        },
+                        {
+                            "type": "select",
+                            "attr": "action",
+                            "title": "Action",
+                            "width": "13%",
+                            "default": "record",
+                            "options": [
+                                { "label": "Video clip", "value": "record" },
+                                { "label": "Snapshot", "value": "snapshot" },
+                                { "label": "Snapshot and video clip", "value": "both" }
+                            ]
+                        },
+                        {
+                            "type": "number",
+                            "attr": "duration",
+                            "title": "Duration (s)",
+                            "width": "8%",
+                            "min": 0,
+                            "max": 60,
+                            "default": 0
+                        },
+                        {
+                            "type": "select",
+                            "attr": "format",
+                            "title": "Format",
+                            "width": "10%",
+                            "default": "",
+                            "options": [
+                                { "label": "Default", "value": "" },
+                                { "label": "MP4 video", "value": "mp4" },
+                                { "label": "GIF animation", "value": "gif" }
+                            ]
+                        },
+                        {
+                            "type": "select",
+                            "attr": "condition",
+                            "title": "Condition",
+                            "width": "11%",
+                            "default": "truthy",
+                            "options": [
+                                { "label": "Value is true", "value": "truthy" },
+                                { "label": "Every write", "value": "any" }
+                            ]
+                        },
+                        {
+                            "type": "number",
+                            "attr": "cooldown",
+                            "title": "Cooldown (s)",
+                            "width": "8%",
+                            "min": 0,
+                            "max": 3600,
+                            "default": 10
+                        },
+                        { "type": "checkbox", "attr": "telegram", "title": "Telegram", "width": "7%", "default": true }
+                    ]
+                }
+            }
+        },
+        "_recordingTab": {
+            "type": "panel",
+            "label": "Recording",
+            "items": {
+                "recordDuration": {
+                    "type": "number",
+                    "label": "Clip length (s)",
+                    "min": 1,
+                    "max": 60,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3
+                },
+                "recordFormat": {
+                    "type": "select",
+                    "label": "Clip format",
+                    "options": [
+                        { "label": "MP4 video", "value": "mp4" },
+                        { "label": "GIF animation", "value": "gif" }
+                    ],
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3
+                },
+                "videoMode": {
+                    "type": "select",
+                    "label": "MP4 encoding",
+                    "help": "Copy needs H.264 from the camera and ignores width and frame rate",
+                    "newLine": true,
+                    "options": [
+                        { "label": "Re-encode (smaller file, uses CPU)", "value": "transcode" },
+                        { "label": "Copy the camera stream (almost no CPU)", "value": "copy" }
+                    ],
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 8,
+                    "lg": 6,
+                    "xl": 6
+                },
+                "videoWidth": {
+                    "type": "number",
+                    "label": "MP4 width (px, 0 = original)",
+                    "newLine": true,
+                    "min": 0,
+                    "max": 3840,
+                    "disabled": "data.videoMode === 'copy'",
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3
+                },
+                "videoFps": {
+                    "type": "number",
+                    "label": "MP4 frame rate (0 = original)",
+                    "min": 0,
+                    "max": 60,
+                    "disabled": "data.videoMode === 'copy'",
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3
+                },
+                "gifWidth": {
+                    "type": "number",
+                    "label": "GIF width (px)",
+                    "newLine": true,
+                    "min": 64,
+                    "max": 1280,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3
+                },
+                "gifFps": {
+                    "type": "number",
+                    "label": "GIF frame rate",
+                    "min": 1,
+                    "max": 25,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3
+                },
+                "snapshotWidth": {
+                    "type": "number",
+                    "label": "Snapshot width (px, 0 = original)",
+                    "newLine": true,
+                    "min": 0,
+                    "max": 3840,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3
+                }
+            }
+        },
+        "_telegramTab": {
+            "type": "panel",
+            "label": "Telegram",
+            "items": {
+                "_telegramHelp": {
+                    "type": "staticText",
+                    "text": "Triggers with the Telegram column checked send their result to this instance. Scripts ask for it with telegram: true.",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "telegramInstance": {
+                    "type": "instance",
+                    "label": "Telegram instance",
+                    "adapter": "telegram",
+                    "allowDeactivate": true,
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3
+                },
+                "telegramUser": {
+                    "type": "text",
+                    "label": "Telegram user (empty = all users)",
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3
+                },
+                "telegramCaption": {
+                    "type": "text",
+                    "label": "Caption",
+                    "help": "{camera}, {date} and {time} are replaced",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 8,
+                    "lg": 6,
+                    "xl": 6
+                }
+            }
+        },
+        "_storageTab": {
+            "type": "panel",
+            "label": "Storage",
+            "items": {
+                "outputDir": {
+                    "type": "text",
+                    "label": "Folder for the files (empty = data folder of the instance)",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 8,
+                    "lg": 6,
+                    "xl": 6
+                },
+                "keepFiles": {
+                    "type": "number",
+                    "label": "Files kept per camera and kind (0 = no limit)",
+                    "newLine": true,
+                    "min": 0,
+                    "max": 10000,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3
+                },
+                "maxAgeDays": {
+                    "type": "number",
+                    "label": "Maximum age in days (0 = no limit)",
+                    "min": 0,
+                    "max": 3650,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3
+                },
+                "copyToFiles": {
+                    "type": "checkbox",
+                    "label": "Copy the newest file into the ioBroker file storage",
+                    "help": "Visible in the admin tab Files under cam-recorder.0.storage",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 8,
+                    "lg": 6,
+                    "xl": 6
+                }
+            }
+        },
+        "_advancedTab": {
+            "type": "panel",
+            "label": "Advanced",
+            "items": {
+                "ffmpegPath": {
+                    "type": "text",
+                    "label": "Path of ffmpeg (empty = bundled ffmpeg)",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 8,
+                    "lg": 6,
+                    "xl": 6
+                },
+                "maxParallel": {
+                    "type": "number",
+                    "label": "ffmpeg processes at the same time",
+                    "help": "Lower it on weak systems, 1 runs one recording after the other",
+                    "newLine": true,
+                    "min": 1,
+                    "max": 10,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3
+                },
+                "rtspTimeout": {
+                    "type": "number",
+                    "label": "Camera timeout (s)",
+                    "min": 2,
+                    "max": 60,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3
+                }
+            }
+        }
+    }
+}

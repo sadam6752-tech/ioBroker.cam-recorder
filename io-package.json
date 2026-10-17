@@ -1,0 +1,188 @@
+{
+    "common": {
+        "name": "cam-recorder",
+        "version": "0.0.1",
+        "news": {
+            "0.0.1": {
+                "en": "initial release",
+                "de": "Erstveröffentlichung",
+                "ru": "Начальная версия",
+                "pt": "lançamento inicial",
+                "nl": "Eerste uitgave",
+                "fr": "Première version",
+                "it": "Versione iniziale",
+                "es": "Versión inicial",
+                "pl": "Pierwsze wydanie",
+                "uk": "Початкова версія",
+                "zh-cn": "首次出版"
+            }
+        },
+        "titleLang": {
+            "en": "Camera recorder",
+            "de": "Kamerarecorder",
+            "ru": "Камера-рекордер",
+            "pt": "Gravador de câmera",
+            "nl": "Camerarecorder",
+            "fr": "Caméra enregistreur",
+            "it": "Registratore della telecamera",
+            "es": "grabadora de cámara",
+            "pl": "Rejestrator kamery",
+            "uk": "Камера-реєстратор",
+            "zh-cn": "摄像机"
+        },
+        "desc": {
+            "en": "Records short video clips (mp4, gif) and snapshots from RTSP cameras with a bundled ffmpeg",
+            "de": "Nimmt kurze Videoclips (mp4, gif) und Schnappschüsse von RTSP-Kameras mit einem mitgelieferten ffmpeg auf",
+            "ru": "Записывает короткие видеоклипы (mp4, gif) и снимки с RTSP-камер с помощью прилагаемого ffmpeg.",
+            "pt": "Grava videoclipes curtos (mp4, gif) e instantâneos de câmeras RTSP com um ffmpeg incluído",
+            "nl": "Neemt korte videoclips (mp4, gif) en snapshots op van RTSP-camera's met een gebundelde ffmpeg",
+            "fr": "Enregistre de courts clips vidéo (mp4, gif) et des instantanés à partir de caméras RTSP avec un ffmpeg fourni",
+            "it": "Registra brevi clip video (mp4, gif) e istantanee dalle fotocamere RTSP con un ffmpeg in bundle",
+            "es": "Graba videoclips cortos (mp4, gif) e instantáneas de cámaras RTSP con un ffmpeg incluido.",
+            "pl": "Nagrywa krótkie klipy wideo (mp4, gif) i migawki z kamer RTSP za pomocą dołączonego ffmpeg",
+            "uk": "Записує короткі відеокліпи (mp4, gif) і знімки з камер RTSP за допомогою ffmpeg у комплекті",
+            "zh-cn": "使用捆绑的 ffmpeg 录制来自 RTSP 摄像机的短视频剪辑（mp4、gif）和快照"
+        },
+        "authors": [
+            "sadam6752-tech <sadam6752@gmail.com>"
+        ],
+        "keywords": [
+            "camera",
+            "rtsp",
+            "ffmpeg",
+            "video",
+            "doorbell",
+            "recording",
+            "snapshot",
+            "telegram"
+        ],
+        "licenseInformation": {
+            "type": "free",
+            "license": "MIT"
+        },
+        "platform": "Javascript/Node.js",
+        "icon": "cam-recorder.png",
+        "enabled": true,
+        "extIcon": "https://raw.githubusercontent.com/sadam6752-tech/ioBroker.cam-recorder/main/admin/cam-recorder.png",
+        "readme": "https://github.com/sadam6752-tech/ioBroker.cam-recorder/blob/main/README.md",
+        "loglevel": "info",
+        "tier": 3,
+        "mode": "daemon",
+        "type": "multimedia",
+        "compact": true,
+        "connectionType": "local",
+        "dataSource": "push",
+        "adminUI": {
+            "config": "json"
+        },
+        "dependencies": [
+            {
+                "js-controller": ">=6.0.11"
+            }
+        ],
+        "globalDependencies": [
+            {
+                "admin": ">=7.0.23"
+            }
+        ],
+        "messagebox": true
+    },
+    "native": {
+        "cameras": [],
+        "triggers": [],
+        "recordDuration": 5,
+        "recordFormat": "mp4",
+        "videoMode": "transcode",
+        "videoWidth": 640,
+        "videoFps": 10,
+        "gifWidth": 480,
+        "gifFps": 8,
+        "snapshotWidth": 0,
+        "telegramInstance": "",
+        "telegramUser": "",
+        "telegramCaption": "{camera} {date} {time}",
+        "outputDir": "",
+        "keepFiles": 20,
+        "maxAgeDays": 7,
+        "copyToFiles": true,
+        "ffmpegPath": "",
+        "maxParallel": 2,
+        "rtspTimeout": 10
+    },
+    "objects": [],
+    "instanceObjects": [
+        {
+            "_id": "info",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "Information",
+                    "de": "Informationen",
+                    "ru": "Информация",
+                    "pt": "Informação",
+                    "nl": "Informatie",
+                    "fr": "Informations",
+                    "it": "Informazioni",
+                    "es": "Información",
+                    "pl": "Informacje",
+                    "uk": "Інформація",
+                    "zh-cn": "信息"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.connection",
+            "type": "state",
+            "common": {
+                "role": "indicator.connected",
+                "name": {
+                    "en": "ffmpeg ready",
+                    "de": "ffmpeg bereit",
+                    "ru": "ffmpeg готов",
+                    "pt": "ffmpeg pronto",
+                    "nl": "ffmpeg gereed",
+                    "fr": "ffmpeg prêt",
+                    "it": "ffmpeg pronto all'uso",
+                    "es": "ffmpeg listo",
+                    "pl": "ffmpeg gotowy",
+                    "uk": "ffmpeg готовий",
+                    "zh-cn": "ffmpeg 就绪"
+                },
+                "type": "boolean",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.ffmpegVersion",
+            "type": "state",
+            "common": {
+                "role": "text",
+                "name": {
+                    "en": "ffmpeg version",
+                    "de": "ffmpeg-Version",
+                    "ru": "Версия ffmpeg",
+                    "pt": "Versão do ffmpeg",
+                    "nl": "ffmpeg-versie",
+                    "fr": "Version de ffmpeg",
+                    "it": "Versione di ffmpeg",
+                    "es": "Versión de ffmpeg",
+                    "pl": "Wersja ffmpeg",
+                    "uk": "Версія ffmpeg",
+                    "zh-cn": "ffmpeg 版本"
+                },
+                "type": "string",
+                "read": true,
+                "write": false,
+                "def": ""
+            },
+            "native": {}
+        }
+    ],
+    "protectedNative": [
+        "cameras"
+    ]
+}

@@ -1,0 +1,133 @@
+// Shared types of the adapter modules (JSDoc in the .js files refers to them with import('./types').X)
+
+/** A camera row of the settings after normalization */
+export interface Camera {
+    /** Object id part */
+    id: string;
+    /** Name as entered */
+    name: string;
+    /** URL without login */
+    url: string;
+    /** User name */
+    username: string;
+    /** Password as stored (may be encrypted) or, inside the recorder, in plain text */
+    password: string;
+    /** RTSP transport */
+    transport: 'tcp' | 'udp';
+    /** Decode snapshots from key frames only */
+    keyframesOnly: boolean;
+}
+
+/** A trigger row of the settings after normalization */
+export interface Trigger {
+    /** Foreign state that starts the action */
+    stateId: string;
+    /** Camera to use */
+    camera: Camera;
+    /** What to take */
+    action: 'record' | 'snapshot' | 'both';
+    /** Clip length in seconds, 0 = default */
+    duration: number;
+    /** Clip format, empty = default */
+    format: '' | 'mp4' | 'gif';
+    /** When the trigger fires */
+    condition: 'truthy' | 'any';
+    /** Seconds in which a further event is ignored */
+    cooldown: number;
+    /** Send the result to Telegram */
+    telegram: boolean;
+}
+
+/** Adapter settings with limits applied */
+export interface Settings {
+    /** Default clip length in seconds */
+    recordDuration: number;
+    /** Default clip format */
+    recordFormat: 'mp4' | 'gif';
+    /** Re-encode the mp4 or copy the camera stream */
+    videoMode: 'transcode' | 'copy';
+    /** 0 = original */
+    videoWidth: number;
+    /** 0 = original */
+    videoFps: number;
+    /** Width of a gif in pixels */
+    gifWidth: number;
+    /** Frame rate of a gif */
+    gifFps: number;
+    /** 0 = original */
+    snapshotWidth: number;
+    /** Seconds until an unreachable camera counts as failed */
+    rtspTimeout: number;
+    /** ffmpeg processes at the same time */
+    maxParallel: number;
+    /** Files kept per camera and kind, 0 = no limit */
+    keepFiles: number;
+    /** Days a file is kept, 0 = no limit */
+    maxAgeDays: number;
+    /** Copy the newest result into the ioBroker file storage */
+    copyToFiles: boolean;
+    /** e.g. `telegram.0`, empty = off */
+    telegramInstance: string;
+    /** Empty = all users */
+    telegramUser: string;
+    /** Caption with `{camera}`, `{date}` and `{time}` */
+    telegramCaption: string;
+}
+
+/** What a clip is made of */
+export interface ClipOptions {
+    /** Seconds */
+    duration: number;
+    /** Output format */
+    format: 'mp4' | 'gif';
+    /** mp4 only: re-encode or copy the camera stream */
+    mode: 'transcode' | 'copy';
+    /** Width in pixels, 0 = original */
+    width: number;
+    /** Frames per second, 0 = original */
+    fps: number;
+}
+
+/** Options of a record request (sendTo, trigger) */
+export interface RecordRequest {
+    /** Seconds, default from the settings */
+    duration?: number;
+    /** `mp4` or `gif`, default from the settings */
+    format?: string;
+    /** Width in pixels */
+    width?: number;
+    /** Frames per second */
+    fps?: number;
+}
+
+/** A finished file */
+export interface RecordResult {
+    /** Full path */
+    file: string;
+    /** Bytes */
+    size: number;
+    /** File type */
+    format: 'mp4' | 'gif' | 'jpg';
+    /** Seconds, 0 for a snapshot */
+    duration: number;
+    /** Camera name */
+    camera: string;
+    /** Start of the recording in ms */
+    time: number;
+}
+
+/** Timer functions of the adapter, so a pending timer ends with the adapter */
+export interface Timers {
+    /** `adapter.setTimeout` */
+    setTimeout: (cb: () => void, ms: number) => any;
+    /** `adapter.clearTimeout` */
+    clearTimeout: (handle: any) => void;
+}
+
+/** Limits of one ffmpeg run */
+export interface RunOptions {
+    /** The process is killed after this time */
+    timeoutMs: number;
+    /** Values to hide in error messages */
+    secrets?: Array<string | undefined>;
+}
