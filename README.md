@@ -187,7 +187,7 @@ adapter.
     ### **WORK IN PROGRESS**
 -->
 
-### **WORK IN PROGRESS**
+### 0.2.0 (2026-10-17)
 
 - (sadam6752-tech) Pre-recording: clips can contain the seconds before the event (off by default, set per camera,
   stream copy without re-encoding, restarted automatically when the camera fails)

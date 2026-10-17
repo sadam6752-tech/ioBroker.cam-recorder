@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "cam-recorder",
-        "version": "0.1.0",
+        "version": "0.2.0",
         "news": {
+            "0.2.0": {
+                "en": "Pre-recording: clips can contain the seconds before the event (off by default, set per camera). Fixed: re-encoded clips were shorter than set. The log names the real clip length",
+                "de": "Voraufnahme: Clips können die Sekunden vor dem Ereignis enthalten (standardmäßig aus, pro Kamera einstellbar). Behoben: neu kodierte Clips waren kürzer als eingestellt. Das Log nennt die echte Cliplänge",
+                "ru": "Предзапись: клипы могут содержать секунды до события (по умолчанию выключена, настраивается для каждой камеры). Исправлено: перекодированные клипы были короче заданного. В логе указывается фактическая длина клипа",
+                "pt": "Pré-gravação: os clipes podem conter os segundos antes do evento (desligada por padrão, ajustável por câmera). Corrigido: clipes recodificados eram mais curtos que o definido. O log mostra a duração real do clipe",
+                "nl": "Vooropname: clips kunnen de seconden vóór de gebeurtenis bevatten (standaard uit, per camera in te stellen). Opgelost: opnieuw gecodeerde clips waren korter dan ingesteld. Het log noemt de echte cliplengte",
+                "fr": "Pré-enregistrement : les clips peuvent contenir les secondes avant l'événement (désactivé par défaut, réglable par caméra). Corrigé : les clips réencodés étaient plus courts que prévu. Le journal indique la durée réelle du clip",
+                "it": "Pre-registrazione: le clip possono contenere i secondi prima dell'evento (disattivata per impostazione predefinita, impostabile per telecamera). Corretto: le clip ricodificate erano più brevi del previsto. Il log indica la durata reale della clip",
+                "es": "Pregrabación: los clips pueden contener los segundos anteriores al evento (desactivada por defecto, ajustable por cámara). Corregido: los clips recodificados eran más cortos de lo configurado. El registro indica la duración real del clip",
+                "pl": "Nagrywanie wstępne: klipy mogą zawierać sekundy przed zdarzeniem (domyślnie wyłączone, ustawiane dla każdej kamery). Naprawiono: przekodowane klipy były krótsze niż ustawiono. Log podaje rzeczywistą długość klipu",
+                "uk": "Попередній запис: кліпи можуть містити секунди до події (типово вимкнено, налаштовується для кожної камери). Виправлено: перекодовані кліпи були коротшими за задане. У журналі вказується фактична довжина кліпу",
+                "zh-cn": "预录：片段可以包含事件发生前的几秒（默认关闭，可按摄像机设置）。已修复：重新编码的片段比设定的短。日志会显示片段的实际时长"
+            },
             "0.1.0": {
                 "en": "First release: MP4/GIF clips and JPEG snapshots from RTSP cameras with a bundled ffmpeg, triggers, Telegram, encrypted camera passwords",
                 "de": "Erste Version: MP4/GIF-Clips und JPEG-Schnappschüsse von RTSP-Kameras mit mitgeliefertem ffmpeg, Auslöser, Telegram, verschlüsselte Kamera-Passwörter",

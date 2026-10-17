@@ -1,6 +1,6 @@
 {
   "name": "iobroker.cam-recorder",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Records short video clips (mp4, gif) and snapshots from RTSP cameras with a bundled ffmpeg",
   "author": {
     "name": "sadam6752-tech",
