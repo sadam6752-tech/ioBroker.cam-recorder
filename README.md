@@ -88,7 +88,8 @@ the clip also contains the seconds **before** the event.
   without pre-recording. The duration in the trigger table and in `sendTo` is the time **after** the event.
 - **When something fails** (camera offline, stream stalled for 20 s), the process is restarted after 5 s, 10 s, 30 s,
   60 s, then every 5 minutes, with a warning in the log. While the buffer is not running, clips are recorded from the
-  event on as without pre-recording.
+  event on as without pre-recording, with a warning in the log. After a start of the adapter the buffer needs about
+  10 seconds (ffmpeg analyses the stream, then waits for key frames) until `prebuffer` shows `running`.
 - The pieces go to the system temp folder (`/tmp/iobroker-cam-recorder.0-prebuffer` on Linux) unless you enter a
   folder. A RAM disk (tmpfs) is a good choice on systems with an SD card.
 
@@ -193,6 +194,7 @@ adapter.
 - (sadam6752-tech) Fixed: re-encoded clips were shorter than set (a 5 s clip of a DoorBird held about 3 s), because the
   length counted from the connection and not from the first picture after the next key frame
 - (sadam6752-tech) The log line of a clip names the length of the written file
+- (sadam6752-tech) A warning names the reason when a clip starts at the event although pre-recording is set
 
 ### 0.1.0 (2026-10-17)
 

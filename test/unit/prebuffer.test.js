@@ -206,16 +206,21 @@ describe('pre-recording with a live test source (real ffmpeg)', function () {
             ffmpegPath,
             timers,
         });
+        const warnings = [];
         const recorder = new Recorder({
             runner: new FfmpegRunner({ ffmpegPath, maxParallel: 2, timers }),
             outputDir: fs.mkdtempSync(path.join(dir, 'out-')),
             settings,
             withPassword: c => c,
             getPrebuffer: () => buffer,
+            onWarning: m => warnings.push(m),
         });
         const clip = await recorder.record(camera(), { duration: 1 });
         assert.equal(clip.pre, 0);
         assert.equal(clip.duration, 1);
+        assert.deepEqual(warnings, [
+            'Camera "Cam": the pre-recording is not ready (off), the clip starts at the event',
+        ]);
     });
 
     it('records live when the segments cannot be joined', async () => {
