@@ -58,5 +58,7 @@
     "Pre-recording (s)": "预录（秒）",
     "Pre-recording": "预录",
     "Keeps the last seconds before an event. Each camera with pre-recording keeps one ffmpeg process running (stream copy, little CPU).": "保存事件发生前的最后几秒。每个启用预录的摄像机都会持续运行一个 ffmpeg 进程（直接复制码流，CPU 占用很少）。",
-    "Folder for the pre-recording (empty = temp folder of the system)": "预录文件夹（留空 = 系统临时文件夹）"
+    "Folder for the pre-recording (empty = temp folder of the system)": "预录文件夹（留空 = 系统临时文件夹）",
+    "Maximum clip length (s)": "片段最大时长（秒）",
+    "With pre-recording, a further event during a clip extends it up to this length": "启用预录时，片段录制期间的新事件会将其延长至此时长"
 }

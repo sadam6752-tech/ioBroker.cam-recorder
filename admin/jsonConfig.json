@@ -274,6 +274,18 @@
                     "lg": 3,
                     "xl": 3
                 },
+                "maxClipLength": {
+                    "type": "number",
+                    "label": "Maximum clip length (s)",
+                    "help": "With pre-recording, a further event during a clip extends it up to this length",
+                    "min": 5,
+                    "max": 300,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3
+                },
                 "videoMode": {
                     "type": "select",
                     "label": "MP4 encoding",

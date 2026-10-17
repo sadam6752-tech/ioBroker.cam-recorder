@@ -6,7 +6,7 @@ const { splitCredentials, buildInputUrl, isRtsp } = require('../../lib/camera-ur
 const { protectCameras, revealPassword, isProtected } = require('../../lib/secrets');
 const { cameraId, normalizeCameras, normalizeTriggers, normalizeSettings, findCamera } = require('../../lib/config');
 const { inputArgs, clipArgs, snapshotArgs } = require('../../lib/ffmpeg-args');
-const { isTruthy, shouldFire, formatCaption, formatDay } = require('../../lib/triggers');
+const { isTruthy, shouldFire, triggerDecision, formatCaption, formatDay } = require('../../lib/triggers');
 
 const fakeEncrypt = v => `E(${Buffer.from(v).toString('base64')})`;
 const fakeDecrypt = v => Buffer.from(v.slice(2, -1), 'base64').toString();
@@ -234,6 +234,14 @@ describe('triggers', () => {
         assert.equal(shouldFire(trigger, { ...state, val: false }, 0, 1000), false);
         assert.equal(shouldFire({ ...trigger, condition: 'any' }, { ...state, val: false }, 0, 1000), true);
         assert.equal(shouldFire(trigger, null, 0, 1000), false);
+    });
+
+    it('tells a write inside the cooldown apart, so it can extend a clip', () => {
+        const state = /** @type {any} */ ({ val: true, ack: true });
+        assert.equal(triggerDecision(trigger, state, 0, 1000), 'fire');
+        assert.equal(triggerDecision(trigger, state, 1000, 5000), 'cooldown');
+        assert.equal(triggerDecision(trigger, { ...state, val: false }, 1000, 5000), 'skip');
+        assert.equal(triggerDecision(trigger, null, 1000, 5000), 'skip');
     });
 
     it('fills the caption', () => {

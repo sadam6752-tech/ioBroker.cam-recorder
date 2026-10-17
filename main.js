@@ -15,7 +15,7 @@ const { FfmpegRunner, probeFfmpeg, resolveFfmpegPath } = require('./lib/ffmpeg-r
 const { Recorder } = require('./lib/recorder');
 const { Prebuffer } = require('./lib/prebuffer');
 const { removePartials } = require('./lib/storage');
-const { shouldFire, formatCaption } = require('./lib/triggers');
+const { triggerDecision, formatCaption } = require('./lib/triggers');
 const { maskSecrets } = require('./lib/mask');
 const { NAMES } = require('./lib/names');
 
@@ -362,7 +362,11 @@ class CamRecorder extends utils.Adapter {
                 ? `${result.pre} s before + ${Math.round((result.duration - result.pre) * 10) / 10} s`
                 : `${result.duration} s`;
             const real = result.realDuration === null ? '' : `, file ${result.realDuration.toFixed(1)} s`;
-            const what = kind === 'record' ? `${result.format} clip (${seconds}${real})` : 'snapshot';
+            const extended = result.extended ? `, extended ${result.extended}x` : '';
+            const what =
+                kind === 'record'
+                    ? `${result.format} clip (${seconds}${real}${extended})`
+                    : `snapshot${result.fromBuffer ? ' from the pre-recording' : ''}`;
             const took = ((Date.now() - began) / 1000).toFixed(1);
             this.log.info(
                 `Camera "${camera.name}": ${what} saved, ${formatSize(result.size)} in ${took} s: ${path.basename(result.file)}`,
@@ -471,9 +475,16 @@ class CamRecorder extends utils.Adapter {
         if (triggers) {
             const now = Date.now();
             for (const trigger of triggers) {
-                if (shouldFire(trigger, state, this.lastFired.get(trigger) || 0, now)) {
+                const decision = triggerDecision(trigger, state, this.lastFired.get(trigger) || 0, now);
+                if (decision === 'fire') {
                     this.lastFired.set(trigger, now);
                     void this._fire(trigger);
+                } else if (decision === 'cooldown' && trigger.action !== 'snapshot') {
+                    // a further ring while the clip is still being cut makes the clip longer
+                    const seconds = trigger.duration || this.settings.recordDuration;
+                    if (this.recorder?.extend(trigger.camera.id, seconds)) {
+                        this.log.info(`Trigger ${trigger.stateId}: clip of camera "${trigger.camera.name}" extended`);
+                    }
                 }
             }
         }

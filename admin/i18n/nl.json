@@ -58,5 +58,7 @@
     "Pre-recording (s)": "Vooropname (s)",
     "Pre-recording": "Vooropname",
     "Keeps the last seconds before an event. Each camera with pre-recording keeps one ffmpeg process running (stream copy, little CPU).": "Bewaart de laatste seconden vóór een gebeurtenis. Elke camera met vooropname houdt één ffmpeg-proces actief (streamkopie, weinig CPU).",
-    "Folder for the pre-recording (empty = temp folder of the system)": "Map voor de vooropname (leeg = tijdelijke map van het systeem)"
+    "Folder for the pre-recording (empty = temp folder of the system)": "Map voor de vooropname (leeg = tijdelijke map van het systeem)",
+    "Maximum clip length (s)": "Maximale cliplengte (s)",
+    "With pre-recording, a further event during a clip extends it up to this length": "Met vooropname verlengt een volgende gebeurtenis tijdens een clip deze tot deze lengte"
 }

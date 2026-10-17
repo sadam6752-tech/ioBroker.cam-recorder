@@ -58,5 +58,7 @@
     "Pre-recording (s)": "Voraufnahme (s)",
     "Pre-recording": "Voraufnahme",
     "Keeps the last seconds before an event. Each camera with pre-recording keeps one ffmpeg process running (stream copy, little CPU).": "Hält die letzten Sekunden vor einem Ereignis bereit. Jede Kamera mit Voraufnahme hält einen ffmpeg-Prozess am Laufen (Stream-Kopie, wenig CPU).",
-    "Folder for the pre-recording (empty = temp folder of the system)": "Ordner für die Voraufnahme (leer = Temp-Ordner des Systems)"
+    "Folder for the pre-recording (empty = temp folder of the system)": "Ordner für die Voraufnahme (leer = Temp-Ordner des Systems)",
+    "Maximum clip length (s)": "Maximale Cliplänge (s)",
+    "With pre-recording, a further event during a clip extends it up to this length": "Mit Voraufnahme verlängert ein weiteres Ereignis während eines Clips diesen bis zu dieser Länge"
 }

@@ -58,5 +58,7 @@
     "Pre-recording (s)": "Попередній запис (с)",
     "Pre-recording": "Попередній запис",
     "Keeps the last seconds before an event. Each camera with pre-recording keeps one ffmpeg process running (stream copy, little CPU).": "Зберігає останні секунди перед подією. Для кожної камери з попереднім записом постійно працює один процес ffmpeg (копіювання потоку, мало CPU).",
-    "Folder for the pre-recording (empty = temp folder of the system)": "Тека для попереднього запису (порожньо = тимчасова тека системи)"
+    "Folder for the pre-recording (empty = temp folder of the system)": "Тека для попереднього запису (порожньо = тимчасова тека системи)",
+    "Maximum clip length (s)": "Максимальна довжина кліпу (с)",
+    "With pre-recording, a further event during a clip extends it up to this length": "З попереднім записом повторна подія під час кліпу подовжує його до цієї довжини"
 }

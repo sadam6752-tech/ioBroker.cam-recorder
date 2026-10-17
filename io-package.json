@@ -94,6 +94,7 @@
         "triggers": [],
         "recordDuration": 5,
         "recordFormat": "mp4",
+        "maxClipLength": 30,
         "videoMode": "transcode",
         "videoWidth": 640,
         "videoFps": 10,

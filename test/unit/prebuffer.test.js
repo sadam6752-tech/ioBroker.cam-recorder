@@ -196,6 +196,63 @@ describe('pre-recording with a live test source (real ffmpeg)', function () {
         assert.equal(fs.existsSync(path.join(dir, 'buffer')), false);
     });
 
+    it('takes snapshots from the buffer and extends a clip on a further event, up to the limit', async () => {
+        const settings = normalizeSettings({ rtspTimeout: 2, maxClipLength: 8 });
+        const buffer = new Prebuffer({
+            camera: camera(),
+            settings,
+            seconds: 2,
+            dir: path.join(dir, 'extend'),
+            ffmpegPath,
+            timers,
+        });
+        await buffer.start();
+        try {
+            await waitFor(() => buffer.isRunning(), 20_000);
+            await new Promise(r => setTimeout(r, 3000));
+            const recorder = new Recorder({
+                runner: new FfmpegRunner({ ffmpegPath, maxParallel: 3, timers }),
+                outputDir: fs.mkdtempSync(path.join(dir, 'out-')),
+                settings,
+                withPassword: c => c,
+                getPrebuffer: () => buffer,
+            });
+
+            // snapshot: from the buffer, without a second connection, and fast
+            const shotStart = Date.now();
+            const shot = await recorder.snapshot(camera());
+            assert.equal(shot.fromBuffer, true);
+            assert.ok(Date.now() - shotStart < 3000, `snapshot took ${Date.now() - shotStart} ms`);
+            const head = fs.readFileSync(shot.file).subarray(0, 2);
+            assert.deepEqual([...head], [0xff, 0xd8]);
+            const live = await recorder.snapshot(camera(), { live: true });
+            assert.equal(live.fromBuffer, false);
+
+            // a second request 1 s later extends the clip: it ends 2 s after the second event
+            const first = recorder.record(camera(), { duration: 2 });
+            await new Promise(r => setTimeout(r, 1000));
+            const second = recorder.record(camera(), { duration: 2 });
+            const [a, b] = await Promise.all([first, second]);
+            assert.equal(a.file, b.file);
+            assert.equal(a.extended, 1);
+            assert.ok(a.duration >= 4.8 && a.duration <= 5.3, `clip has ${a.duration} s (2 before + about 3 after)`);
+            assert.ok(
+                a.realDuration !== null && Math.abs(a.realDuration - a.duration) < 0.6,
+                `file ${a.realDuration} s`,
+            );
+
+            // the limit: 8 s in all, however long the extension asks for
+            const capped = recorder.record(camera(), { duration: 2 });
+            await new Promise(r => setTimeout(r, 500));
+            assert.equal(recorder.extend('cam', 60), true);
+            const c = await capped;
+            assert.ok(c.duration <= 8.05, `clip has ${c.duration} s, limit 8 s`);
+            assert.equal(recorder.extend('cam', 5), false, 'nothing to extend after the clip is cut');
+        } finally {
+            await buffer.stop();
+        }
+    });
+
     it('records live when the buffer is not running', async () => {
         const settings = normalizeSettings({ rtspTimeout: 2 });
         const buffer = new Prebuffer({

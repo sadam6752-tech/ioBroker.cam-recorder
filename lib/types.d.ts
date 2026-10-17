@@ -78,6 +78,8 @@ export interface Settings {
     prebufferEnabled: boolean;
     /** Folder of the segments, empty = temp folder of the system */
     prebufferDir: string;
+    /** Longest clip in seconds when further events extend it */
+    maxClipLength: number;
 }
 
 /** What a clip is made of */
@@ -120,6 +122,10 @@ export interface RecordResult {
     duration: number;
     /** Seconds before the event that the clip contains */
     pre: number;
+    /** How often a further event extended the clip */
+    extended: number;
+    /** True when the file was cut from the pre-recording instead of a new connection */
+    fromBuffer: boolean;
     /** Length of the written file in seconds as ffmpeg reads it, null if unknown */
     realDuration: number | null;
     /** Camera name */

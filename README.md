@@ -48,18 +48,20 @@ diacritics are transliterated (`ü` → `ue`, `é` → `e`), other special chara
 
 ### Triggers
 
-| Column    | Meaning                                                                                 |
-| --------- | --------------------------------------------------------------------------------------- |
-| State     | Any state, e.g. `doorbird.0.Doorbell.1.trigger` or `doorbird.0.Motion.trigger`          |
-| Camera    | Name of a camera of the first tab                                                       |
-| Action    | Video clip, snapshot, or both (both run at the same time, the photo arrives first)      |
-| Duration  | Seconds, 0 = value of the _Recording_ tab                                               |
-| Format    | MP4 video, GIF animation, or _Default_                                                  |
-| Condition | _Value is true_ (default) or _Every write_                                              |
-| Cooldown  | Seconds in which further writes are ignored (a doorbell pressed three times = one clip) |
-| Telegram  | Send the result to the Telegram instance of the _Telegram_ tab                          |
+| Column    | Meaning                                                                                       |
+| --------- | --------------------------------------------------------------------------------------------- |
+| State     | Any state, e.g. `doorbird.0.Doorbell.1.trigger` or `doorbird.0.Motion.trigger`                |
+| Camera    | Name of a camera of the first tab                                                             |
+| Action    | Video clip, snapshot, or both (both run at the same time, the photo arrives first)            |
+| Duration  | Seconds, 0 = value of the _Recording_ tab                                                     |
+| Format    | MP4 video, GIF animation, or _Default_                                                        |
+| Condition | _Value is true_ (default) or _Every write_                                                    |
+| Cooldown  | Seconds in which further writes start no new clip (a doorbell pressed three times = one clip) |
+| Telegram  | Send the result to the Telegram instance of the _Telegram_ tab                                |
 
-Every write of the state counts, also when the value does not change.
+Every write of the state counts, also when the value does not change. With pre-recording, a write inside the cooldown
+**extends** the clip that is still being cut instead of being ignored: the clip then ends the trigger's duration after
+the last ring, up to _Maximum clip length_ on the _Recording_ tab (default 30 s). The log shows it as `extended 2x`.
 
 ### Recording
 
@@ -87,6 +89,9 @@ the clip also contains the seconds **before** the event.
 - **How a clip is made.** At the event the adapter waits until the seconds after the event are on disk, joins the
   pieces and cuts the window _pre-recording + clip length_. A clip is therefore ready about 2 to 4 seconds later than
   without pre-recording. The duration in the trigger table and in `sendTo` is the time **after** the event.
+- **Snapshots** come from the buffer while it runs: the newest picture on disk, at most about a second old, without a
+  second connection to the camera — instant, and it shows the moment of the event. `sendTo` with `live: true` asks the
+  camera instead.
 - **When something fails** (camera offline, stream stalled for 20 s), the process is restarted after 5 s, 10 s, 30 s,
   60 s, then every 5 minutes, with a warning in the log. While the buffer is not running, clips are recorded from the
   event on as without pre-recording, with a warning in the log. After a start of the adapter the buffer needs about
@@ -154,11 +159,11 @@ on({ id: 'doorbird.0.Doorbell.1.trigger', change: 'any' }, () => {
 });
 ```
 
-| Command       | Message                                                                         | Answer                                                               |
-| ------------- | ------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| `record`      | `{ camera, duration?, pre?, format?: 'mp4' \| 'gif', width?, fps?, telegram? }` | `{ file, size, format, duration, pre, camera, time }` or `{ error }` |
-| `snapshot`    | `{ camera, width?, telegram? }` or just the camera name                         | as above, `format: 'jpg'`                                            |
-| `listCameras` | –                                                                               | `[{ value, label }]`                                                 |
+| Command       | Message                                                                         | Answer                                                                                                   |
+| ------------- | ------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `record`      | `{ camera, duration?, pre?, format?: 'mp4' \| 'gif', width?, fps?, telegram? }` | `{ file, size, format, duration, pre, extended, fromBuffer, realDuration, camera, time }` or `{ error }` |
+| `snapshot`    | `{ camera, width?, live?, telegram? }` or just the camera name                  | as above, `format: 'jpg'`                                                                                |
+| `listCameras` | –                                                                               | `[{ value, label }]`                                                                                     |
 
 `telegram: true` sends the result to the configured Telegram instance as well.
 `pre` limits the seconds before the event (at most the value set for the camera, `0` = no pre-recording for this
@@ -187,6 +192,14 @@ adapter.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+
+### **WORK IN PROGRESS**
+
+- (sadam6752-tech) A further event while a clip is being cut from the pre-recording extends the clip (up to the new
+  setting _Maximum clip length_, default 30 s) instead of being ignored
+- (sadam6752-tech) Snapshots come from the pre-recording while it runs: instant, without a second stream, and showing
+  the moment of the event; `live: true` in `sendTo` asks the camera
+- (sadam6752-tech) Examples in README, code and tests are English only, guarded by a test
 
 ### 0.2.0 (2026-10-17)
 
