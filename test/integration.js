@@ -140,7 +140,7 @@ tests.integration(path.join(__dirname, '..'), {
                 assert.ok(!clip.error, clip.error);
                 assert.ok(clip.pre > 0 && clip.pre <= 2, `pre ${clip.pre}`);
                 assert.ok(clip.duration > 2, `duration ${clip.duration}`);
-                assert.ok(fs.readdirSync(path.join(dir, 'prebuffer', 'garten')).some(n => n.endsWith('.ts')));
+                assert.ok(fs.readdirSync(path.join(dir, 'prebuffer', 'garten')).some(n => n.endsWith('.mkv')));
             });
         });
     },

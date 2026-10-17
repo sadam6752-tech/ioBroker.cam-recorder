@@ -26,11 +26,11 @@ const at = sec => new Date(2026, 9, 17, 10, 0, sec).getTime();
 const name = sec => {
     const d = new Date(at(sec));
     const p = n => String(n).padStart(2, '0');
-    return `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}.ts`;
+    return `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}.mkv`;
 };
 
 describe('pre-recording plan', () => {
-    const segs = parseSegments([name(6), name(0), 'x.ts', name(2), name(4), 'list.txt']);
+    const segs = parseSegments([name(6), name(0), 'x.mkv', '20261017100000.ts', name(2), name(4), 'list.txt']);
 
     it('reads segment names as local times, oldest first', () => {
         assert.deepEqual(
@@ -185,7 +185,7 @@ describe('pre-recording with a live test source (real ffmpeg)', function () {
             assert.ok(seconds > 4 && seconds < 6.5, `clip has ${seconds} s`);
             // no list file left in the buffer folder
             assert.deepEqual(
-                fs.readdirSync(buffer.dir).filter(n => !n.endsWith('.ts')),
+                fs.readdirSync(buffer.dir).filter(n => !n.endsWith('.mkv')),
                 [],
             );
         } finally {
