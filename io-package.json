@@ -1,20 +1,20 @@
 {
     "common": {
         "name": "cam-recorder",
-        "version": "0.0.1",
+        "version": "0.1.0",
         "news": {
-            "0.0.1": {
-                "en": "initial release",
-                "de": "Erstveröffentlichung",
-                "ru": "Начальная версия",
-                "pt": "lançamento inicial",
-                "nl": "Eerste uitgave",
-                "fr": "Première version",
-                "it": "Versione iniziale",
-                "es": "Versión inicial",
-                "pl": "Pierwsze wydanie",
-                "uk": "Початкова версія",
-                "zh-cn": "首次出版"
+            "0.1.0": {
+                "en": "First release: MP4/GIF clips and JPEG snapshots from RTSP cameras with a bundled ffmpeg, triggers, Telegram, encrypted camera passwords",
+                "de": "Erste Version: MP4/GIF-Clips und JPEG-Schnappschüsse von RTSP-Kameras mit mitgeliefertem ffmpeg, Auslöser, Telegram, verschlüsselte Kamera-Passwörter",
+                "ru": "Первая версия: клипы MP4/GIF и снимки JPEG с RTSP-камер со встроенным ffmpeg, триггеры, Telegram, зашифрованные пароли камер",
+                "pt": "Primeira versão: clipes MP4/GIF e instantâneos JPEG de câmeras RTSP com ffmpeg incluído, gatilhos, Telegram, senhas das câmeras criptografadas",
+                "nl": "Eerste versie: MP4/GIF-clips en JPEG-momentopnamen van RTSP-camera's met meegeleverde ffmpeg, triggers, Telegram, versleutelde camerawachtwoorden",
+                "fr": "Première version : clips MP4/GIF et photos JPEG de caméras RTSP avec ffmpeg fourni, déclencheurs, Telegram, mots de passe des caméras chiffrés",
+                "it": "Prima versione: clip MP4/GIF e istantanee JPEG da telecamere RTSP con ffmpeg incluso, attivatori, Telegram, password delle telecamere crittografate",
+                "es": "Primera versión: clips MP4/GIF e instantáneas JPEG de cámaras RTSP con ffmpeg incluido, disparadores, Telegram, contraseñas de cámaras cifradas",
+                "pl": "Pierwsza wersja: klipy MP4/GIF i zdjęcia JPEG z kamer RTSP z dołączonym ffmpeg, wyzwalacze, Telegram, zaszyfrowane hasła kamer",
+                "uk": "Перша версія: кліпи MP4/GIF і знімки JPEG з RTSP-камер із вбудованим ffmpeg, тригери, Telegram, зашифровані паролі камер",
+                "zh-cn": "首个版本：使用内置 ffmpeg 从 RTSP 摄像机录制 MP4/GIF 片段和 JPEG 快照，支持触发器、Telegram 和加密的摄像机密码"
             }
         },
         "titleLang": {
@@ -43,19 +43,8 @@
             "uk": "Записує короткі відеокліпи (mp4, gif) і знімки з камер RTSP за допомогою ffmpeg у комплекті",
             "zh-cn": "使用捆绑的 ffmpeg 录制来自 RTSP 摄像机的短视频剪辑（mp4、gif）和快照"
         },
-        "authors": [
-            "sadam6752-tech <sadam6752@gmail.com>"
-        ],
-        "keywords": [
-            "camera",
-            "rtsp",
-            "ffmpeg",
-            "video",
-            "doorbell",
-            "recording",
-            "snapshot",
-            "telegram"
-        ],
+        "authors": ["sadam6752-tech <sadam6752@gmail.com>"],
+        "keywords": ["camera", "rtsp", "ffmpeg", "video", "doorbell", "recording", "snapshot", "telegram"],
         "licenseInformation": {
             "type": "free",
             "license": "MIT"
@@ -82,7 +71,7 @@
         ],
         "globalDependencies": [
             {
-                "admin": ">=7.0.23"
+                "admin": ">=7.6.20"
             }
         ],
         "messagebox": true
@@ -182,7 +171,5 @@
             "native": {}
         }
     ],
-    "protectedNative": [
-        "cameras"
-    ]
+    "protectedNative": ["cameras"]
 }
