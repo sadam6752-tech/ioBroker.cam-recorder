@@ -425,7 +425,7 @@ class CamRecorder extends utils.Adapter {
         if (!obj || typeof obj !== 'object') {
             return;
         }
-        /** @param {any} answer - Answer for the caller */
+        /** @param {ioBroker.MessagePayload} answer - Answer for the caller */
         const reply = answer => {
             if (obj.callback) {
                 this.sendTo(obj.from, obj.command, answer, obj.callback);
@@ -441,9 +441,13 @@ class CamRecorder extends utils.Adapter {
                 reply({ error: `Unknown command "${obj.command}"` });
                 return;
             }
-            /** @type {Record<string, any>} */
+            /** @type {RecordRequest & {camera?: string, telegram?: boolean}} */
             const message =
-                typeof obj.message === 'string' ? { camera: obj.message } : /** @type {any} */ (obj.message) || {};
+                typeof obj.message === 'string'
+                    ? { camera: obj.message }
+                    : obj.message && typeof obj.message === 'object'
+                      ? obj.message
+                      : {};
             const camera = findCamera(this.cameras, message.camera);
             if (!camera) {
                 reply({ error: `Unknown camera "${message.camera ?? ''}"` });
