@@ -182,6 +182,7 @@ class CamRecorder extends utils.Adapter {
                 settings: this.settings,
                 withPassword: camera => this._withPassword(camera),
                 getPrebuffer: cameraId => this.prebuffers.get(cameraId),
+                onWarning: message => this.log.warn(message),
             });
             await this._startPrebuffers(ffmpegPath);
 

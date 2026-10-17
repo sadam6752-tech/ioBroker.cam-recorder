@@ -26,11 +26,16 @@ tests.integration(path.join(__dirname, '..'), {
                     '-f',
                     'lavfi',
                     '-i',
-                    'testsrc=size=640x360:rate=15',
+                    'testsrc=size=320x240:rate=10',
+                    // longer than the test runs: the pre-recording reads it in real time, and a
+                    // looped file gives segments with jumping timestamps
                     '-t',
-                    '5',
+                    '60',
                     '-c:v',
                     'libx264',
+                    // a key frame every second like a camera
+                    '-g',
+                    '10',
                     '-pix_fmt',
                     'yuv420p',
                     '-y',

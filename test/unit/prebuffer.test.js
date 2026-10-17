@@ -12,7 +12,7 @@ const {
     concatList,
     restartDelay,
 } = require('../../lib/prebuffer-plan');
-const { Prebuffer } = require('../../lib/prebuffer');
+const { Prebuffer, isStalled, STALL_MS } = require('../../lib/prebuffer');
 const { FfmpegRunner, resolveFfmpegPath } = require('../../lib/ffmpeg-runner');
 const { Recorder } = require('../../lib/recorder');
 const { normalizeSettings } = require('../../lib/config');
@@ -69,6 +69,11 @@ describe('pre-recording plan', () => {
 
     it('writes a concat list with forward slashes and escaped quotes', () => {
         assert.equal(concatList(['C:\\tmp\\a.ts', "/x/it's.ts"]), "file 'C:/tmp/a.ts'\nfile '/x/it'\\''s.ts'\n");
+    });
+
+    it('counts a buffer as stalled only after the limit without growth', () => {
+        assert.equal(isStalled(1000, 1000 + STALL_MS), false);
+        assert.equal(isStalled(1000, 1001 + STALL_MS), true);
     });
 
     it('waits longer after every failed start', () => {
@@ -211,6 +216,88 @@ describe('pre-recording with a live test source (real ffmpeg)', function () {
         const clip = await recorder.record(camera(), { duration: 1 });
         assert.equal(clip.pre, 0);
         assert.equal(clip.duration, 1);
+    });
+
+    it('records live when the segments cannot be joined', async () => {
+        const settings = normalizeSettings({ rtspTimeout: 2 });
+        const broken = path.join(dir, 'broken');
+        fs.mkdirSync(broken, { recursive: true });
+        fs.writeFileSync(path.join(broken, 'garbage.ts'), 'not a video');
+        const warnings = [];
+        let released = 0;
+        const fake = /** @type {any} */ ({
+            seconds: 3,
+            dir: broken,
+            isRunning: () => true,
+            collect: async () => ({
+                files: [path.join(broken, 'garbage.ts')],
+                first: Date.now() - 3000,
+                offset: 0,
+                complete: true,
+                release: () => released++,
+            }),
+        });
+        const recorder = new Recorder({
+            runner: new FfmpegRunner({ ffmpegPath, maxParallel: 2, timers }),
+            outputDir: fs.mkdtempSync(path.join(dir, 'out-')),
+            settings,
+            withPassword: c => c,
+            getPrebuffer: () => fake,
+            onWarning: m => warnings.push(m),
+        });
+        const clip = await recorder.record(camera(), { duration: 1 });
+        assert.equal(clip.pre, 0);
+        assert.ok(fs.statSync(clip.file).size > 0);
+        assert.equal(released, 1);
+        assert.match(warnings[0], /could not be joined .* recording live instead/);
+        assert.deepEqual(fs.readdirSync(broken), ['garbage.ts']);
+    });
+
+    it('does not restart a buffer whose camera sends a key frame only every 25 s', async function () {
+        this.timeout(90_000);
+        const longGop = path.join(dir, 'long-gop.ts');
+        execFileSync(ffmpegPath, [
+            '-hide_banner',
+            '-loglevel',
+            'error',
+            '-f',
+            'lavfi',
+            '-i',
+            'testsrc=size=160x120:rate=10',
+            '-t',
+            '60',
+            '-c:v',
+            'libx264',
+            '-g',
+            '250',
+            '-keyint_min',
+            '250',
+            '-sc_threshold',
+            '0',
+            '-pix_fmt',
+            'yuv420p',
+            '-y',
+            longGop,
+        ]);
+        const warnings = [];
+        const buffer = new Prebuffer({
+            camera: { ...camera(), url: longGop },
+            settings: normalizeSettings({ rtspTimeout: 2 }),
+            seconds: 3,
+            dir: path.join(dir, 'long-gop'),
+            ffmpegPath,
+            timers,
+            onWarning: m => warnings.push(m),
+        });
+        await buffer.start();
+        try {
+            // longer than the stall limit, while the first segment is still being written
+            await new Promise(r => setTimeout(r, STALL_MS + 5000));
+            assert.deepEqual(warnings, []);
+            assert.ok(buffer.child, 'the process was stopped');
+        } finally {
+            await buffer.stop();
+        }
     });
 
     it('restarts a failing buffer and never shows the password', async () => {
