@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "cam-recorder",
-        "version": "0.4.0",
+        "version": "0.4.1",
         "news": {
+            "0.4.1": {
+                "en": "Timelapse: the states timelapseFrames and timelapseNextVideo show the waiting pictures and the time of the next video",
+                "de": "Zeitraffer: die Datenpunkte timelapseFrames und timelapseNextVideo zeigen die wartenden Bilder und den Zeitpunkt des nächsten Videos",
+                "ru": "Таймлапс: состояния timelapseFrames и timelapseNextVideo показывают накопленные кадры и время следующего видео",
+                "pt": "Timelapse: os estados timelapseFrames e timelapseNextVideo mostram as imagens em espera e a hora do próximo vídeo",
+                "nl": "Tijdopname: de statussen timelapseFrames en timelapseNextVideo tonen de wachtende beelden en het tijdstip van de volgende video",
+                "fr": "Accéléré : les états timelapseFrames et timelapseNextVideo indiquent les images en attente et l'heure de la prochaine vidéo",
+                "it": "Timelapse: gli stati timelapseFrames e timelapseNextVideo mostrano le immagini in attesa e l'ora del prossimo video",
+                "es": "Timelapse: los estados timelapseFrames y timelapseNextVideo muestran las imágenes en espera y la hora del próximo vídeo",
+                "pl": "Film poklatkowy: stany timelapseFrames i timelapseNextVideo pokazują oczekujące zdjęcia i czas następnego filmu",
+                "uk": "Таймлапс: стани timelapseFrames і timelapseNextVideo показують накопичені кадри й час наступного відео",
+                "zh-cn": "延时摄影：状态 timelapseFrames 和 timelapseNextVideo 显示等待中的图片和下一个视频的时间"
+            },
             "0.4.0": {
                 "en": "Timelapse: a picture every few minutes, once a day a video. Copy of every clip, snapshot and timelapse to an SFTP server (NAS) with fingerprint check and connection test",
                 "de": "Zeitraffer: alle paar Minuten ein Bild, einmal täglich ein Video. Kopie jedes Clips, Schnappschusses und Zeitraffers auf einen SFTP-Server (NAS) mit Fingerabdruck-Prüfung und Verbindungstest",

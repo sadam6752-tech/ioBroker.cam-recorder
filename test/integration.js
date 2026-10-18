@@ -223,6 +223,11 @@ tests.integration(path.join(__dirname, '..'), {
                 assert.equal(error?.val || '', '');
                 const lastCopy = await harness.states.getStateAsync('cam-recorder.0.info.lastRemoteCopy');
                 assert.ok(Number(lastCopy?.val) > 0);
+                // the counter of the timelapse is back at 0 after the video, the next video is planned
+                const frames = await harness.states.getStateAsync('cam-recorder.0.cameras.cafe_door.timelapseFrames');
+                assert.equal(frames?.val, 0);
+                const next = await harness.states.getStateAsync('cam-recorder.0.cameras.cafe_door.timelapseNextVideo');
+                assert.ok(Number(next?.val) > Date.now(), String(next?.val));
             });
 
             it('runs the pre-recording and puts the seconds before the event into the clip', async function () {

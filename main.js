@@ -89,6 +89,8 @@ const CAMERA_STATES = [
     { id: 'timelapse', common: { type: 'boolean', role: 'button', read: false, write: true, def: false } },
     { id: 'lastTimelapse', common: { type: 'string', role: 'text', read: true, write: false, def: '' } },
     { id: 'lastTimelapseTime', common: { type: 'number', role: 'value.time', read: true, write: false, def: 0 } },
+    { id: 'timelapseFrames', common: { type: 'number', role: 'value', read: true, write: false, def: 0 } },
+    { id: 'timelapseNextVideo', common: { type: 'number', role: 'value.time', read: true, write: false, def: 0 } },
 ];
 
 class CamRecorder extends utils.Adapter {
@@ -342,6 +344,10 @@ class CamRecorder extends utils.Adapter {
                 timers: this._ownTimers(),
                 onVideo: result => void this._deliverTimelapse(job.camera, result, job.notify),
                 onWarning: message => this.log.warn(message),
+                onProgress: ({ frames, nextVideo }) => {
+                    void this.setState(`cameras.${job.camera.id}.timelapseFrames`, frames, true);
+                    void this.setState(`cameras.${job.camera.id}.timelapseNextVideo`, nextVideo, true);
+                },
             });
             this.timelapses.set(job.camera.id, timelapse);
             await timelapse.start();

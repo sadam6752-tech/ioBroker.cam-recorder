@@ -189,20 +189,22 @@ The newest file of each camera and kind is also copied into the ioBroker file st
 
 Per camera below `cam-recorder.0.cameras.<camera>`:
 
-| State               | Meaning                                         |
-| ------------------- | ----------------------------------------------- |
-| `record`            | Button: record a clip with the default settings |
-| `snapshot`          | Button: take a snapshot                         |
-| `lastVideo`         | Path of the newest clip                         |
-| `lastVideoTime`     | Time of the newest clip                         |
-| `lastSnapshot`      | Path of the newest snapshot                     |
-| `lastSnapshotTime`  | Time of the newest snapshot                     |
-| `status`            | `idle`, `recording`, `snapshot` or `error`      |
-| `lastError`         | Text of the last error, empty after a success   |
-| `prebuffer`         | `off`, `starting`, `running` or `restarting`    |
-| `timelapse`         | Button: make the timelapse video now            |
-| `lastTimelapse`     | Path of the newest timelapse video              |
-| `lastTimelapseTime` | Time of the newest timelapse video              |
+| State                | Meaning                                         |
+| -------------------- | ----------------------------------------------- |
+| `record`             | Button: record a clip with the default settings |
+| `snapshot`           | Button: take a snapshot                         |
+| `lastVideo`          | Path of the newest clip                         |
+| `lastVideoTime`      | Time of the newest clip                         |
+| `lastSnapshot`       | Path of the newest snapshot                     |
+| `lastSnapshotTime`   | Time of the newest snapshot                     |
+| `status`             | `idle`, `recording`, `snapshot` or `error`      |
+| `lastError`          | Text of the last error, empty after a success   |
+| `prebuffer`          | `off`, `starting`, `running` or `restarting`    |
+| `timelapse`          | Button: make the timelapse video now            |
+| `lastTimelapse`      | Path of the newest timelapse video              |
+| `lastTimelapseTime`  | Time of the newest timelapse video              |
+| `timelapseFrames`    | Pictures waiting for the next timelapse video   |
+| `timelapseNextVideo` | Time of the next timelapse video                |
 
 `info.connection` is true when ffmpeg was found and works, `info.ffmpegVersion` shows its version.
 `info.lastRemoteCopy` and `info.remoteError` report the copy to the SFTP server.
@@ -259,6 +261,11 @@ adapter.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+
+### 0.4.1 (2026-10-18)
+
+- (sadam6752-tech) Timelapse: the states `timelapseFrames` (pictures waiting) and `timelapseNextVideo` (time of the
+  next video) show the progress
 
 ### 0.4.0 (2026-10-18)
 

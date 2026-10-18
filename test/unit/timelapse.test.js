@@ -87,7 +87,7 @@ describe('timelapse with real ffmpeg', function () {
      * @param {(r: any) => void} onVideo - Video callback
      * @returns {Timelapse} Timelapse of a camera reading the test file
      */
-    function makeTimelapse(out, onVideo) {
+    function makeTimelapse(out, onVideo, onProgress = undefined) {
         const settings = normalizeSettings({ videoWidth: 160, maxAgeDays: 7 });
         const camera = normalizeCameras([{ name: 'Door', url: source }]).cameras[0];
         const recorder = new Recorder({
@@ -105,6 +105,7 @@ describe('timelapse with real ffmpeg', function () {
             timers,
             onVideo,
             onWarning: () => undefined,
+            onProgress,
         });
     }
 
@@ -145,8 +146,14 @@ describe('timelapse with real ffmpeg', function () {
     it('takes a frame with takeFrame and builds a missed video at the start', async () => {
         const out = fs.mkdtempSync(path.join(dir, 'out-'));
         const videos = [];
-        const timelapse = makeTimelapse(out, r => videos.push(r));
+        const progress = [];
+        const timelapse = makeTimelapse(
+            out,
+            r => videos.push(r),
+            p => progress.push(p),
+        );
         const frame = await timelapse.takeFrame();
+        assert.equal(progress[progress.length - 1].frames, 1, 'one frame waits');
         assert.ok(frame && fs.statSync(frame).size > 0);
         // a frame from two days ago: the start has to build the missed video at once
         const old = new Date(Date.now() - CATCH_UP_MS - 3600_000);
@@ -160,6 +167,10 @@ describe('timelapse with real ffmpeg', function () {
             timelapse.stop();
         }
         assert.equal(videos.length, 1);
+        // the missed video emptied the folder: the counter is back at 0, the next video is planned
+        const last = progress[progress.length - 1];
+        assert.equal(last.frames, 0);
+        assert.ok(last.nextVideo > Date.now() && last.nextVideo <= Date.now() + 86_400_000, String(last.nextVideo));
         assert.match(
             path.basename(videos[0].file),
             new RegExp(`^door_timelapse_${timeStamp(old).slice(0, 10)}\\.mp4$`),
