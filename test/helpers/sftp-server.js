@@ -18,9 +18,17 @@ const { STATUS_CODE, OPEN_MODE } = utils.sftp;
  * @returns {Promise<{port: number, fingerprint: string, close: () => void}>} the running server
  */
 async function startServer(disk, login = { username: 'nas', password: 'secret' }) {
-    const keys = utils.generateKeyPairSync('ed25519');
-    // "ssh-ed25519 <base64 blob> comment": the fingerprint is the SHA-256 of that blob. Not via
-    // utils.parseKey(), which now and then returned an Error for a fresh key on Linux (CI).
+    // ssh2 now and then (about 1 in 200) generates an ed25519 key that it cannot parse itself
+    // ("Malformed OpenSSH private key"): take the next one until both halves can be read
+    let keys = utils.generateKeyPairSync('ed25519');
+    for (
+        let i = 0;
+        i < 20 && (utils.parseKey(keys.private) instanceof Error || utils.parseKey(keys.public) instanceof Error);
+        i++
+    ) {
+        keys = utils.generateKeyPairSync('ed25519');
+    }
+    // "ssh-ed25519 <base64 blob> comment": the fingerprint is the SHA-256 of that blob
     const publicBlob = Buffer.from(keys.public.trim().split(/\s+/)[1], 'base64');
     const fingerprint = `SHA256:${createHash('sha256').update(publicBlob).digest('base64').replace(/=+$/, '')}`;
     const clients = new Set();
