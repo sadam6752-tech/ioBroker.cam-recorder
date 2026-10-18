@@ -277,7 +277,7 @@ adapter.
     ### **WORK IN PROGRESS**
 -->
 
-### **WORK IN PROGRESS**
+### 0.5.0 (2026-10-18)
 
 - (sadam6752-tech) Recipients by name: notification targets get a name, triggers and timelapses a column "Send to",
   so for example the two buttons of a door station notify two different people on any messenger
@@ -303,19 +303,6 @@ adapter.
 - (sadam6752-tech) Copy of every clip, snapshot and timelapse to an SFTP server (NAS), with fingerprint check,
   connection test, maximum age on the server
 - (sadam6752-tech) Tables of the settings that arrive as objects (after an update of an older instance) are read
-
-### 0.3.0 (2026-10-18)
-
-- (sadam6752-tech) A further event while a clip is being cut from the pre-recording extends the clip (up to the new
-  setting _Maximum clip length_, default 30 s) instead of being ignored
-- (sadam6752-tech) Snapshots come from the pre-recording while it runs: instant, without a second stream, and showing
-  the moment of the event; `live: true` in `sendTo` asks the camera
-- (sadam6752-tech) Examples in README, code and tests are English only, guarded by a test
-- (sadam6752-tech) js-controller 7.0.7 or newer is required
-- (sadam6752-tech) Trigger conditions: a trigger fires only while another state has a value (e.g. nobody at home);
-  a skipped event starts no cooldown
-- (sadam6752-tech) Further notification targets besides Telegram: email, Pushover, Discord, Matrix, Signal, WhatsApp,
-  Gotify, ntfy, and any other adapter through a JSON template; the trigger column "Telegram" is now "Notify"
 
 Older changes are in [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 

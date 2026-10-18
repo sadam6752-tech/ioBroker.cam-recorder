@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "cam-recorder",
-        "version": "0.4.3",
+        "version": "0.5.0",
         "news": {
+            "0.5.0": {
+                "en": "Recipients by name: notification targets get a name, triggers and timelapses a column Send to, e.g. two doorbell buttons notify two different people on any messenger",
+                "de": "Empfänger nach Namen: Benachrichtigungsziele erhalten einen Namen, Auslöser und Zeitraffer eine Spalte Senden an, z. B. benachrichtigen zwei Klingeltasten zwei verschiedene Personen über jeden Messenger",
+                "ru": "Получатели по имени: у получателей появилось имя, у триггеров и таймлапсов столбец «Отправить», например две кнопки звонка уведомляют двух разных людей в любом мессенджере",
+                "pt": "Destinatários por nome: os destinos de notificação ganham um nome, gatilhos e timelapses uma coluna Enviar para, p. ex. dois botões da campainha avisam duas pessoas diferentes em qualquer mensageiro",
+                "nl": "Ontvangers op naam: meldingsdoelen krijgen een naam, triggers en tijdopnamen een kolom Versturen naar, bijv. twee deurbelknoppen melden aan twee verschillende personen via elke messenger",
+                "fr": "Destinataires par nom : les destinataires reçoivent un nom, déclencheurs et accélérés une colonne Envoyer à, p. ex. deux boutons de sonnette notifient deux personnes différentes sur toute messagerie",
+                "it": "Destinatari per nome: i destinatari ricevono un nome, attivatori e timelapse una colonna Invia a, ad es. due pulsanti del campanello avvisano due persone diverse su qualsiasi messenger",
+                "es": "Destinatarios por nombre: los destinos reciben un nombre, disparadores y timelapses una columna Enviar a, p. ej. dos botones del timbre avisan a dos personas distintas en cualquier mensajero",
+                "pl": "Odbiorcy według nazwy: odbiorcy powiadomień dostają nazwę, wyzwalacze i filmy poklatkowe kolumnę Wyślij do, np. dwa przyciski dzwonka powiadamiają dwie różne osoby w dowolnym komunikatorze",
+                "uk": "Отримувачі за іменем: отримувачі мають ім'я, тригери й таймлапси стовпець «Надіслати», наприклад дві кнопки дзвінка сповіщають двох різних людей у будь-якому месенджері",
+                "zh-cn": "按名称选择接收者：通知目标可设置名称，触发器和延时摄影新增“发送给”列，例如两个门铃按钮可在任意消息工具中分别通知两个人"
+            },
             "0.4.3": {
                 "en": "Internal: a variable was renamed that the repository checker took for a wait function (W5051)",
                 "de": "Intern: eine Variable umbenannt, die der Repository-Checker für eine Wartefunktion hielt (W5051)",
@@ -80,19 +93,6 @@
                 "pl": "Nagrywanie wstępne: klipy mogą zawierać sekundy przed zdarzeniem (domyślnie wyłączone, ustawiane dla każdej kamery). Naprawiono: przekodowane klipy były krótsze niż ustawiono. Log podaje rzeczywistą długość klipu",
                 "uk": "Попередній запис: кліпи можуть містити секунди до події (типово вимкнено, налаштовується для кожної камери). Виправлено: перекодовані кліпи були коротшими за задане. У журналі вказується фактична довжина кліпу",
                 "zh-cn": "预录：片段可以包含事件发生前的几秒（默认关闭，可按摄像机设置）。已修复：重新编码的片段比设定的短。日志会显示片段的实际时长"
-            },
-            "0.1.0": {
-                "en": "First release: MP4/GIF clips and JPEG snapshots from RTSP cameras with a bundled ffmpeg, triggers, Telegram, encrypted camera passwords",
-                "de": "Erste Version: MP4/GIF-Clips und JPEG-Schnappschüsse von RTSP-Kameras mit mitgeliefertem ffmpeg, Auslöser, Telegram, verschlüsselte Kamera-Passwörter",
-                "ru": "Первая версия: клипы MP4/GIF и снимки JPEG с RTSP-камер со встроенным ffmpeg, триггеры, Telegram, зашифрованные пароли камер",
-                "pt": "Primeira versão: clipes MP4/GIF e instantâneos JPEG de câmeras RTSP com ffmpeg incluído, gatilhos, Telegram, senhas das câmeras criptografadas",
-                "nl": "Eerste versie: MP4/GIF-clips en JPEG-momentopnamen van RTSP-camera's met meegeleverde ffmpeg, triggers, Telegram, versleutelde camerawachtwoorden",
-                "fr": "Première version : clips MP4/GIF et photos JPEG de caméras RTSP avec ffmpeg fourni, déclencheurs, Telegram, mots de passe des caméras chiffrés",
-                "it": "Prima versione: clip MP4/GIF e istantanee JPEG da telecamere RTSP con ffmpeg incluso, attivatori, Telegram, password delle telecamere crittografate",
-                "es": "Primera versión: clips MP4/GIF e instantáneas JPEG de cámaras RTSP con ffmpeg incluido, disparadores, Telegram, contraseñas de cámaras cifradas",
-                "pl": "Pierwsza wersja: klipy MP4/GIF i zdjęcia JPEG z kamer RTSP z dołączonym ffmpeg, wyzwalacze, Telegram, zaszyfrowane hasła kamer",
-                "uk": "Перша версія: кліпи MP4/GIF і знімки JPEG з RTSP-камер із вбудованим ffmpeg, тригери, Telegram, зашифровані паролі камер",
-                "zh-cn": "首个版本：使用内置 ffmpeg 从 RTSP 摄像机录制 MP4/GIF 片段和 JPEG 快照，支持触发器、Telegram 和加密的摄像机密码"
             }
         },
         "titleLang": {

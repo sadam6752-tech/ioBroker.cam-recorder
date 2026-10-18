@@ -1,5 +1,18 @@
 # Older changes
 
+### 0.3.0 (2026-10-18)
+
+- (sadam6752-tech) A further event while a clip is being cut from the pre-recording extends the clip (up to the new
+  setting _Maximum clip length_, default 30 s) instead of being ignored
+- (sadam6752-tech) Snapshots come from the pre-recording while it runs: instant, without a second stream, and showing
+  the moment of the event; `live: true` in `sendTo` asks the camera
+- (sadam6752-tech) Examples in README, code and tests are English only, guarded by a test
+- (sadam6752-tech) js-controller 7.0.7 or newer is required
+- (sadam6752-tech) Trigger conditions: a trigger fires only while another state has a value (e.g. nobody at home);
+  a skipped event starts no cooldown
+- (sadam6752-tech) Further notification targets besides Telegram: email, Pushover, Discord, Matrix, Signal, WhatsApp,
+  Gotify, ntfy, and any other adapter through a JSON template; the trigger column "Telegram" is now "Notify"
+
 ### 0.2.0 (2026-10-17)
 
 - (sadam6752-tech) Pre-recording: clips can contain the seconds before the event (off by default, set per camera,
