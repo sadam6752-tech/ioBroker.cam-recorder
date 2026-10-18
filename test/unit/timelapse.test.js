@@ -58,6 +58,7 @@ describe('timelapse: rules', () => {
                 at: { hour: 6, minute: 30 },
                 fps: 60,
                 notify: true,
+                recipients: [],
             },
         );
         assert.equal(problems.length, 2);

@@ -85,5 +85,7 @@
     "Empty = not verified; the connection test shows the fingerprint": "Leeg = niet gecontroleerd; de verbindingstest toont de vingerafdruk",
     "Days kept on the server (0 = keep all)": "Dagen bewaren op de server (0 = alles bewaren)",
     "Test connection": "Verbinding testen",
-    "Further targets: MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "Verdere doelen: MAX, e-mail, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify en ntfy zijn ingebouwd (messengers zonder bestandsverzending krijgen een tekst). Voer voor andere adapters een JSON-bericht in met {file}, {caption}, {camera}, {text}."
+    "Further targets: MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "Verdere doelen: MAX, e-mail, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify en ntfy zijn ingebouwd (messengers zonder bestandsverzending krijgen een tekst). Voer voor andere adapters een JSON-bericht in met {file}, {caption}, {camera}, {text}.",
+    "Send to": "Versturen naar",
+    "Name: a trigger or timelapse with names in its column Send to notifies only those targets; the Telegram instance above is called Telegram. Send to empty = all targets.": "Naam: een trigger of tijdopname met namen in de kolom Versturen naar meldt alleen aan die doelen; de Telegram-instantie hierboven heet Telegram. Versturen naar leeg = alle doelen."
 }

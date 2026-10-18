@@ -58,6 +58,7 @@ diacritics are transliterated (`ü` → `ue`, `é` → `e`), other special chara
 | Condition                        | _Value is true_ (default) or _Every write_                                                    |
 | Cooldown                         | Seconds in which further writes start no new clip (a doorbell pressed three times = one clip) |
 | Notify                           | Send the result to Telegram and the further targets of the _Notifications_ tab                |
+| Send to                          | Names of notification targets, comma separated; empty = all (see _Recipients by name_)        |
 | Only if state, Comparison, Value | Optional condition, see below                                                                 |
 
 **Conditions.** A trigger with _Only if state_ fires only while that state compares as set: `=`, `≠`, `>` or `<`
@@ -132,6 +133,19 @@ For any other adapter enter a **template**: the JSON message for its `send` comm
 `{fileName}`, `{fileUrl}`, `{caption}`, `{camera}`, `{format}`, `{duration}`, `{recipient}` and `{text}`, for example
 `{"to": "{recipient}", "message": "{caption}", "file": "{file}"}`. A template also replaces the built-in format of a
 known adapter. All targets must run on the same host as this adapter, since they read the file from its path.
+
+**Recipients by name.** Give targets a _Name_; the Telegram instance of the upper part is always called `Telegram`.
+A trigger or timelapse with names in its column _Send to_ notifies only those targets, an empty _Send to_ notifies
+all of them. Example for a door station with two buttons for two flats:
+
+| Name   | Instance   | Recipient |
+| ------ | ---------- | --------- |
+| Me     | telegram.0 | Alex      |
+| Father | telegram.0 | Father    |
+| Father | max.0      | 123456    |
+
+Trigger `doorbird.0.Doorbell.1.trigger` → _Send to_ `Me`; trigger `doorbird.0.Doorbell.2.trigger` → _Send to_
+`Father` (Telegram and MAX). Several targets may share a name. A name that matches no target is reported at the start.
 
 ### Timelapse
 
@@ -233,7 +247,7 @@ on({ id: 'doorbird.0.Doorbell.1.trigger', change: 'any' }, () => {
 | `timelapse`   | `{ camera }` or just the camera name                                            | the video as above, or `{ error }` when fewer than two pictures wait                                     |
 | `listCameras` | –                                                                               | `[{ value, label }]`                                                                                     |
 
-`telegram: true` sends the result to the configured Telegram instance as well.
+`telegram: true` sends the result to the notification targets as well, `recipients: 'Father'` (or a list) only to those names.
 `pre` limits the seconds before the event (at most the value set for the camera, `0` = no pre-recording for this
 clip); `duration` is always the time after the event, and the answer's `duration` is the whole clip.
 
@@ -262,6 +276,11 @@ adapter.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+
+### **WORK IN PROGRESS**
+
+- (sadam6752-tech) Recipients by name: notification targets get a name, triggers and timelapses a column "Send to",
+  so for example the two buttons of a door station notify two different people on any messenger
 
 ### 0.4.3 (2026-10-18)
 

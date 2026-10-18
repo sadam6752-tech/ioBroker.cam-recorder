@@ -140,14 +140,14 @@
                             "type": "objectId",
                             "attr": "stateId",
                             "title": "State",
-                            "width": "17%",
+                            "width": "15%",
                             "default": ""
                         },
                         {
                             "type": "autocompleteSendTo",
                             "attr": "camera",
                             "title": "Camera",
-                            "width": "9%",
+                            "width": "8%",
                             "command": "listCameras",
                             "freeSolo": true,
                             "default": ""
@@ -156,7 +156,7 @@
                             "type": "select",
                             "attr": "action",
                             "title": "Action",
-                            "width": "10%",
+                            "width": "9%",
                             "default": "record",
                             "options": [
                                 {
@@ -177,7 +177,7 @@
                             "type": "number",
                             "attr": "duration",
                             "title": "Duration (s)",
-                            "width": "6%",
+                            "width": "5%",
                             "min": 0,
                             "max": 60,
                             "default": 0
@@ -186,7 +186,7 @@
                             "type": "select",
                             "attr": "format",
                             "title": "Format",
-                            "width": "8%",
+                            "width": "7%",
                             "default": "",
                             "options": [
                                 {
@@ -224,7 +224,7 @@
                             "type": "number",
                             "attr": "cooldown",
                             "title": "Cooldown (s)",
-                            "width": "6%",
+                            "width": "5%",
                             "min": 0,
                             "max": 3600,
                             "default": 10
@@ -233,14 +233,21 @@
                             "type": "checkbox",
                             "attr": "telegram",
                             "title": "Notify",
-                            "width": "6%",
+                            "width": "5%",
                             "default": true
+                        },
+                        {
+                            "type": "text",
+                            "attr": "recipients",
+                            "title": "Send to",
+                            "width": "10%",
+                            "default": ""
                         },
                         {
                             "type": "objectId",
                             "attr": "condState",
                             "title": "Only if state",
-                            "width": "13%",
+                            "width": "12%",
                             "default": ""
                         },
                         {
@@ -273,7 +280,7 @@
                             "type": "text",
                             "attr": "condValue",
                             "title": "Value",
-                            "width": "8%",
+                            "width": "7%",
                             "default": ""
                         }
                     ]
@@ -496,6 +503,16 @@
                     "lg": 12,
                     "xl": 12
                 },
+                "_namesHelp": {
+                    "type": "staticText",
+                    "text": "Name: a trigger or timelapse with names in its column Send to notifies only those targets; the Telegram instance above is called Telegram. Send to empty = all targets.",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
                 "notifyTargets": {
                     "type": "table",
                     "newLine": true,
@@ -513,10 +530,17 @@
                             "default": true
                         },
                         {
+                            "type": "text",
+                            "attr": "name",
+                            "title": "Name",
+                            "width": "14%",
+                            "default": ""
+                        },
+                        {
                             "type": "autocomplete",
                             "attr": "instance",
                             "title": "Instance",
-                            "width": "20%",
+                            "width": "18%",
                             "freeSolo": true,
                             "default": "",
                             "options": [
@@ -536,14 +560,14 @@
                             "type": "text",
                             "attr": "recipient",
                             "title": "Recipient",
-                            "width": "24%",
+                            "width": "20%",
                             "default": ""
                         },
                         {
                             "type": "text",
                             "attr": "template",
                             "title": "Template (JSON, optional)",
-                            "width": "50%",
+                            "width": "42%",
                             "default": ""
                         }
                     ]
@@ -576,14 +600,14 @@
                             "type": "checkbox",
                             "attr": "enabled",
                             "title": "Active",
-                            "width": "8%",
+                            "width": "7%",
                             "default": true
                         },
                         {
                             "type": "autocompleteSendTo",
                             "attr": "camera",
                             "title": "Camera",
-                            "width": "22%",
+                            "width": "18%",
                             "command": "listCameras",
                             "freeSolo": true,
                             "default": ""
@@ -592,7 +616,7 @@
                             "type": "number",
                             "attr": "interval",
                             "title": "Interval (min)",
-                            "width": "16%",
+                            "width": "13%",
                             "min": 1,
                             "max": 1440,
                             "default": 5
@@ -601,14 +625,14 @@
                             "type": "text",
                             "attr": "at",
                             "title": "Video at (HH:MM)",
-                            "width": "18%",
+                            "width": "15%",
                             "default": "23:55"
                         },
                         {
                             "type": "number",
                             "attr": "fps",
                             "title": "Frames per second",
-                            "width": "18%",
+                            "width": "15%",
                             "min": 1,
                             "max": 60,
                             "default": 10
@@ -617,8 +641,15 @@
                             "type": "checkbox",
                             "attr": "notify",
                             "title": "Notify",
-                            "width": "18%",
+                            "width": "12%",
                             "default": false
+                        },
+                        {
+                            "type": "text",
+                            "attr": "recipients",
+                            "title": "Send to",
+                            "width": "20%",
+                            "default": ""
                         }
                     ]
                 }

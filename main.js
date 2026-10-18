@@ -25,7 +25,7 @@ const { triggerDecision, formatCaption } = require('./lib/triggers');
 const { maskSecrets } = require('./lib/mask');
 const { NAMES } = require('./lib/names');
 const { conditionMet, opSymbol } = require('./lib/conditions');
-const { KNOWN, buildMessage } = require('./lib/notify');
+const { KNOWN, buildMessage, parseNames, selectTargets } = require('./lib/notify');
 const { Timelapse } = require('./lib/timelapse');
 const {
     copyFileToRemote,
@@ -148,6 +148,9 @@ class CamRecorder extends utils.Adapter {
             this.cameras = cams.cameras;
             const trig = normalizeTriggers(this.config.triggers, this.cameras);
             this._checkTargets();
+            for (const trigger of trig.triggers) {
+                this._checkNames(`Trigger ${trigger.stateId}`, trigger.telegram ? trigger.recipients : []);
+            }
             for (const problem of [...cams.problems, ...trig.problems]) {
                 this.log.warn(problem);
             }
@@ -335,6 +338,9 @@ class CamRecorder extends utils.Adapter {
             return;
         }
         for (const job of jobs) {
+            if (job.notify) {
+                this._checkNames(`Timelapse of camera "${job.camera.name}"`, job.recipients);
+            }
             const timelapse = new Timelapse({
                 camera: job.camera,
                 job,
@@ -342,7 +348,7 @@ class CamRecorder extends utils.Adapter {
                 outputDir,
                 recorder: this.recorder,
                 timers: this._ownTimers(),
-                onVideo: result => void this._deliverTimelapse(job.camera, result, job.notify),
+                onVideo: result => void this._deliverTimelapse(job.camera, result, job.notify ? job.recipients : false),
                 onWarning: message => this.log.warn(message),
                 onProgress: ({ frames, nextVideo }) => {
                     void this.setState(`cameras.${job.camera.id}.timelapseFrames`, frames, true);
@@ -387,7 +393,7 @@ class CamRecorder extends utils.Adapter {
      *
      * @param {Camera} camera - Camera
      * @param {RecordResult} result - Video
-     * @param {boolean} notify - Send it to the notification targets
+     * @param {false | string[]} notify - false, or the names to send to (empty = all)
      */
     async _deliverTimelapse(camera, result, notify) {
         const base = `cameras.${camera.id}`;
@@ -398,7 +404,7 @@ class CamRecorder extends utils.Adapter {
         );
         this._queueRemote(camera, result);
         if (notify) {
-            await this._notify(result);
+            await this._notify(result, notify);
         }
     }
 
@@ -492,10 +498,10 @@ class CamRecorder extends utils.Adapter {
      * @param {Camera} camera - Camera
      * @param {'record' | 'snapshot'} kind - What to take
      * @param {RecordRequest} request - Options
-     * @param {boolean} telegram - Send the result to Telegram
+     * @param {false | string[]} notify - false, or the names to send the result to (empty = all)
      * @returns {Promise<RecordResult>} The finished file
      */
-    async _take(camera, kind, request, telegram) {
+    async _take(camera, kind, request, notify) {
         if (!this.recorder) {
             throw new Error('ffmpeg is not available, see the log of the adapter start');
         }
@@ -529,8 +535,8 @@ class CamRecorder extends utils.Adapter {
             this.log.debug(`Camera "${camera.name}": full path ${result.file}`);
             await this._copyToFiles(camera, result);
             this._queueRemote(camera, result);
-            if (telegram) {
-                await this._notify(result);
+            if (notify) {
+                await this._notify(result, notify);
             }
             return result;
         } catch (err) {
@@ -573,19 +579,22 @@ class CamRecorder extends utils.Adapter {
      * @param {RecordResult} result - Finished file
      */
     /**
-     * Sends the file to the Telegram instance of the Telegram tab and to every further target.
+     * Sends the file to the Telegram instance of the Notifications tab and the further targets,
+     * or only to the named ones.
      *
      * @param {RecordResult} result - Finished file
+     * @param {string[]} [names] - Names to send to, empty = all
      */
-    async _notify(result) {
+    async _notify(result, names = []) {
         const caption = formatCaption(
             this.settings.telegramCaption,
             result.camera,
             new Date(result.time),
             this.dateFormat,
         ).trim();
-        const jobs = [this._sendTelegram(result)];
-        for (const target of this.settings.notifyTargets) {
+        const choice = selectTargets(names, this.settings.notifyTargets);
+        const jobs = choice.telegram ? [this._sendTelegram(result)] : [];
+        for (const target of choice.targets) {
             jobs.push(this._sendToTarget(target, result, caption));
         }
         await Promise.all(jobs);
@@ -604,6 +613,21 @@ class CamRecorder extends utils.Adapter {
             this.log.info(`Sent ${name} to ${target.instance}${target.recipient ? ` (${target.recipient})` : ''}`);
         } catch (err) {
             this.log.warn(`Could not send ${name} to ${target.instance}: ${err.message}`);
+        }
+    }
+
+    /**
+     * Warns about recipient names that match no target.
+     *
+     * @param {string} where - Trigger or timelapse, for the message
+     * @param {string[]} names - Names it sends to
+     */
+    _checkNames(where, names) {
+        const { unknown } = selectTargets(names, this.settings.notifyTargets);
+        if (unknown.length) {
+            this.log.warn(
+                `${where}: no notification target is named ${unknown.map(n => `"${n}"`).join(', ')} (tab Notifications, column Name)`,
+            );
         }
     }
 
@@ -681,10 +705,10 @@ class CamRecorder extends utils.Adapter {
         }
         const jobs = [];
         if (trigger.action !== 'record') {
-            jobs.push(this._take(camera, 'snapshot', {}, trigger.telegram));
+            jobs.push(this._take(camera, 'snapshot', {}, trigger.telegram ? trigger.recipients : false));
         }
         if (trigger.action !== 'snapshot') {
-            jobs.push(this._take(camera, 'record', request, trigger.telegram));
+            jobs.push(this._take(camera, 'record', request, trigger.telegram ? trigger.recipients : false));
         }
         await Promise.allSettled(jobs);
         return true;
@@ -785,7 +809,7 @@ class CamRecorder extends utils.Adapter {
                 reply({ error: `Unknown command "${obj.command}"` });
                 return;
             }
-            /** @type {RecordRequest & {camera?: string, telegram?: boolean}} */
+            /** @type {RecordRequest & {camera?: string, telegram?: boolean, recipients?: string | string[]}} */
             const message =
                 typeof obj.message === 'string'
                     ? { camera: obj.message }
@@ -797,7 +821,8 @@ class CamRecorder extends utils.Adapter {
                 reply({ error: `Unknown camera "${message.camera ?? ''}"` });
                 return;
             }
-            const result = await this._take(camera, obj.command, message, message.telegram === true);
+            const notify = message.telegram === true ? parseNames(message.recipients) : false;
+            const result = await this._take(camera, obj.command, message, notify);
             reply(result);
         } catch (err) {
             reply({ error: err.message });

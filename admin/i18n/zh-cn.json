@@ -85,5 +85,7 @@
     "Empty = not verified; the connection test shows the fingerprint": "留空 = 不验证；连接测试会显示指纹",
     "Days kept on the server (0 = keep all)": "服务器上保留天数（0 = 全部保留）",
     "Test connection": "测试连接",
-    "Further targets: MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "其他目标：已内置 MAX、Email、Pushover、Discord、Matrix、Signal、WhatsApp、Gotify 和 ntfy（不能发送文件的消息工具会收到文本）。其他适配器请填写包含 {file}、{caption}、{camera}、{text} 的 JSON 消息。"
+    "Further targets: MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "其他目标：已内置 MAX、Email、Pushover、Discord、Matrix、Signal、WhatsApp、Gotify 和 ntfy（不能发送文件的消息工具会收到文本）。其他适配器请填写包含 {file}、{caption}、{camera}、{text} 的 JSON 消息。",
+    "Send to": "发送给",
+    "Name: a trigger or timelapse with names in its column Send to notifies only those targets; the Telegram instance above is called Telegram. Send to empty = all targets.": "名称：在“发送给”列中填写名称的触发器或延时摄影只通知这些目标；上方的 Telegram 实例名为 Telegram。“发送给”留空 = 所有目标。"
 }

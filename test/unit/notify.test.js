@@ -2,7 +2,7 @@
 
 const assert = require('node:assert/strict');
 const { conditionMet } = require('../../lib/conditions');
-const { buildMessage, KNOWN } = require('../../lib/notify');
+const { buildMessage, KNOWN, parseNames, selectTargets } = require('../../lib/notify');
 const { normalizeCameras, normalizeTriggers, normalizeSettings } = require('../../lib/config');
 
 /** @type {import('../../lib/types').RecordResult} */
@@ -26,7 +26,7 @@ const photo = { ...clip, file: clip.file.replace('.mp4', '.jpg'), format: /** @t
  * @param {string} [template] - Template
  * @returns {import('../../lib/types').NotifyTarget} Target
  */
-const target = (instance, recipient = '', template = '') => ({ instance, recipient, template });
+const target = (instance, recipient = '', template = '', name = '') => ({ name, instance, recipient, template });
 
 describe('trigger conditions', () => {
     it('compares booleans, numbers and texts', () => {
@@ -71,6 +71,49 @@ describe('trigger conditions', () => {
     });
 });
 
+describe('recipients by name', () => {
+    const me = target('max.0', '111', '', 'Alex');
+    const fatherMax = target('max.0', '222', '', 'Father');
+    const fatherMail = target('email.0', 'f@example.com', '', 'father');
+    const unnamed = target('discord.0', '1/2');
+    const all = [me, fatherMax, fatherMail, unnamed];
+
+    it('reads a list of names', () => {
+        assert.deepEqual(parseNames(' Alex, Father ;Telegram,, '), ['Alex', 'Father', 'Telegram']);
+        assert.deepEqual(parseNames(['Alex', ' ']), ['Alex']);
+        assert.deepEqual(parseNames(undefined), []);
+    });
+
+    it('sends to everybody without names', () => {
+        assert.deepEqual(selectTargets([], all), { telegram: true, targets: all, unknown: [] });
+    });
+
+    it('sends only to the named targets, without case, Telegram included when named', () => {
+        assert.deepEqual(selectTargets(['FATHER'], all), {
+            telegram: false,
+            targets: [fatherMax, fatherMail],
+            unknown: [],
+        });
+        assert.deepEqual(selectTargets(['Alex', 'telegram'], all), { telegram: true, targets: [me], unknown: [] });
+    });
+
+    it('names unknown names, and a target without a name is only reached by an empty list', () => {
+        const choice = selectTargets(['Alex', 'Mother'], all);
+        assert.deepEqual(choice.targets, [me]);
+        assert.deepEqual(choice.unknown, ['Mother']);
+        assert.ok(!choice.targets.includes(unnamed));
+    });
+
+    it('reads the column Send to of a trigger', () => {
+        const { cameras } = normalizeCameras([{ name: 'Door', url: 'rtsp://h/1' }]);
+        const { triggers } = normalizeTriggers(
+            [{ stateId: 'a.0.b', camera: 'Door', recipients: 'Father, Telegram' }],
+            cameras,
+        );
+        assert.deepEqual(triggers[0].recipients, ['Father', 'Telegram']);
+    });
+});
+
 describe('notification targets', () => {
     it('keeps active targets with an instance only', () => {
         const s = normalizeSettings({
@@ -80,7 +123,9 @@ describe('notification targets', () => {
                 { enabled: true, instance: '' },
             ],
         });
-        assert.deepEqual(s.notifyTargets, [{ instance: 'email.0', recipient: 'me@example.com', template: '' }]);
+        assert.deepEqual(s.notifyTargets, [
+            { name: '', instance: 'email.0', recipient: 'me@example.com', template: '' },
+        ]);
     });
 
     it('sends the clip to Telegram as a path with caption and user', () => {

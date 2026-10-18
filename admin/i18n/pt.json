@@ -85,5 +85,7 @@
     "Empty = not verified; the connection test shows the fingerprint": "Vazio = não verificado; o teste de conexão mostra a impressão digital",
     "Days kept on the server (0 = keep all)": "Dias mantidos no servidor (0 = manter tudo)",
     "Test connection": "Testar conexão",
-    "Further targets: MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "Destinos adicionais: MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify e ntfy estão incluídos (mensageiros que não enviam arquivos recebem um texto). Para outros adaptadores, insira uma mensagem JSON com {file}, {caption}, {camera}, {text}."
+    "Further targets: MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "Destinos adicionais: MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify e ntfy estão incluídos (mensageiros que não enviam arquivos recebem um texto). Para outros adaptadores, insira uma mensagem JSON com {file}, {caption}, {camera}, {text}.",
+    "Send to": "Enviar para",
+    "Name: a trigger or timelapse with names in its column Send to notifies only those targets; the Telegram instance above is called Telegram. Send to empty = all targets.": "Nome: um gatilho ou timelapse com nomes na coluna Enviar para notifica apenas esses destinos; a instância do Telegram acima chama-se Telegram. Enviar para vazio = todos os destinos."
 }

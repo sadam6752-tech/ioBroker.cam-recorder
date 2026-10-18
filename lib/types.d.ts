@@ -38,12 +38,16 @@ export interface Trigger {
     cooldown: number;
     /** Send the result to Telegram and the further notification targets */
     telegram: boolean;
+    /** Names of the targets to send to, empty = all */
+    recipients: string[];
     /** Only fire when this state has the given value; null = always */
     onlyIf: { stateId: string; op: 'eq' | 'ne' | 'gt' | 'lt'; value: string } | null;
 }
 
 /** A further notification target besides the Telegram tab */
 export interface NotifyTarget {
+    /** Name that triggers and timelapses use to choose this target, may be empty */
+    name: string;
     /** Instance, e.g. `email.0` */
     instance: string;
     /** Recipient in the form the adapter expects (address, user, phone, channel), empty = its default */
@@ -64,6 +68,8 @@ export interface TimelapseJob {
     fps: number;
     /** Send the video to the notification targets */
     notify: boolean;
+    /** Names of the targets to send to, empty = all */
+    recipients: string[];
 }
 
 /** Settings of the copy to an SFTP server (NAS) */

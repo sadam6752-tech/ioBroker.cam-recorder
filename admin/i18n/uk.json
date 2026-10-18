@@ -85,5 +85,7 @@
     "Empty = not verified; the connection test shows the fingerprint": "Порожньо = без перевірки; тест з'єднання покаже відбиток",
     "Days kept on the server (0 = keep all)": "Днів зберігати на сервері (0 = зберігати все)",
     "Test connection": "Перевірити з'єднання",
-    "Further targets: MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "Додаткові отримувачі: MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify і ntfy вбудовані (месенджери, що не вміють надсилати файли, отримують текст). Для інших адаптерів укажіть JSON-повідомлення з {file}, {caption}, {camera}, {text}."
+    "Further targets: MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "Додаткові отримувачі: MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify і ntfy вбудовані (месенджери, що не вміють надсилати файли, отримують текст). Для інших адаптерів укажіть JSON-повідомлення з {file}, {caption}, {camera}, {text}.",
+    "Send to": "Надіслати",
+    "Name: a trigger or timelapse with names in its column Send to notifies only those targets; the Telegram instance above is called Telegram. Send to empty = all targets.": "Назва: тригер або таймлапс з іменами у стовпці «Надіслати» сповіщає лише цих отримувачів; екземпляр Telegram вище називається Telegram. Порожнє «Надіслати» = усі отримувачі."
 }
