@@ -19,8 +19,9 @@ const { STATUS_CODE, OPEN_MODE } = utils.sftp;
  */
 async function startServer(disk, login = { username: 'nas', password: 'secret' }) {
     const keys = utils.generateKeyPairSync('ed25519');
-    const parsed = utils.parseKey(keys.public);
-    const publicBlob = (Array.isArray(parsed) ? parsed[0] : parsed).getPublicSSH();
+    // "ssh-ed25519 <base64 blob> comment": the fingerprint is the SHA-256 of that blob. Not via
+    // utils.parseKey(), which now and then returned an Error for a fresh key on Linux (CI).
+    const publicBlob = Buffer.from(keys.public.trim().split(/\s+/)[1], 'base64');
     const fingerprint = `SHA256:${createHash('sha256').update(publicBlob).digest('base64').replace(/=+$/, '')}`;
     const clients = new Set();
 

@@ -107,8 +107,9 @@ tests.integration(path.join(__dirname, '..'), {
                 this.timeout(60_000);
                 // the unload must end the ffmpeg of the pre-recording; on Windows a running
                 // process would keep the source file locked and the removal would fail
-                await harness.stopAdapter();
-                sftp.close();
+                // when "before" failed early, there is nothing to stop
+                await harness?.stopAdapter();
+                sftp?.close();
                 fs.rmSync(dir, { recursive: true, force: true, maxRetries: 5, retryDelay: 500 });
             });
 
@@ -208,13 +209,15 @@ tests.integration(path.join(__dirname, '..'), {
                 assert.ok(disk.files.has(remoteVideo), [...disk.files.keys()].join(', '));
                 // the clip and the snapshot of the earlier test were copied as well
                 const copied = copiedFiles();
+                const remoteError = (await harness.states.getStateAsync('cam-recorder.0.info.remoteError'))?.val;
+                const why = `on the server: ${copied.join(', ')}; info.remoteError: ${remoteError || '-'}`;
                 assert.ok(
                     copied.some(k => /cafe_door_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}\.mp4$/.test(k)),
-                    copied.join(', '),
+                    why,
                 );
                 assert.ok(
                     copied.some(k => k.endsWith('.jpg')),
-                    copied.join(', '),
+                    why,
                 );
                 const error = await harness.states.getStateAsync('cam-recorder.0.info.remoteError');
                 assert.equal(error?.val || '', '');
