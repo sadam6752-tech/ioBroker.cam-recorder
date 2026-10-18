@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "cam-recorder",
-        "version": "0.2.0",
+        "version": "0.3.0",
         "news": {
+            "0.3.0": {
+                "en": "Further events extend a clip (with pre-recording). Snapshots from the pre-recording. Trigger conditions. Further notification targets: email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify, ntfy and templates. Requires js-controller 7.0.7",
+                "de": "Weitere Ereignisse verlängern einen Clip (mit Voraufnahme). Schnappschüsse aus der Voraufnahme. Bedingungen für Auslöser. Weitere Benachrichtigungsziele: E-Mail, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify, ntfy und Vorlagen. Benötigt js-controller 7.0.7",
+                "ru": "Повторные события продлевают клип (с предзаписью). Снимки из предзаписи. Условия для триггеров. Дополнительные получатели: email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify, ntfy и шаблоны. Требуется js-controller 7.0.7",
+                "pt": "Novos eventos prolongam um clipe (com pré-gravação). Instantâneos a partir da pré-gravação. Condições para gatilhos. Destinos de notificação adicionais: email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify, ntfy e modelos. Requer js-controller 7.0.7",
+                "nl": "Volgende gebeurtenissen verlengen een clip (met vooropname). Momentopnamen uit de vooropname. Voorwaarden voor triggers. Verdere meldingsdoelen: e-mail, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify, ntfy en sjablonen. Vereist js-controller 7.0.7",
+                "fr": "De nouveaux événements prolongent un clip (avec pré-enregistrement). Photos tirées du pré-enregistrement. Conditions pour les déclencheurs. Autres destinataires : e-mail, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify, ntfy et modèles. Nécessite js-controller 7.0.7",
+                "it": "Ulteriori eventi prolungano una clip (con pre-registrazione). Istantanee dalla pre-registrazione. Condizioni per gli attivatori. Altri destinatari: email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify, ntfy e modelli. Richiede js-controller 7.0.7",
+                "es": "Nuevos eventos alargan un clip (con pregrabación). Instantáneas desde la pregrabación. Condiciones para disparadores. Destinos de notificación adicionales: correo, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify, ntfy y plantillas. Requiere js-controller 7.0.7",
+                "pl": "Kolejne zdarzenia wydłużają klip (z nagrywaniem wstępnym). Zdjęcia z nagrywania wstępnego. Warunki dla wyzwalaczy. Dalsi odbiorcy powiadomień: e-mail, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify, ntfy i szablony. Wymaga js-controller 7.0.7",
+                "uk": "Повторні події подовжують кліп (з попереднім записом). Знімки з попереднього запису. Умови для тригерів. Додаткові отримувачі: email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify, ntfy і шаблони. Потрібен js-controller 7.0.7",
+                "zh-cn": "后续事件会延长片段（启用预录时）。从预录中截取快照。触发器条件。更多通知目标：Email、Pushover、Discord、Matrix、Signal、WhatsApp、Gotify、ntfy 和模板。需要 js-controller 7.0.7"
+            },
             "0.2.0": {
                 "en": "Pre-recording: clips can contain the seconds before the event (off by default, set per camera). Fixed: re-encoded clips were shorter than set. The log names the real clip length",
                 "de": "Voraufnahme: Clips können die Sekunden vor dem Ereignis enthalten (standardmäßig aus, pro Kamera einstellbar). Behoben: neu kodierte Clips waren kürzer als eingestellt. Das Log nennt die echte Cliplänge",

@@ -218,7 +218,7 @@ adapter.
     ### **WORK IN PROGRESS**
 -->
 
-### **WORK IN PROGRESS**
+### 0.3.0 (2026-10-18)
 
 - (sadam6752-tech) A further event while a clip is being cut from the pre-recording extends the clip (up to the new
   setting _Maximum clip length_, default 30 s) instead of being ignored
