@@ -69,7 +69,6 @@
     "Template (JSON, optional)": "Modello (JSON, facoltativo)",
     "Only if state: the trigger fires only while that state has the value, e.g. 0_userdata.0.away = true. Empty = always.": "Solo se lo stato: l'attivatore scatta solo finché quello stato ha il valore, ad es. 0_userdata.0.away = true. Vuoto = sempre.",
     "Triggers with the Notify column checked send their result to this Telegram instance and to the further targets below. Scripts ask for it with telegram: true.": "Gli attivatori con la colonna Notifica selezionata inviano il risultato a questa istanza Telegram e agli altri destinatari qui sotto. Gli script lo richiedono con telegram: true.",
-    "Further targets: Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "Altri destinatari: email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify e ntfy sono integrati (i messenger che non inviano file ricevono un testo). Per altri adattatori inserire un messaggio JSON con {file}, {caption}, {camera}, {text}.",
     "Timelapse": "Timelapse (video accelerato)",
     "A picture every interval (from the pre-recording while it runs). Once a day at the set time the pictures become an MP4 video with the width of the Recording tab and are deleted. The button cameras.<camera>.timelapse builds the video at once.": "Un'immagine per intervallo (dalla pre-registrazione finché è attiva). Una volta al giorno all'ora impostata le immagini diventano un video MP4 con la larghezza della scheda Registrazione e vengono cancellate. Il pulsante cameras.<camera>.timelapse crea subito il video.",
     "Interval (min)": "Intervallo (min)",
@@ -85,5 +84,6 @@
     "Fingerprint of the server (SHA256:…)": "Impronta del server (SHA256:…)",
     "Empty = not verified; the connection test shows the fingerprint": "Vuoto = non verificato; il test di connessione mostra l'impronta",
     "Days kept on the server (0 = keep all)": "Giorni conservati sul server (0 = conserva tutto)",
-    "Test connection": "Prova connessione"
+    "Test connection": "Prova connessione",
+    "Further targets: MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "Altri destinatari: MAX, email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify e ntfy sono integrati (i messenger che non inviano file ricevono un testo). Per altri adattatori inserire un messaggio JSON con {file}, {caption}, {camera}, {text}."
 }

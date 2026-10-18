@@ -488,7 +488,7 @@
                 },
                 "_targetsHelp": {
                     "type": "staticText",
-                    "text": "Further targets: Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.",
+                    "text": "Further targets: MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.",
                     "newLine": true,
                     "xs": 12,
                     "sm": 12,
@@ -520,6 +520,7 @@
                             "freeSolo": true,
                             "default": "",
                             "options": [
+                                "max.0",
                                 "email.0",
                                 "pushover.0",
                                 "discord.0",

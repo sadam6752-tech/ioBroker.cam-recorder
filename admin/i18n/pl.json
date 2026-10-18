@@ -69,7 +69,6 @@
     "Template (JSON, optional)": "Szablon (JSON, opcjonalnie)",
     "Only if state: the trigger fires only while that state has the value, e.g. 0_userdata.0.away = true. Empty = always.": "Tylko gdy stan: wyzwalacz działa tylko wtedy, gdy ten stan ma podaną wartość, np. 0_userdata.0.away = true. Puste = zawsze.",
     "Triggers with the Notify column checked send their result to this Telegram instance and to the further targets below. Scripts ask for it with telegram: true.": "Wyzwalacze z zaznaczoną kolumną Powiadom wysyłają wynik do tej instancji Telegram i do dalszych odbiorców poniżej. Skrypty proszą o to przez telegram: true.",
-    "Further targets: Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "Dalsi odbiorcy: e-mail, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify i ntfy są wbudowane (komunikatory bez wysyłania plików dostają tekst). Dla innych adapterów wpisz wiadomość JSON z {file}, {caption}, {camera}, {text}.",
     "Timelapse": "Film poklatkowy",
     "A picture every interval (from the pre-recording while it runs). Once a day at the set time the pictures become an MP4 video with the width of the Recording tab and are deleted. The button cameras.<camera>.timelapse builds the video at once.": "Jedno zdjęcie na interwał (z nagrywania wstępnego, gdy działa). Raz dziennie o ustawionej godzinie zdjęcia stają się filmem MP4 o szerokości z karty Nagrywanie i są usuwane. Przycisk cameras.<camera>.timelapse tworzy film od razu.",
     "Interval (min)": "Interwał (min)",
@@ -85,5 +84,6 @@
     "Fingerprint of the server (SHA256:…)": "Odcisk serwera (SHA256:…)",
     "Empty = not verified; the connection test shows the fingerprint": "Puste = bez sprawdzania; test połączenia pokaże odcisk",
     "Days kept on the server (0 = keep all)": "Dni przechowywania na serwerze (0 = zachowaj wszystko)",
-    "Test connection": "Testuj połączenie"
+    "Test connection": "Testuj połączenie",
+    "Further targets: MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "Dalsi odbiorcy: MAX, e-mail, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify i ntfy są wbudowane (komunikatory bez wysyłania plików dostają tekst). Dla innych adapterów wpisz wiadomość JSON z {file}, {caption}, {camera}, {text}."
 }

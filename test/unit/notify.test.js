@@ -90,6 +90,18 @@ describe('notification targets', () => {
         });
     });
 
+    it('sends clips as video and pictures as image to MAX, to a user, a group chat or everybody', () => {
+        assert.deepEqual(buildMessage(target('max.0', '123456'), clip, 'Door 09:00'), {
+            command: 'send',
+            message: { text: 'Door 09:00', video: clip.file, userId: 123456 },
+        });
+        assert.deepEqual(buildMessage(target('max.0', '-987654321'), photo, ''), {
+            command: 'send',
+            message: { image: photo.file, chatId: -987654321 },
+        });
+        assert.deepEqual(buildMessage(target('max.0'), photo, 'Door').message, { text: 'Door', image: photo.file });
+    });
+
     it('attaches the clip to an email', () => {
         const { message } = buildMessage(target('email.0', 'me@example.com'), clip, 'Door 09:00');
         assert.equal(message.to, 'me@example.com');

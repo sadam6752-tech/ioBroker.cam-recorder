@@ -116,16 +116,17 @@ MP4 as video, GIF as animation and JPEG as photo. Both adapters must run on the 
 **Further targets** get the same results. Pick the instance; _Recipient_ is optional (empty = the default of that
 adapter):
 
-| Adapter        | What arrives                               | Recipient                                     |
-| -------------- | ------------------------------------------ | --------------------------------------------- |
-| `email`        | the file as attachment, caption as subject | address                                       |
-| `pushover`     | pictures as attachment, a clip as text     | device                                        |
-| `discord`      | the file                                   | `serverId/channelId`, a user id or a user tag |
-| `matrix-org`   | pictures, a clip as text                   | –                                             |
-| `signal-cmb`   | text with camera, kind and file name       | phone number                                  |
-| `whatsapp-cmb` | text                                       | phone number                                  |
-| `gotify`       | text                                       | –                                             |
-| `ntfy`         | text                                       | topic                                         |
+| Adapter        | What arrives                               | Recipient                                          |
+| -------------- | ------------------------------------------ | -------------------------------------------------- |
+| `max`          | the file (clip as video, picture as image) | user ID, negative group chat ID, empty = all users |
+| `email`        | the file as attachment, caption as subject | address                                            |
+| `pushover`     | pictures as attachment, a clip as text     | device                                             |
+| `discord`      | the file                                   | `serverId/channelId`, a user id or a user tag      |
+| `matrix-org`   | pictures, a clip as text                   | –                                                  |
+| `signal-cmb`   | text with camera, kind and file name       | phone number                                       |
+| `whatsapp-cmb` | text                                       | phone number                                       |
+| `gotify`       | text                                       | –                                                  |
+| `ntfy`         | text                                       | topic                                              |
 
 For any other adapter enter a **template**: the JSON message for its `send` command, with the placeholders `{file}`,
 `{fileName}`, `{fileUrl}`, `{caption}`, `{camera}`, `{format}`, `{duration}`, `{recipient}` and `{text}`, for example
@@ -261,6 +262,11 @@ adapter.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+
+### **WORK IN PROGRESS**
+
+- (sadam6752-tech) Built-in notification format for the MAX adapter (clips as video, pictures as image, to a user,
+  a group chat or all users)
 
 ### 0.4.1 (2026-10-18)
 

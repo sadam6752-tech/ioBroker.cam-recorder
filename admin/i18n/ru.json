@@ -69,7 +69,6 @@
     "Template (JSON, optional)": "Шаблон (JSON, необязательно)",
     "Only if state: the trigger fires only while that state has the value, e.g. 0_userdata.0.away = true. Empty = always.": "Только если состояние: триггер срабатывает, только пока это состояние имеет заданное значение, например 0_userdata.0.away = true. Пусто = всегда.",
     "Triggers with the Notify column checked send their result to this Telegram instance and to the further targets below. Scripts ask for it with telegram: true.": "Триггеры с отмеченным столбцом «Уведомить» отправляют результат в этот экземпляр Telegram и дополнительным получателям ниже. Скрипты запрашивают это через telegram: true.",
-    "Further targets: Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "Дополнительные получатели: Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify и ntfy встроены (мессенджеры, которые не умеют отправлять файлы, получают текст). Для других адаптеров укажите JSON-сообщение с {file}, {caption}, {camera}, {text}.",
     "Timelapse": "Таймлапс",
     "A picture every interval (from the pre-recording while it runs). Once a day at the set time the pictures become an MP4 video with the width of the Recording tab and are deleted. The button cameras.<camera>.timelapse builds the video at once.": "Один снимок за интервал (из предзаписи, пока она работает). Раз в сутки в заданное время снимки собираются в MP4-видео шириной как на вкладке «Запись» и удаляются. Кнопка cameras.<camera>.timelapse собирает видео сразу.",
     "Interval (min)": "Интервал (мин)",
@@ -85,5 +84,6 @@
     "Fingerprint of the server (SHA256:…)": "Отпечаток сервера (SHA256:…)",
     "Empty = not verified; the connection test shows the fingerprint": "Пусто = без проверки; тест соединения покажет отпечаток",
     "Days kept on the server (0 = keep all)": "Дней хранить на сервере (0 = хранить всё)",
-    "Test connection": "Проверить соединение"
+    "Test connection": "Проверить соединение",
+    "Further targets: MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "Дополнительные получатели: MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify и ntfy встроены (мессенджеры, которые не умеют отправлять файлы, получают текст). Для других адаптеров укажите JSON-сообщение с {file}, {caption}, {camera}, {text}."
 }
