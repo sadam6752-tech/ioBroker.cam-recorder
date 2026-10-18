@@ -1,9 +1,9 @@
 {
     "common": {
         "name": "cam-recorder",
-        "version": "0.5.0",
+        "version": "0.4.4",
         "news": {
-            "0.5.0": {
+            "0.4.4": {
                 "en": "Recipients by name: notification targets get a name, triggers and timelapses a column Send to, e.g. two doorbell buttons notify two different people on any messenger",
                 "de": "Empfänger nach Namen: Benachrichtigungsziele erhalten einen Namen, Auslöser und Zeitraffer eine Spalte Senden an, z. B. benachrichtigen zwei Klingeltasten zwei verschiedene Personen über jeden Messenger",
                 "ru": "Получатели по имени: у получателей появилось имя, у триггеров и таймлапсов столбец «Отправить», например две кнопки звонка уведомляют двух разных людей в любом мессенджере",
