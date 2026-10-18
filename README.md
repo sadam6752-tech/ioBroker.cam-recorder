@@ -263,10 +263,10 @@ adapter.
     ### **WORK IN PROGRESS**
 -->
 
-### **WORK IN PROGRESS**
+### 0.4.2 (2026-10-18)
 
 - (sadam6752-tech) Built-in notification format for the MAX adapter (clips as video, pictures as image, to a user,
-  a group chat or all users)
+  a group chat or all users); built from the documentation of ioBroker.max, not yet tried with a real MAX bot
 
 ### 0.4.1 (2026-10-18)
 
@@ -303,11 +303,7 @@ adapter.
 - (sadam6752-tech) The log line of a clip names the length of the written file
 - (sadam6752-tech) A warning names the reason when a clip starts at the event although pre-recording is set
 
-### 0.1.0 (2026-10-17)
-
-- (sadam6752-tech) Initial release: MP4/GIF clips and JPEG snapshots from RTSP cameras with a bundled ffmpeg,
-  triggers, Telegram, encrypted camera passwords,
-  `{date}` in the Telegram caption, a log line for every saved file and every Telegram message
+Older changes are in [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 
 ## License
 

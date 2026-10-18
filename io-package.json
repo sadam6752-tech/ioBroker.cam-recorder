@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "cam-recorder",
-        "version": "0.4.1",
+        "version": "0.4.2",
         "news": {
+            "0.4.2": {
+                "en": "Built-in notification target for the MAX adapter: clips as video, pictures as image, to a user, a group chat or all users",
+                "de": "Eingebautes Benachrichtigungsziel für den MAX-Adapter: Clips als Video, Bilder als Bild, an einen Benutzer, einen Gruppenchat oder alle Benutzer",
+                "ru": "Встроенный получатель для адаптера MAX: клипы как видео, снимки как изображение, пользователю, в групповой чат или всем пользователям",
+                "pt": "Destino de notificação integrado para o adaptador MAX: clipes como vídeo, imagens como imagem, para um usuário, um chat de grupo ou todos os usuários",
+                "nl": "Ingebouwd meldingsdoel voor de MAX-adapter: clips als video, beelden als afbeelding, naar een gebruiker, een groepschat of alle gebruikers",
+                "fr": "Destinataire intégré pour l'adaptateur MAX : clips en vidéo, photos en image, vers un utilisateur, un chat de groupe ou tous les utilisateurs",
+                "it": "Destinatario integrato per l'adattatore MAX: clip come video, immagini come immagine, a un utente, a una chat di gruppo o a tutti gli utenti",
+                "es": "Destino de notificación integrado para el adaptador MAX: clips como vídeo, imágenes como imagen, a un usuario, un chat de grupo o todos los usuarios",
+                "pl": "Wbudowany odbiorca dla adaptera MAX: klipy jako wideo, zdjęcia jako obraz, do użytkownika, czatu grupowego lub wszystkich użytkowników",
+                "uk": "Вбудований отримувач для адаптера MAX: кліпи як відео, знімки як зображення, користувачу, у груповий чат або всім користувачам",
+                "zh-cn": "为 MAX 适配器内置通知目标：片段作为视频、图片作为图像，发送给某个用户、群聊或所有用户"
+            },
             "0.4.1": {
                 "en": "Timelapse: the states timelapseFrames and timelapseNextVideo show the waiting pictures and the time of the next video",
                 "de": "Zeitraffer: die Datenpunkte timelapseFrames und timelapseNextVideo zeigen die wartenden Bilder und den Zeitpunkt des nächsten Videos",
