@@ -193,15 +193,21 @@ tests.integration(path.join(__dirname, '..'), {
                 const pad = n => String(n).padStart(2, '0');
                 const day = `${oldDay.getFullYear()}-${pad(oldDay.getMonth() + 1)}-${pad(oldDay.getDate())}`;
                 const remoteVideo = `/nas/cafe_door/cafe_door_timelapse_${day}.mp4`;
+                // the copies run one after the other in the background: wait for all three kinds
+                const copiedFiles = () => [...disk.files.keys()].filter(k => k.startsWith('/nas/cafe_door/'));
+                const complete = () =>
+                    disk.files.has(remoteVideo) &&
+                    copiedFiles().some(k => /cafe_door_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}\.mp4$/.test(k)) &&
+                    copiedFiles().some(k => k.endsWith('.jpg'));
                 let last;
-                for (let i = 0; i < 80 && !(last && disk.files.has(remoteVideo)); i++) {
+                for (let i = 0; i < 160 && !(last && complete()); i++) {
                     await new Promise(r => setTimeout(r, 250));
                     last = (await harness.states.getStateAsync('cam-recorder.0.cameras.cafe_door.lastTimelapse'))?.val;
                 }
                 assert.ok(String(last).endsWith(`cafe_door_timelapse_${day}.mp4`), String(last));
                 assert.ok(disk.files.has(remoteVideo), [...disk.files.keys()].join(', '));
                 // the clip and the snapshot of the earlier test were copied as well
-                const copied = [...disk.files.keys()].filter(k => k.startsWith('/nas/cafe_door/'));
+                const copied = copiedFiles();
                 assert.ok(
                     copied.some(k => /cafe_door_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}\.mp4$/.test(k)),
                     copied.join(', '),
