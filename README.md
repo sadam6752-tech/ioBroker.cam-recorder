@@ -263,7 +263,7 @@ adapter.
     ### **WORK IN PROGRESS**
 -->
 
-### **WORK IN PROGRESS**
+### 0.4.3 (2026-10-18)
 
 - (sadam6752-tech) A variable named like a wait function is renamed (false positive W5051 of the repository checker)
 
@@ -297,15 +297,6 @@ adapter.
   a skipped event starts no cooldown
 - (sadam6752-tech) Further notification targets besides Telegram: email, Pushover, Discord, Matrix, Signal, WhatsApp,
   Gotify, ntfy, and any other adapter through a JSON template; the trigger column "Telegram" is now "Notify"
-
-### 0.2.0 (2026-10-17)
-
-- (sadam6752-tech) Pre-recording: clips can contain the seconds before the event (off by default, set per camera,
-  stream copy without re-encoding, restarted automatically when the camera fails)
-- (sadam6752-tech) Fixed: re-encoded clips were shorter than set (a 5 s clip of a DoorBird held about 3 s), because the
-  length counted from the connection and not from the first picture after the next key frame
-- (sadam6752-tech) The log line of a clip names the length of the written file
-- (sadam6752-tech) A warning names the reason when a clip starts at the event although pre-recording is set
 
 Older changes are in [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 

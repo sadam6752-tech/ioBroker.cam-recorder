@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "cam-recorder",
-        "version": "0.4.2",
+        "version": "0.4.3",
         "news": {
+            "0.4.3": {
+                "en": "Internal: a variable was renamed that the repository checker took for a wait function (W5051)",
+                "de": "Intern: eine Variable umbenannt, die der Repository-Checker für eine Wartefunktion hielt (W5051)",
+                "ru": "Внутреннее: переименована переменная, которую проверка репозитория приняла за функцию ожидания (W5051)",
+                "pt": "Interno: renomeada uma variável que o verificador do repositório confundiu com uma função de espera (W5051)",
+                "nl": "Intern: een variabele hernoemd die de repository-checker voor een wachtfunctie aanzag (W5051)",
+                "fr": "Interne : renommage d'une variable que le vérificateur du dépôt prenait pour une fonction d'attente (W5051)",
+                "it": "Interno: rinominata una variabile che il controllo del repository scambiava per una funzione di attesa (W5051)",
+                "es": "Interno: se renombró una variable que el verificador del repositorio tomaba por una función de espera (W5051)",
+                "pl": "Wewnętrzne: zmieniono nazwę zmiennej, którą sprawdzanie repozytorium uznawało za funkcję oczekiwania (W5051)",
+                "uk": "Внутрішнє: перейменовано змінну, яку перевірка репозиторію вважала функцією очікування (W5051)",
+                "zh-cn": "内部：重命名了一个被仓库检查器误认为等待函数的变量（W5051）"
+            },
             "0.4.2": {
                 "en": "Built-in notification target for the MAX adapter: clips as video, pictures as image, to a user, a group chat or all users",
                 "de": "Eingebautes Benachrichtigungsziel für den MAX-Adapter: Clips als Video, Bilder als Bild, an einen Benutzer, einen Gruppenchat oder alle Benutzer",
