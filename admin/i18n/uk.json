@@ -26,7 +26,6 @@
     "Value is true": "Значення істинне",
     "Every write": "Кожен запис",
     "Cooldown (s)": "Пауза (с)",
-    "Telegram": "Telegram",
     "Recording": "Запис",
     "Clip length (s)": "Довжина кліпу (с)",
     "Clip format": "Формат кліпу",
@@ -39,7 +38,6 @@
     "GIF width (px)": "Ширина GIF (пікс.)",
     "GIF frame rate": "Частота кадрів GIF",
     "Snapshot width (px, 0 = original)": "Ширина знімка (пікс., 0 = початкова)",
-    "Triggers with the Telegram column checked send their result to this instance. Scripts ask for it with telegram: true.": "Тригери з позначеним стовпцем Telegram надсилають результат до цього екземпляра. Скрипти запитують це через telegram: true.",
     "Telegram instance": "Екземпляр Telegram",
     "Telegram user (empty = all users)": "Користувач Telegram (порожньо = усі)",
     "Caption": "Підпис",
@@ -60,5 +58,16 @@
     "Keeps the last seconds before an event. Each camera with pre-recording keeps one ffmpeg process running (stream copy, little CPU).": "Зберігає останні секунди перед подією. Для кожної камери з попереднім записом постійно працює один процес ffmpeg (копіювання потоку, мало CPU).",
     "Folder for the pre-recording (empty = temp folder of the system)": "Тека для попереднього запису (порожньо = тимчасова тека системи)",
     "Maximum clip length (s)": "Максимальна довжина кліпу (с)",
-    "With pre-recording, a further event during a clip extends it up to this length": "З попереднім записом повторна подія під час кліпу подовжує його до цієї довжини"
+    "With pre-recording, a further event during a clip extends it up to this length": "З попереднім записом повторна подія під час кліпу подовжує його до цієї довжини",
+    "Notify": "Сповістити",
+    "Notifications": "Сповіщення",
+    "Only if state": "Лише якщо стан",
+    "Comparison": "Порівняння",
+    "Value": "Значення",
+    "Instance": "Екземпляр",
+    "Recipient": "Отримувач",
+    "Template (JSON, optional)": "Шаблон (JSON, необов'язково)",
+    "Only if state: the trigger fires only while that state has the value, e.g. 0_userdata.0.away = true. Empty = always.": "Лише якщо стан: тригер спрацьовує, лише поки цей стан має задане значення, наприклад 0_userdata.0.away = true. Порожньо = завжди.",
+    "Triggers with the Notify column checked send their result to this Telegram instance and to the further targets below. Scripts ask for it with telegram: true.": "Тригери з позначеним стовпцем «Сповістити» надсилають результат до цього екземпляра Telegram і додатковим отримувачам нижче. Скрипти запитують це через telegram: true.",
+    "Further targets: Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "Додаткові отримувачі: Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify і ntfy вбудовані (месенджери, що не вміють надсилати файли, отримують текст). Для інших адаптерів укажіть JSON-повідомлення з {file}, {caption}, {camera}, {text}."
 }

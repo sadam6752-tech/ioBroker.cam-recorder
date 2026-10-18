@@ -26,7 +26,6 @@
     "Value is true": "Значение истинно",
     "Every write": "Каждая запись",
     "Cooldown (s)": "Пауза (с)",
-    "Telegram": "Telegram",
     "Recording": "Запись",
     "Clip length (s)": "Длина клипа (с)",
     "Clip format": "Формат клипа",
@@ -39,7 +38,6 @@
     "GIF width (px)": "Ширина GIF (пикс.)",
     "GIF frame rate": "Частота кадров GIF",
     "Snapshot width (px, 0 = original)": "Ширина снимка (пикс., 0 = исходная)",
-    "Triggers with the Telegram column checked send their result to this instance. Scripts ask for it with telegram: true.": "Триггеры с отмеченным столбцом Telegram отправляют результат в этот экземпляр. Скрипты запрашивают это через telegram: true.",
     "Telegram instance": "Экземпляр Telegram",
     "Telegram user (empty = all users)": "Пользователь Telegram (пусто = все)",
     "Caption": "Подпись",
@@ -60,5 +58,16 @@
     "Keeps the last seconds before an event. Each camera with pre-recording keeps one ffmpeg process running (stream copy, little CPU).": "Хранит последние секунды перед событием. Для каждой камеры с предзаписью постоянно работает один процесс ffmpeg (копирование потока, мало CPU).",
     "Folder for the pre-recording (empty = temp folder of the system)": "Папка для предзаписи (пусто = временная папка системы)",
     "Maximum clip length (s)": "Максимальная длина клипа (с)",
-    "With pre-recording, a further event during a clip extends it up to this length": "С предзаписью повторное событие во время клипа продлевает его до этой длины"
+    "With pre-recording, a further event during a clip extends it up to this length": "С предзаписью повторное событие во время клипа продлевает его до этой длины",
+    "Notify": "Уведомить",
+    "Notifications": "Уведомления",
+    "Only if state": "Только если состояние",
+    "Comparison": "Сравнение",
+    "Value": "Значение",
+    "Instance": "Экземпляр",
+    "Recipient": "Получатель",
+    "Template (JSON, optional)": "Шаблон (JSON, необязательно)",
+    "Only if state: the trigger fires only while that state has the value, e.g. 0_userdata.0.away = true. Empty = always.": "Только если состояние: триггер срабатывает, только пока это состояние имеет заданное значение, например 0_userdata.0.away = true. Пусто = всегда.",
+    "Triggers with the Notify column checked send their result to this Telegram instance and to the further targets below. Scripts ask for it with telegram: true.": "Триггеры с отмеченным столбцом «Уведомить» отправляют результат в этот экземпляр Telegram и дополнительным получателям ниже. Скрипты запрашивают это через telegram: true.",
+    "Further targets: Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "Дополнительные получатели: Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify и ntfy встроены (мессенджеры, которые не умеют отправлять файлы, получают текст). Для других адаптеров укажите JSON-сообщение с {file}, {caption}, {camera}, {text}."
 }

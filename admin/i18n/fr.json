@@ -26,7 +26,6 @@
     "Value is true": "La valeur est vraie",
     "Every write": "Chaque écriture",
     "Cooldown (s)": "Délai d'attente (s)",
-    "Telegram": "Telegram",
     "Recording": "Enregistrement",
     "Clip length (s)": "Durée du clip (s)",
     "Clip format": "Format du clip",
@@ -39,7 +38,6 @@
     "GIF width (px)": "Largeur GIF (px)",
     "GIF frame rate": "Cadence GIF",
     "Snapshot width (px, 0 = original)": "Largeur de la photo (px, 0 = d'origine)",
-    "Triggers with the Telegram column checked send their result to this instance. Scripts ask for it with telegram: true.": "Les déclencheurs dont la colonne Telegram est cochée envoient leur résultat à cette instance. Les scripts le demandent avec telegram: true.",
     "Telegram instance": "Instance Telegram",
     "Telegram user (empty = all users)": "Utilisateur Telegram (vide = tous)",
     "Caption": "Légende",
@@ -60,5 +58,16 @@
     "Keeps the last seconds before an event. Each camera with pre-recording keeps one ffmpeg process running (stream copy, little CPU).": "Conserve les dernières secondes avant un événement. Chaque caméra avec pré-enregistrement garde un processus ffmpeg actif (copie du flux, peu de CPU).",
     "Folder for the pre-recording (empty = temp folder of the system)": "Dossier du pré-enregistrement (vide = dossier temporaire du système)",
     "Maximum clip length (s)": "Durée maximale du clip (s)",
-    "With pre-recording, a further event during a clip extends it up to this length": "Avec le pré-enregistrement, un nouvel événement pendant un clip le prolonge jusqu'à cette durée"
+    "With pre-recording, a further event during a clip extends it up to this length": "Avec le pré-enregistrement, un nouvel événement pendant un clip le prolonge jusqu'à cette durée",
+    "Notify": "Notifier",
+    "Notifications": "Notifications",
+    "Only if state": "Seulement si l'état",
+    "Comparison": "Comparaison",
+    "Value": "Valeur",
+    "Instance": "Instance de l'adaptateur",
+    "Recipient": "Destinataire",
+    "Template (JSON, optional)": "Modèle (JSON, facultatif)",
+    "Only if state: the trigger fires only while that state has the value, e.g. 0_userdata.0.away = true. Empty = always.": "Seulement si l'état : le déclencheur ne réagit que tant que cet état a la valeur, par ex. 0_userdata.0.away = true. Vide = toujours.",
+    "Triggers with the Notify column checked send their result to this Telegram instance and to the further targets below. Scripts ask for it with telegram: true.": "Les déclencheurs dont la colonne Notifier est cochée envoient leur résultat à cette instance Telegram et aux autres destinataires ci-dessous. Les scripts le demandent avec telegram: true.",
+    "Further targets: Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "Autres destinataires : e-mail, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify et ntfy sont intégrés (les messageries sans envoi de fichiers reçoivent un texte). Pour d'autres adaptateurs, saisissez un message JSON avec {file}, {caption}, {camera}, {text}."
 }

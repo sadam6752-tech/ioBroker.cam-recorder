@@ -148,6 +148,7 @@ describe('configuration', () => {
                 condition: 'truthy',
                 cooldown: 10,
                 telegram: true,
+                onlyIf: null,
             },
         );
     });

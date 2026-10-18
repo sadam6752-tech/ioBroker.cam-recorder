@@ -106,6 +106,7 @@
         "telegramInstance": "",
         "telegramUser": "",
         "telegramCaption": "{camera} {date} {time}",
+        "notifyTargets": [],
         "outputDir": "",
         "keepFiles": 20,
         "maxAgeDays": 7,

@@ -26,7 +26,6 @@
     "Value is true": "值为真",
     "Every write": "每次写入",
     "Cooldown (s)": "冷却时间（秒）",
-    "Telegram": "Telegram",
     "Recording": "录制",
     "Clip length (s)": "片段时长（秒）",
     "Clip format": "片段格式",
@@ -39,7 +38,6 @@
     "GIF width (px)": "GIF 宽度（像素）",
     "GIF frame rate": "GIF 帧率",
     "Snapshot width (px, 0 = original)": "快照宽度（像素，0 = 原始）",
-    "Triggers with the Telegram column checked send their result to this instance. Scripts ask for it with telegram: true.": "勾选了 Telegram 列的触发器会把结果发送到此实例。脚本可通过 telegram: true 请求发送。",
     "Telegram instance": "Telegram 实例",
     "Telegram user (empty = all users)": "Telegram 用户（留空 = 所有用户）",
     "Caption": "说明文字",
@@ -60,5 +58,16 @@
     "Keeps the last seconds before an event. Each camera with pre-recording keeps one ffmpeg process running (stream copy, little CPU).": "保存事件发生前的最后几秒。每个启用预录的摄像机都会持续运行一个 ffmpeg 进程（直接复制码流，CPU 占用很少）。",
     "Folder for the pre-recording (empty = temp folder of the system)": "预录文件夹（留空 = 系统临时文件夹）",
     "Maximum clip length (s)": "片段最大时长（秒）",
-    "With pre-recording, a further event during a clip extends it up to this length": "启用预录时，片段录制期间的新事件会将其延长至此时长"
+    "With pre-recording, a further event during a clip extends it up to this length": "启用预录时，片段录制期间的新事件会将其延长至此时长",
+    "Notify": "通知",
+    "Notifications": "通知设置",
+    "Only if state": "仅当状态",
+    "Comparison": "比较",
+    "Value": "值",
+    "Instance": "实例",
+    "Recipient": "接收者",
+    "Template (JSON, optional)": "模板（JSON，可选）",
+    "Only if state: the trigger fires only while that state has the value, e.g. 0_userdata.0.away = true. Empty = always.": "仅当状态：只有当该状态等于设定值时触发器才会触发，例如 0_userdata.0.away = true。留空 = 始终触发。",
+    "Triggers with the Notify column checked send their result to this Telegram instance and to the further targets below. Scripts ask for it with telegram: true.": "勾选了“通知”列的触发器会把结果发送到此 Telegram 实例以及下方的其他目标。脚本可通过 telegram: true 请求发送。",
+    "Further targets: Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "其他目标：已内置 Email、Pushover、Discord、Matrix、Signal、WhatsApp、Gotify 和 ntfy（不能发送文件的消息工具会收到文本）。其他适配器请填写包含 {file}、{caption}、{camera}、{text} 的 JSON 消息。"
 }

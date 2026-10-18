@@ -26,7 +26,6 @@
     "Value is true": "Value is true",
     "Every write": "Every write",
     "Cooldown (s)": "Cooldown (s)",
-    "Telegram": "Telegram",
     "Recording": "Recording",
     "Clip length (s)": "Clip length (s)",
     "Clip format": "Clip format",
@@ -39,7 +38,6 @@
     "GIF width (px)": "GIF width (px)",
     "GIF frame rate": "GIF frame rate",
     "Snapshot width (px, 0 = original)": "Snapshot width (px, 0 = original)",
-    "Triggers with the Telegram column checked send their result to this instance. Scripts ask for it with telegram: true.": "Triggers with the Telegram column checked send their result to this instance. Scripts ask for it with telegram: true.",
     "Telegram instance": "Telegram instance",
     "Telegram user (empty = all users)": "Telegram user (empty = all users)",
     "Caption": "Caption",
@@ -60,5 +58,16 @@
     "Keeps the last seconds before an event. Each camera with pre-recording keeps one ffmpeg process running (stream copy, little CPU).": "Keeps the last seconds before an event. Each camera with pre-recording keeps one ffmpeg process running (stream copy, little CPU).",
     "Folder for the pre-recording (empty = temp folder of the system)": "Folder for the pre-recording (empty = temp folder of the system)",
     "Maximum clip length (s)": "Maximum clip length (s)",
-    "With pre-recording, a further event during a clip extends it up to this length": "With pre-recording, a further event during a clip extends it up to this length"
+    "With pre-recording, a further event during a clip extends it up to this length": "With pre-recording, a further event during a clip extends it up to this length",
+    "Notify": "Notify",
+    "Notifications": "Notifications",
+    "Only if state": "Only if state",
+    "Comparison": "Comparison",
+    "Value": "Value",
+    "Instance": "Instance",
+    "Recipient": "Recipient",
+    "Template (JSON, optional)": "Template (JSON, optional)",
+    "Only if state: the trigger fires only while that state has the value, e.g. 0_userdata.0.away = true. Empty = always.": "Only if state: the trigger fires only while that state has the value, e.g. 0_userdata.0.away = true. Empty = always.",
+    "Triggers with the Notify column checked send their result to this Telegram instance and to the further targets below. Scripts ask for it with telegram: true.": "Triggers with the Notify column checked send their result to this Telegram instance and to the further targets below. Scripts ask for it with telegram: true.",
+    "Further targets: Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "Further targets: Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}."
 }

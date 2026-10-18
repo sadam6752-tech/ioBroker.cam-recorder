@@ -48,12 +48,33 @@ tests.integration(path.join(__dirname, '..'), {
                             { enabled: true, name: 'Café Door', url: source, username: '', password: 'Plain-Pw-123' },
                             { enabled: true, name: 'Garden', url: source, username: '', password: '', prebuffer: 2 },
                         ],
+                        triggers: [
+                            {
+                                enabled: true,
+                                stateId: '0_userdata.0.ring',
+                                camera: 'Café Door',
+                                action: 'snapshot',
+                                cooldown: 60,
+                                telegram: false,
+                                condState: '0_userdata.0.away',
+                                condOp: 'eq',
+                                condValue: 'true',
+                            },
+                        ],
                         prebufferEnabled: true,
                         prebufferDir: path.join(dir, 'prebuffer'),
                         outputDir: path.join(dir, 'media'),
                         recordDuration: 2,
                     },
                 });
+                for (const id of ['0_userdata.0.ring', '0_userdata.0.away']) {
+                    await harness.objects.setObjectAsync(id, {
+                        type: 'state',
+                        common: { name: id, type: 'boolean', role: 'switch', read: true, write: true },
+                        native: {},
+                    });
+                }
+                await harness.states.setStateAsync('0_userdata.0.away', { val: false, ack: true });
                 await harness.startAdapterAndWait(true);
                 await harness.enableSendTo();
             });
@@ -118,6 +139,28 @@ tests.integration(path.join(__dirname, '..'), {
 
                 const unknown = await send('record', { camera: 'Cellar' });
                 assert.match(unknown.error, /Unknown camera/);
+            });
+
+            it('fires a trigger only while its condition holds, and a skipped event starts no cooldown', async function () {
+                this.timeout(60_000);
+                const shotTime = async () =>
+                    (await harness.states.getStateAsync('cam-recorder.0.cameras.cafe_door.lastSnapshotTime'))?.val || 0;
+                const before = await shotTime();
+
+                // nobody away: the ring is ignored
+                await harness.states.setStateAsync('0_userdata.0.ring', { val: true, ack: true });
+                await new Promise(r => setTimeout(r, 3000));
+                assert.equal(await shotTime(), before, 'the trigger fired although the condition was not met');
+
+                // away: the next ring fires at once, the skipped one did not start the 60 s cooldown
+                await harness.states.setStateAsync('0_userdata.0.away', { val: true, ack: true });
+                await harness.states.setStateAsync('0_userdata.0.ring', { val: true, ack: true });
+                let after = before;
+                for (let i = 0; i < 40 && after === before; i++) {
+                    await new Promise(r => setTimeout(r, 250));
+                    after = await shotTime();
+                }
+                assert.ok(after > before, 'the trigger did not fire with the condition met');
             });
 
             it('runs the pre-recording and puts the seconds before the event into the clip', async function () {

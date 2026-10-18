@@ -36,8 +36,20 @@ export interface Trigger {
     condition: 'truthy' | 'any';
     /** Seconds in which a further event is ignored */
     cooldown: number;
-    /** Send the result to Telegram */
+    /** Send the result to Telegram and the further notification targets */
     telegram: boolean;
+    /** Only fire when this state has the given value; null = always */
+    onlyIf: { stateId: string; op: 'eq' | 'ne' | 'gt' | 'lt'; value: string } | null;
+}
+
+/** A further notification target besides the Telegram tab */
+export interface NotifyTarget {
+    /** Instance, e.g. `email.0` */
+    instance: string;
+    /** Recipient in the form the adapter expects (address, user, phone, channel), empty = its default */
+    recipient: string;
+    /** JSON message with placeholders for adapters without a known format, empty = built-in format */
+    template: string;
 }
 
 /** Adapter settings with limits applied */
@@ -80,6 +92,8 @@ export interface Settings {
     prebufferDir: string;
     /** Longest clip in seconds when further events extend it */
     maxClipLength: number;
+    /** Further notification targets */
+    notifyTargets: NotifyTarget[];
 }
 
 /** What a clip is made of */

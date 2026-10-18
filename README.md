@@ -48,16 +48,22 @@ diacritics are transliterated (`ü` → `ue`, `é` → `e`), other special chara
 
 ### Triggers
 
-| Column    | Meaning                                                                                       |
-| --------- | --------------------------------------------------------------------------------------------- |
-| State     | Any state, e.g. `doorbird.0.Doorbell.1.trigger` or `doorbird.0.Motion.trigger`                |
-| Camera    | Name of a camera of the first tab                                                             |
-| Action    | Video clip, snapshot, or both (both run at the same time, the photo arrives first)            |
-| Duration  | Seconds, 0 = value of the _Recording_ tab                                                     |
-| Format    | MP4 video, GIF animation, or _Default_                                                        |
-| Condition | _Value is true_ (default) or _Every write_                                                    |
-| Cooldown  | Seconds in which further writes start no new clip (a doorbell pressed three times = one clip) |
-| Telegram  | Send the result to the Telegram instance of the _Telegram_ tab                                |
+| Column                           | Meaning                                                                                       |
+| -------------------------------- | --------------------------------------------------------------------------------------------- |
+| State                            | Any state, e.g. `doorbird.0.Doorbell.1.trigger` or `doorbird.0.Motion.trigger`                |
+| Camera                           | Name of a camera of the first tab                                                             |
+| Action                           | Video clip, snapshot, or both (both run at the same time, the photo arrives first)            |
+| Duration                         | Seconds, 0 = value of the _Recording_ tab                                                     |
+| Format                           | MP4 video, GIF animation, or _Default_                                                        |
+| Condition                        | _Value is true_ (default) or _Every write_                                                    |
+| Cooldown                         | Seconds in which further writes start no new clip (a doorbell pressed three times = one clip) |
+| Notify                           | Send the result to Telegram and the further targets of the _Notifications_ tab                |
+| Only if state, Comparison, Value | Optional condition, see below                                                                 |
+
+**Conditions.** A trigger with _Only if state_ fires only while that state compares as set: `=`, `≠`, `>` or `<`
+against _Value_. Examples: `0_userdata.0.away` `=` `true` (only when nobody is home), `javascript.0.isNight` `=`
+`true`, `hm-rpc.0.ABC.LUX` `<` `50`. A boolean state also matches `1`/`0`, `on`/`off`, `yes`/`no`; texts are compared
+without case. The state is read at the moment of the event; a skipped event is logged and starts no cooldown.
 
 Every write of the state counts, also when the value does not change. With pre-recording, a write inside the cooldown
 **extends** the clip that is still being cut instead of being ignored: the clip then ends the trigger's duration after
@@ -99,13 +105,32 @@ the clip also contains the seconds **before** the event.
 - The pieces go to the system temp folder (`/tmp/iobroker-cam-recorder.0-prebuffer` on Linux) unless you enter a
   folder. A RAM disk (tmpfs) is a good choice on systems with an SD card.
 
-### Telegram
+### Notifications
 
-Instance, user (empty = all users of the bot) and caption: `{camera}`, `{date}` and `{time}` are replaced, the date in
+**Telegram:** instance, user (empty = all users of the bot) and caption: `{camera}`, `{date}` and `{time}` are replaced, the date in
 the date format of the ioBroker system settings (default caption `{camera} {date} {time}`, e.g.
 `DoorBird 17.10.2026 13:22:12`). The adapter passes
 the file path to the [Telegram adapter](https://github.com/iobroker-community-adapters/ioBroker.telegram), which sends
 MP4 as video, GIF as animation and JPEG as photo. Both adapters must run on the same host.
+
+**Further targets** get the same results. Pick the instance; _Recipient_ is optional (empty = the default of that
+adapter):
+
+| Adapter        | What arrives                               | Recipient                                     |
+| -------------- | ------------------------------------------ | --------------------------------------------- |
+| `email`        | the file as attachment, caption as subject | address                                       |
+| `pushover`     | pictures as attachment, a clip as text     | device                                        |
+| `discord`      | the file                                   | `serverId/channelId`, a user id or a user tag |
+| `matrix-org`   | pictures, a clip as text                   | –                                             |
+| `signal-cmb`   | text with camera, kind and file name       | phone number                                  |
+| `whatsapp-cmb` | text                                       | phone number                                  |
+| `gotify`       | text                                       | –                                             |
+| `ntfy`         | text                                       | topic                                         |
+
+For any other adapter enter a **template**: the JSON message for its `send` command, with the placeholders `{file}`,
+`{fileName}`, `{fileUrl}`, `{caption}`, `{camera}`, `{format}`, `{duration}`, `{recipient}` and `{text}`, for example
+`{"to": "{recipient}", "message": "{caption}", "file": "{file}"}`. A template also replaces the built-in format of a
+known adapter. All targets must run on the same host as this adapter, since they read the file from its path.
 
 ### Storage
 
@@ -201,6 +226,10 @@ adapter.
   the moment of the event; `live: true` in `sendTo` asks the camera
 - (sadam6752-tech) Examples in README, code and tests are English only, guarded by a test
 - (sadam6752-tech) js-controller 7.0.7 or newer is required
+- (sadam6752-tech) Trigger conditions: a trigger fires only while another state has a value (e.g. nobody at home);
+  a skipped event starts no cooldown
+- (sadam6752-tech) Further notification targets besides Telegram: email, Pushover, Discord, Matrix, Signal, WhatsApp,
+  Gotify, ntfy, and any other adapter through a JSON template; the trigger column "Telegram" is now "Notify"
 
 ### 0.2.0 (2026-10-17)
 

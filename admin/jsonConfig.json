@@ -133,21 +133,21 @@
                             "type": "checkbox",
                             "attr": "enabled",
                             "title": "Active",
-                            "width": "5%",
+                            "width": "4%",
                             "default": true
                         },
                         {
                             "type": "objectId",
                             "attr": "stateId",
                             "title": "State",
-                            "width": "25%",
+                            "width": "17%",
                             "default": ""
                         },
                         {
                             "type": "autocompleteSendTo",
                             "attr": "camera",
                             "title": "Camera",
-                            "width": "13%",
+                            "width": "9%",
                             "command": "listCameras",
                             "freeSolo": true,
                             "default": ""
@@ -156,7 +156,7 @@
                             "type": "select",
                             "attr": "action",
                             "title": "Action",
-                            "width": "13%",
+                            "width": "10%",
                             "default": "record",
                             "options": [
                                 {
@@ -177,7 +177,7 @@
                             "type": "number",
                             "attr": "duration",
                             "title": "Duration (s)",
-                            "width": "8%",
+                            "width": "6%",
                             "min": 0,
                             "max": 60,
                             "default": 0
@@ -186,7 +186,7 @@
                             "type": "select",
                             "attr": "format",
                             "title": "Format",
-                            "width": "10%",
+                            "width": "8%",
                             "default": "",
                             "options": [
                                 {
@@ -207,7 +207,7 @@
                             "type": "select",
                             "attr": "condition",
                             "title": "Condition",
-                            "width": "11%",
+                            "width": "8%",
                             "default": "truthy",
                             "options": [
                                 {
@@ -224,7 +224,7 @@
                             "type": "number",
                             "attr": "cooldown",
                             "title": "Cooldown (s)",
-                            "width": "8%",
+                            "width": "6%",
                             "min": 0,
                             "max": 3600,
                             "default": 10
@@ -232,11 +232,61 @@
                         {
                             "type": "checkbox",
                             "attr": "telegram",
-                            "title": "Telegram",
-                            "width": "7%",
+                            "title": "Notify",
+                            "width": "6%",
                             "default": true
+                        },
+                        {
+                            "type": "objectId",
+                            "attr": "condState",
+                            "title": "Only if state",
+                            "width": "13%",
+                            "default": ""
+                        },
+                        {
+                            "type": "select",
+                            "attr": "condOp",
+                            "title": "Comparison",
+                            "width": "5%",
+                            "default": "eq",
+                            "noTranslation": true,
+                            "options": [
+                                {
+                                    "label": "=",
+                                    "value": "eq"
+                                },
+                                {
+                                    "label": "≠",
+                                    "value": "ne"
+                                },
+                                {
+                                    "label": ">",
+                                    "value": "gt"
+                                },
+                                {
+                                    "label": "<",
+                                    "value": "lt"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "text",
+                            "attr": "condValue",
+                            "title": "Value",
+                            "width": "8%",
+                            "default": ""
                         }
                     ]
+                },
+                "_conditionHelp": {
+                    "type": "staticText",
+                    "text": "Only if state: the trigger fires only while that state has the value, e.g. 0_userdata.0.away = true. Empty = always.",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
                 }
             }
         },
@@ -393,11 +443,11 @@
         },
         "_telegramTab": {
             "type": "panel",
-            "label": "Telegram",
+            "label": "Notifications",
             "items": {
                 "_telegramHelp": {
                     "type": "staticText",
-                    "text": "Triggers with the Telegram column checked send their result to this instance. Scripts ask for it with telegram: true.",
+                    "text": "Triggers with the Notify column checked send their result to this Telegram instance and to the further targets below. Scripts ask for it with telegram: true.",
                     "xs": 12,
                     "sm": 12,
                     "md": 12,
@@ -435,6 +485,67 @@
                     "md": 8,
                     "lg": 6,
                     "xl": 6
+                },
+                "_targetsHelp": {
+                    "type": "staticText",
+                    "text": "Further targets: Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "notifyTargets": {
+                    "type": "table",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12,
+                    "items": [
+                        {
+                            "type": "checkbox",
+                            "attr": "enabled",
+                            "title": "Active",
+                            "width": "6%",
+                            "default": true
+                        },
+                        {
+                            "type": "autocomplete",
+                            "attr": "instance",
+                            "title": "Instance",
+                            "width": "20%",
+                            "freeSolo": true,
+                            "default": "",
+                            "options": [
+                                "email.0",
+                                "pushover.0",
+                                "discord.0",
+                                "matrix-org.0",
+                                "signal-cmb.0",
+                                "whatsapp-cmb.0",
+                                "gotify.0",
+                                "ntfy.0",
+                                "telegram.0"
+                            ]
+                        },
+                        {
+                            "type": "text",
+                            "attr": "recipient",
+                            "title": "Recipient",
+                            "width": "24%",
+                            "default": ""
+                        },
+                        {
+                            "type": "text",
+                            "attr": "template",
+                            "title": "Template (JSON, optional)",
+                            "width": "50%",
+                            "default": ""
+                        }
+                    ]
                 }
             }
         },

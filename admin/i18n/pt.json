@@ -26,7 +26,6 @@
     "Value is true": "Valor é verdadeiro",
     "Every write": "Cada escrita",
     "Cooldown (s)": "Intervalo de espera (s)",
-    "Telegram": "Telegram",
     "Recording": "Gravação",
     "Clip length (s)": "Duração do clipe (s)",
     "Clip format": "Formato do clipe",
@@ -39,7 +38,6 @@
     "GIF width (px)": "Largura do GIF (px)",
     "GIF frame rate": "Taxa de quadros do GIF",
     "Snapshot width (px, 0 = original)": "Largura do instantâneo (px, 0 = original)",
-    "Triggers with the Telegram column checked send their result to this instance. Scripts ask for it with telegram: true.": "Gatilhos com a coluna Telegram marcada enviam o resultado para esta instância. Scripts pedem isso com telegram: true.",
     "Telegram instance": "Instância do Telegram",
     "Telegram user (empty = all users)": "Usuário do Telegram (vazio = todos)",
     "Caption": "Legenda",
@@ -60,5 +58,16 @@
     "Keeps the last seconds before an event. Each camera with pre-recording keeps one ffmpeg process running (stream copy, little CPU).": "Guarda os últimos segundos antes de um evento. Cada câmera com pré-gravação mantém um processo ffmpeg em execução (cópia do fluxo, pouca CPU).",
     "Folder for the pre-recording (empty = temp folder of the system)": "Pasta da pré-gravação (vazio = pasta temporária do sistema)",
     "Maximum clip length (s)": "Duração máxima do clipe (s)",
-    "With pre-recording, a further event during a clip extends it up to this length": "Com pré-gravação, um novo evento durante um clipe prolonga-o até esta duração"
+    "With pre-recording, a further event during a clip extends it up to this length": "Com pré-gravação, um novo evento durante um clipe prolonga-o até esta duração",
+    "Notify": "Notificar",
+    "Notifications": "Notificações",
+    "Only if state": "Só se o estado",
+    "Comparison": "Comparação",
+    "Value": "Valor",
+    "Instance": "Instância",
+    "Recipient": "Destinatário",
+    "Template (JSON, optional)": "Modelo (JSON, opcional)",
+    "Only if state: the trigger fires only while that state has the value, e.g. 0_userdata.0.away = true. Empty = always.": "Só se o estado: o gatilho só dispara enquanto esse estado tiver o valor, por exemplo 0_userdata.0.away = true. Vazio = sempre.",
+    "Triggers with the Notify column checked send their result to this Telegram instance and to the further targets below. Scripts ask for it with telegram: true.": "Gatilhos com a coluna Notificar marcada enviam o resultado para esta instância do Telegram e para os destinos adicionais abaixo. Scripts pedem isso com telegram: true.",
+    "Further targets: Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "Destinos adicionais: Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify e ntfy estão incluídos (mensageiros que não enviam arquivos recebem um texto). Para outros adaptadores, insira uma mensagem JSON com {file}, {caption}, {camera}, {text}."
 }

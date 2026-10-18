@@ -18,6 +18,8 @@ const { removePartials } = require('./lib/storage');
 const { triggerDecision, formatCaption } = require('./lib/triggers');
 const { maskSecrets } = require('./lib/mask');
 const { NAMES } = require('./lib/names');
+const { conditionMet, opSymbol } = require('./lib/conditions');
+const { KNOWN, buildMessage } = require('./lib/notify');
 
 /**
  * @param {number} bytes - File size
@@ -122,6 +124,7 @@ class CamRecorder extends utils.Adapter {
             const cams = normalizeCameras(this.config.cameras);
             this.cameras = cams.cameras;
             const trig = normalizeTriggers(this.config.triggers, this.cameras);
+            this._checkTargets();
             for (const problem of [...cams.problems, ...trig.problems]) {
                 this.log.warn(problem);
             }
@@ -374,7 +377,7 @@ class CamRecorder extends utils.Adapter {
             this.log.debug(`Camera "${camera.name}": full path ${result.file}`);
             await this._copyToFiles(camera, result);
             if (telegram) {
-                await this._sendTelegram(result);
+                await this._notify(result);
             }
             return result;
         } catch (err) {
@@ -416,6 +419,64 @@ class CamRecorder extends utils.Adapter {
     /**
      * @param {RecordResult} result - Finished file
      */
+    /**
+     * Sends the file to the Telegram instance of the Telegram tab and to every further target.
+     *
+     * @param {RecordResult} result - Finished file
+     */
+    async _notify(result) {
+        const caption = formatCaption(
+            this.settings.telegramCaption,
+            result.camera,
+            new Date(result.time),
+            this.dateFormat,
+        ).trim();
+        const jobs = [this._sendTelegram(result)];
+        for (const target of this.settings.notifyTargets) {
+            jobs.push(this._sendToTarget(target, result, caption));
+        }
+        await Promise.all(jobs);
+    }
+
+    /**
+     * @param {import('./lib/types').NotifyTarget} target - Target
+     * @param {RecordResult} result - Finished file
+     * @param {string} caption - Caption
+     */
+    async _sendToTarget(target, result, caption) {
+        const name = path.basename(result.file);
+        try {
+            const { command, message } = buildMessage(target, result, caption);
+            await this.sendToAsync(target.instance, command, message, { timeout: 60_000 });
+            this.log.info(`Sent ${name} to ${target.instance}${target.recipient ? ` (${target.recipient})` : ''}`);
+        } catch (err) {
+            this.log.warn(`Could not send ${name} to ${target.instance}: ${err.message}`);
+        }
+    }
+
+    /** Names problems of the notification targets once at the start. */
+    _checkTargets() {
+        for (const target of this.settings.notifyTargets) {
+            const adapter = target.instance.split('.')[0];
+            if (target.template) {
+                try {
+                    JSON.parse(target.template);
+                } catch (err) {
+                    this.log.warn(
+                        `Notification target ${target.instance}: the template is no valid JSON (${err.message})`,
+                    );
+                }
+            } else if (!KNOWN.includes(adapter)) {
+                this.log.warn(
+                    `Notification target ${target.instance}: no built-in message format for "${adapter}", enter a template`,
+                );
+            }
+        }
+    }
+
+    /**
+     * @param {RecordResult} result - Finished file
+     */
     async _sendTelegram(result) {
         const { telegramInstance, telegramUser, telegramCaption } = this.settings;
         if (!telegramInstance) {
@@ -442,9 +503,20 @@ class CamRecorder extends utils.Adapter {
 
     /**
      * @param {Trigger} trigger - Trigger that fired
+     * @returns {Promise<boolean>} False when the condition of the trigger was not met
      */
     async _fire(trigger) {
         const { camera } = trigger;
+        if (trigger.onlyIf) {
+            const { stateId, op, value } = trigger.onlyIf;
+            const current = await this.getForeignStateAsync(stateId).catch(() => null);
+            if (!conditionMet(op, value, current?.val)) {
+                this.log.info(
+                    `Trigger ${trigger.stateId}: skipped, ${stateId} is ${JSON.stringify(current?.val ?? null)} (needs ${opSymbol(op)} ${value})`,
+                );
+                return false;
+            }
+        }
         this.log.info(`Trigger ${trigger.stateId}: ${trigger.action} on camera "${camera.name}"`);
         /** @type {RecordRequest} */
         const request = {};
@@ -462,6 +534,7 @@ class CamRecorder extends utils.Adapter {
             jobs.push(this._take(camera, 'record', request, trigger.telegram));
         }
         await Promise.allSettled(jobs);
+        return true;
     }
 
     /**
@@ -477,8 +550,14 @@ class CamRecorder extends utils.Adapter {
             for (const trigger of triggers) {
                 const decision = triggerDecision(trigger, state, this.lastFired.get(trigger) || 0, now);
                 if (decision === 'fire') {
+                    const before = this.lastFired.get(trigger) || 0;
                     this.lastFired.set(trigger, now);
-                    void this._fire(trigger);
+                    // a trigger whose condition is not met starts no cooldown
+                    void this._fire(trigger).then(fired => {
+                        if (fired === false && this.lastFired.get(trigger) === now) {
+                            this.lastFired.set(trigger, before);
+                        }
+                    });
                 } else if (decision === 'cooldown' && trigger.action !== 'snapshot') {
                     // a further ring while the clip is still being cut makes the clip longer
                     const seconds = trigger.duration || this.settings.recordDuration;

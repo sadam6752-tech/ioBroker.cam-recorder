@@ -26,7 +26,6 @@
     "Value is true": "Waarde is waar",
     "Every write": "Elke schrijfactie",
     "Cooldown (s)": "Wachttijd (s)",
-    "Telegram": "Telegram",
     "Recording": "Opname",
     "Clip length (s)": "Cliplengte (s)",
     "Clip format": "Clipformaat",
@@ -39,7 +38,6 @@
     "GIF width (px)": "GIF-breedte (px)",
     "GIF frame rate": "GIF-framerate",
     "Snapshot width (px, 0 = original)": "Breedte momentopname (px, 0 = origineel)",
-    "Triggers with the Telegram column checked send their result to this instance. Scripts ask for it with telegram: true.": "Triggers met een vinkje in de kolom Telegram sturen hun resultaat naar deze instantie. Scripts vragen dit met telegram: true.",
     "Telegram instance": "Telegram-instantie",
     "Telegram user (empty = all users)": "Telegram-gebruiker (leeg = alle gebruikers)",
     "Caption": "Bijschrift",
@@ -60,5 +58,16 @@
     "Keeps the last seconds before an event. Each camera with pre-recording keeps one ffmpeg process running (stream copy, little CPU).": "Bewaart de laatste seconden vóór een gebeurtenis. Elke camera met vooropname houdt één ffmpeg-proces actief (streamkopie, weinig CPU).",
     "Folder for the pre-recording (empty = temp folder of the system)": "Map voor de vooropname (leeg = tijdelijke map van het systeem)",
     "Maximum clip length (s)": "Maximale cliplengte (s)",
-    "With pre-recording, a further event during a clip extends it up to this length": "Met vooropname verlengt een volgende gebeurtenis tijdens een clip deze tot deze lengte"
+    "With pre-recording, a further event during a clip extends it up to this length": "Met vooropname verlengt een volgende gebeurtenis tijdens een clip deze tot deze lengte",
+    "Notify": "Melden",
+    "Notifications": "Meldingen",
+    "Only if state": "Alleen als status",
+    "Comparison": "Vergelijking",
+    "Value": "Waarde",
+    "Instance": "Instantie",
+    "Recipient": "Ontvanger",
+    "Template (JSON, optional)": "Sjabloon (JSON, optioneel)",
+    "Only if state: the trigger fires only while that state has the value, e.g. 0_userdata.0.away = true. Empty = always.": "Alleen als status: de trigger reageert alleen zolang die status de waarde heeft, bijv. 0_userdata.0.away = true. Leeg = altijd.",
+    "Triggers with the Notify column checked send their result to this Telegram instance and to the further targets below. Scripts ask for it with telegram: true.": "Triggers met een vinkje in de kolom Melden sturen hun resultaat naar deze Telegram-instantie en naar de verdere doelen hieronder. Scripts vragen dit met telegram: true.",
+    "Further targets: Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "Verdere doelen: e-mail, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify en ntfy zijn ingebouwd (messengers zonder bestandsverzending krijgen een tekst). Voer voor andere adapters een JSON-bericht in met {file}, {caption}, {camera}, {text}."
 }

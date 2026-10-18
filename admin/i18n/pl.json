@@ -26,7 +26,6 @@
     "Value is true": "Wartość jest prawdziwa",
     "Every write": "Każdy zapis",
     "Cooldown (s)": "Czas blokady (s)",
-    "Telegram": "Telegram",
     "Recording": "Nagrywanie",
     "Clip length (s)": "Długość klipu (s)",
     "Clip format": "Format klipu",
@@ -39,7 +38,6 @@
     "GIF width (px)": "Szerokość GIF (px)",
     "GIF frame rate": "Liczba klatek GIF",
     "Snapshot width (px, 0 = original)": "Szerokość zdjęcia (px, 0 = oryginalna)",
-    "Triggers with the Telegram column checked send their result to this instance. Scripts ask for it with telegram: true.": "Wyzwalacze z zaznaczoną kolumną Telegram wysyłają wynik do tej instancji. Skrypty proszą o to przez telegram: true.",
     "Telegram instance": "Instancja Telegram",
     "Telegram user (empty = all users)": "Użytkownik Telegram (puste = wszyscy)",
     "Caption": "Podpis",
@@ -60,5 +58,16 @@
     "Keeps the last seconds before an event. Each camera with pre-recording keeps one ffmpeg process running (stream copy, little CPU).": "Przechowuje ostatnie sekundy przed zdarzeniem. Każda kamera z nagrywaniem wstępnym utrzymuje jeden proces ffmpeg (kopia strumienia, mało CPU).",
     "Folder for the pre-recording (empty = temp folder of the system)": "Folder nagrywania wstępnego (puste = folder tymczasowy systemu)",
     "Maximum clip length (s)": "Maksymalna długość klipu (s)",
-    "With pre-recording, a further event during a clip extends it up to this length": "Przy nagrywaniu wstępnym kolejne zdarzenie w trakcie klipu wydłuża go do tej długości"
+    "With pre-recording, a further event during a clip extends it up to this length": "Przy nagrywaniu wstępnym kolejne zdarzenie w trakcie klipu wydłuża go do tej długości",
+    "Notify": "Powiadom",
+    "Notifications": "Powiadomienia",
+    "Only if state": "Tylko gdy stan",
+    "Comparison": "Porównanie",
+    "Value": "Wartość",
+    "Instance": "Instancja",
+    "Recipient": "Odbiorca",
+    "Template (JSON, optional)": "Szablon (JSON, opcjonalnie)",
+    "Only if state: the trigger fires only while that state has the value, e.g. 0_userdata.0.away = true. Empty = always.": "Tylko gdy stan: wyzwalacz działa tylko wtedy, gdy ten stan ma podaną wartość, np. 0_userdata.0.away = true. Puste = zawsze.",
+    "Triggers with the Notify column checked send their result to this Telegram instance and to the further targets below. Scripts ask for it with telegram: true.": "Wyzwalacze z zaznaczoną kolumną Powiadom wysyłają wynik do tej instancji Telegram i do dalszych odbiorców poniżej. Skrypty proszą o to przez telegram: true.",
+    "Further targets: Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "Dalsi odbiorcy: e-mail, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify i ntfy są wbudowane (komunikatory bez wysyłania plików dostają tekst). Dla innych adapterów wpisz wiadomość JSON z {file}, {caption}, {camera}, {text}."
 }
