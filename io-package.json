@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "cam-recorder",
-        "version": "0.3.0",
+        "version": "0.4.0",
         "news": {
+            "0.4.0": {
+                "en": "Timelapse: a picture every few minutes, once a day a video. Copy of every clip, snapshot and timelapse to an SFTP server (NAS) with fingerprint check and connection test",
+                "de": "Zeitraffer: alle paar Minuten ein Bild, einmal täglich ein Video. Kopie jedes Clips, Schnappschusses und Zeitraffers auf einen SFTP-Server (NAS) mit Fingerabdruck-Prüfung und Verbindungstest",
+                "ru": "Таймлапс: снимок каждые несколько минут, раз в сутки видео. Копия каждого клипа, снимка и таймлапса на SFTP-сервер (NAS) с проверкой отпечатка и тестом соединения",
+                "pt": "Timelapse: uma imagem a cada poucos minutos, um vídeo por dia. Cópia de cada clipe, instantâneo e timelapse para um servidor SFTP (NAS) com verificação da impressão digital e teste de conexão",
+                "nl": "Tijdopname: om de paar minuten een beeld, eenmaal per dag een video. Kopie van elke clip, momentopname en tijdopname naar een SFTP-server (NAS) met vingerafdrukcontrole en verbindingstest",
+                "fr": "Accéléré : une image toutes les quelques minutes, une vidéo par jour. Copie de chaque clip, photo et accéléré vers un serveur SFTP (NAS) avec vérification de l'empreinte et test de connexion",
+                "it": "Timelapse: un'immagine ogni pochi minuti, un video al giorno. Copia di ogni clip, istantanea e timelapse su un server SFTP (NAS) con verifica dell'impronta e test di connessione",
+                "es": "Timelapse: una imagen cada pocos minutos, un vídeo al día. Copia de cada clip, instantánea y timelapse a un servidor SFTP (NAS) con comprobación de la huella y prueba de conexión",
+                "pl": "Film poklatkowy: zdjęcie co kilka minut, raz dziennie film. Kopia każdego klipu, zdjęcia i filmu poklatkowego na serwer SFTP (NAS) ze sprawdzaniem odcisku i testem połączenia",
+                "uk": "Таймлапс: знімок кожні кілька хвилин, раз на добу відео. Копія кожного кліпу, знімка й таймлапсу на SFTP-сервер (NAS) з перевіркою відбитка й тестом з'єднання",
+                "zh-cn": "延时摄影：每隔几分钟拍一张图片，每天生成一段视频。每个片段、快照和延时视频都会复制到 SFTP 服务器（NAS），支持指纹校验和连接测试"
+            },
             "0.3.0": {
                 "en": "Further events extend a clip (with pre-recording). Snapshots from the pre-recording. Trigger conditions. Further notification targets: email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify, ntfy and templates. Requires js-controller 7.0.7",
                 "de": "Weitere Ereignisse verlängern einen Clip (mit Voraufnahme). Schnappschüsse aus der Voraufnahme. Bedingungen für Auslöser. Weitere Benachrichtigungsziele: E-Mail, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify, ntfy und Vorlagen. Benötigt js-controller 7.0.7",

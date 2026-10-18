@@ -260,7 +260,7 @@ adapter.
     ### **WORK IN PROGRESS**
 -->
 
-### **WORK IN PROGRESS**
+### 0.4.0 (2026-10-18)
 
 - (sadam6752-tech) Timelapse: a picture every few minutes, once a day a video; missed videos are made at the next
   start; pictures from the pre-recording while it runs
