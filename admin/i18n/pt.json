@@ -69,5 +69,21 @@
     "Template (JSON, optional)": "Modelo (JSON, opcional)",
     "Only if state: the trigger fires only while that state has the value, e.g. 0_userdata.0.away = true. Empty = always.": "Só se o estado: o gatilho só dispara enquanto esse estado tiver o valor, por exemplo 0_userdata.0.away = true. Vazio = sempre.",
     "Triggers with the Notify column checked send their result to this Telegram instance and to the further targets below. Scripts ask for it with telegram: true.": "Gatilhos com a coluna Notificar marcada enviam o resultado para esta instância do Telegram e para os destinos adicionais abaixo. Scripts pedem isso com telegram: true.",
-    "Further targets: Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "Destinos adicionais: Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify e ntfy estão incluídos (mensageiros que não enviam arquivos recebem um texto). Para outros adaptadores, insira uma mensagem JSON com {file}, {caption}, {camera}, {text}."
+    "Further targets: Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "Destinos adicionais: Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify e ntfy estão incluídos (mensageiros que não enviam arquivos recebem um texto). Para outros adaptadores, insira uma mensagem JSON com {file}, {caption}, {camera}, {text}.",
+    "Timelapse": "Timelapse (vídeo acelerado)",
+    "A picture every interval (from the pre-recording while it runs). Once a day at the set time the pictures become an MP4 video with the width of the Recording tab and are deleted. The button cameras.<camera>.timelapse builds the video at once.": "Uma imagem por intervalo (da pré-gravação enquanto estiver ativa). Uma vez por dia, na hora definida, as imagens viram um vídeo MP4 com a largura da aba Gravação e são apagadas. O botão cameras.<camera>.timelapse cria o vídeo imediatamente.",
+    "Interval (min)": "Intervalo (min)",
+    "Video at (HH:MM)": "Vídeo às (HH:MM)",
+    "Frames per second": "Quadros por segundo",
+    "NAS (SFTP)": "NAS (servidor SFTP)",
+    "The copy runs in the background after each clip, snapshot and timelapse video, into a folder per camera. Give the server a user that may only write into this folder. The files are not encrypted on the server.": "A cópia é feita em segundo plano após cada clipe, instantâneo e vídeo timelapse, numa pasta por câmera. Crie no servidor um usuário que só possa escrever nessa pasta. Os arquivos não são criptografados no servidor.",
+    "Copy every new file to an SFTP server (NAS)": "Copiar cada novo arquivo para um servidor SFTP (NAS)",
+    "Host": "Servidor",
+    "SSH port": "Porta SSH",
+    "Folder on the server": "Pasta no servidor",
+    "A folder per camera is created below it": "Uma pasta por câmera é criada dentro dela",
+    "Fingerprint of the server (SHA256:…)": "Impressão digital do servidor (SHA256:…)",
+    "Empty = not verified; the connection test shows the fingerprint": "Vazio = não verificado; o teste de conexão mostra a impressão digital",
+    "Days kept on the server (0 = keep all)": "Dias mantidos no servidor (0 = manter tudo)",
+    "Test connection": "Testar conexão"
 }

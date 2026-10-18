@@ -69,5 +69,21 @@
     "Template (JSON, optional)": "Sjabloon (JSON, optioneel)",
     "Only if state: the trigger fires only while that state has the value, e.g. 0_userdata.0.away = true. Empty = always.": "Alleen als status: de trigger reageert alleen zolang die status de waarde heeft, bijv. 0_userdata.0.away = true. Leeg = altijd.",
     "Triggers with the Notify column checked send their result to this Telegram instance and to the further targets below. Scripts ask for it with telegram: true.": "Triggers met een vinkje in de kolom Melden sturen hun resultaat naar deze Telegram-instantie en naar de verdere doelen hieronder. Scripts vragen dit met telegram: true.",
-    "Further targets: Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "Verdere doelen: e-mail, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify en ntfy zijn ingebouwd (messengers zonder bestandsverzending krijgen een tekst). Voer voor andere adapters een JSON-bericht in met {file}, {caption}, {camera}, {text}."
+    "Further targets: Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "Verdere doelen: e-mail, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify en ntfy zijn ingebouwd (messengers zonder bestandsverzending krijgen een tekst). Voer voor andere adapters een JSON-bericht in met {file}, {caption}, {camera}, {text}.",
+    "Timelapse": "Tijdopname",
+    "A picture every interval (from the pre-recording while it runs). Once a day at the set time the pictures become an MP4 video with the width of the Recording tab and are deleted. The button cameras.<camera>.timelapse builds the video at once.": "Eén beeld per interval (uit de vooropname zolang die loopt). Eenmaal per dag op het ingestelde tijdstip worden de beelden een MP4-video met de breedte van het tabblad Opname en daarna verwijderd. De knop cameras.<camera>.timelapse maakt de video meteen.",
+    "Interval (min)": "Interval (min)",
+    "Video at (HH:MM)": "Video om (UU:MM)",
+    "Frames per second": "Beelden per seconde",
+    "NAS (SFTP)": "NAS (SFTP-server)",
+    "The copy runs in the background after each clip, snapshot and timelapse video, into a folder per camera. Give the server a user that may only write into this folder. The files are not encrypted on the server.": "De kopie loopt op de achtergrond na elke clip, momentopname en timelapse-video, naar een map per camera. Geef de server een gebruiker die alleen in deze map mag schrijven. De bestanden worden op de server niet versleuteld.",
+    "Copy every new file to an SFTP server (NAS)": "Elk nieuw bestand naar een SFTP-server (NAS) kopiëren",
+    "Host": "Hostnaam",
+    "SSH port": "SSH-poort",
+    "Folder on the server": "Map op de server",
+    "A folder per camera is created below it": "Daaronder wordt per camera een map gemaakt",
+    "Fingerprint of the server (SHA256:…)": "Vingerafdruk van de server (SHA256:…)",
+    "Empty = not verified; the connection test shows the fingerprint": "Leeg = niet gecontroleerd; de verbindingstest toont de vingerafdruk",
+    "Days kept on the server (0 = keep all)": "Dagen bewaren op de server (0 = alles bewaren)",
+    "Test connection": "Verbinding testen"
 }

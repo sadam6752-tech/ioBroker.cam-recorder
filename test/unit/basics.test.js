@@ -153,6 +153,15 @@ describe('configuration', () => {
         );
     });
 
+    it('reads a table that arrives as an object with numbered keys', () => {
+        const { cameras } = normalizeCameras(/** @type {any} */ ({ 0: { name: 'Door', url: 'rtsp://h/1' } }));
+        assert.deepEqual(
+            cameras.map(c => c.id),
+            ['door'],
+        );
+        assert.deepEqual(normalizeCameras(null).cameras, []);
+    });
+
     it('applies limits to the settings', () => {
         const s = normalizeSettings({ recordDuration: 999, maxParallel: 0, videoWidth: 'abc', recordFormat: 'avi' });
         assert.equal(s.recordDuration, 60);

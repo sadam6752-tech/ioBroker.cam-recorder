@@ -69,5 +69,21 @@
     "Template (JSON, optional)": "模板（JSON，可选）",
     "Only if state: the trigger fires only while that state has the value, e.g. 0_userdata.0.away = true. Empty = always.": "仅当状态：只有当该状态等于设定值时触发器才会触发，例如 0_userdata.0.away = true。留空 = 始终触发。",
     "Triggers with the Notify column checked send their result to this Telegram instance and to the further targets below. Scripts ask for it with telegram: true.": "勾选了“通知”列的触发器会把结果发送到此 Telegram 实例以及下方的其他目标。脚本可通过 telegram: true 请求发送。",
-    "Further targets: Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "其他目标：已内置 Email、Pushover、Discord、Matrix、Signal、WhatsApp、Gotify 和 ntfy（不能发送文件的消息工具会收到文本）。其他适配器请填写包含 {file}、{caption}、{camera}、{text} 的 JSON 消息。"
+    "Further targets: Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "其他目标：已内置 Email、Pushover、Discord、Matrix、Signal、WhatsApp、Gotify 和 ntfy（不能发送文件的消息工具会收到文本）。其他适配器请填写包含 {file}、{caption}、{camera}、{text} 的 JSON 消息。",
+    "Timelapse": "延时摄影",
+    "A picture every interval (from the pre-recording while it runs). Once a day at the set time the pictures become an MP4 video with the width of the Recording tab and are deleted. The button cameras.<camera>.timelapse builds the video at once.": "每个间隔拍一张图片（预录运行时从预录中获取）。每天在设定时间把图片合成为 MP4 视频（宽度同“录制”选项卡），然后删除图片。按钮 cameras.<camera>.timelapse 可立即生成视频。",
+    "Interval (min)": "间隔（分钟）",
+    "Video at (HH:MM)": "视频生成时间（HH:MM）",
+    "Frames per second": "每秒帧数",
+    "NAS (SFTP)": "NAS（SFTP 服务器）",
+    "The copy runs in the background after each clip, snapshot and timelapse video, into a folder per camera. Give the server a user that may only write into this folder. The files are not encrypted on the server.": "每个片段、快照和延时视频保存后都会在后台复制，每个摄像机一个文件夹。请在服务器上创建只能写入该文件夹的用户。文件在服务器上不加密。",
+    "Copy every new file to an SFTP server (NAS)": "将每个新文件复制到 SFTP 服务器（NAS）",
+    "Host": "主机",
+    "SSH port": "SSH 端口",
+    "Folder on the server": "服务器上的文件夹",
+    "A folder per camera is created below it": "其下会为每个摄像机创建一个文件夹",
+    "Fingerprint of the server (SHA256:…)": "服务器指纹（SHA256:…）",
+    "Empty = not verified; the connection test shows the fingerprint": "留空 = 不验证；连接测试会显示指纹",
+    "Days kept on the server (0 = keep all)": "服务器上保留天数（0 = 全部保留）",
+    "Test connection": "测试连接"
 }

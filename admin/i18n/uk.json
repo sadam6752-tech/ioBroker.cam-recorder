@@ -69,5 +69,21 @@
     "Template (JSON, optional)": "Шаблон (JSON, необов'язково)",
     "Only if state: the trigger fires only while that state has the value, e.g. 0_userdata.0.away = true. Empty = always.": "Лише якщо стан: тригер спрацьовує, лише поки цей стан має задане значення, наприклад 0_userdata.0.away = true. Порожньо = завжди.",
     "Triggers with the Notify column checked send their result to this Telegram instance and to the further targets below. Scripts ask for it with telegram: true.": "Тригери з позначеним стовпцем «Сповістити» надсилають результат до цього екземпляра Telegram і додатковим отримувачам нижче. Скрипти запитують це через telegram: true.",
-    "Further targets: Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "Додаткові отримувачі: Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify і ntfy вбудовані (месенджери, що не вміють надсилати файли, отримують текст). Для інших адаптерів укажіть JSON-повідомлення з {file}, {caption}, {camera}, {text}."
+    "Further targets: Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "Додаткові отримувачі: Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify і ntfy вбудовані (месенджери, що не вміють надсилати файли, отримують текст). Для інших адаптерів укажіть JSON-повідомлення з {file}, {caption}, {camera}, {text}.",
+    "Timelapse": "Таймлапс",
+    "A picture every interval (from the pre-recording while it runs). Once a day at the set time the pictures become an MP4 video with the width of the Recording tab and are deleted. The button cameras.<camera>.timelapse builds the video at once.": "Один знімок за інтервал (з попереднього запису, поки він працює). Раз на добу в заданий час знімки збираються у відео MP4 шириною як на вкладці «Запис» і видаляються. Кнопка cameras.<camera>.timelapse збирає відео одразу.",
+    "Interval (min)": "Інтервал (хв)",
+    "Video at (HH:MM)": "Відео о (ГГ:ХХ)",
+    "Frames per second": "Кадрів за секунду",
+    "NAS (SFTP)": "NAS (SFTP-сервер)",
+    "The copy runs in the background after each clip, snapshot and timelapse video, into a folder per camera. Give the server a user that may only write into this folder. The files are not encrypted on the server.": "Копіювання йде у фоні після кожного кліпу, знімка й таймлапсу, в окрему теку для кожної камери. Створіть на сервері користувача, який може писати лише в цю теку. Файли на сервері не шифруються.",
+    "Copy every new file to an SFTP server (NAS)": "Копіювати кожен новий файл на SFTP-сервер (NAS)",
+    "Host": "Хост",
+    "SSH port": "SSH-порт",
+    "Folder on the server": "Тека на сервері",
+    "A folder per camera is created below it": "Усередині створюється тека для кожної камери",
+    "Fingerprint of the server (SHA256:…)": "Відбиток сервера (SHA256:…)",
+    "Empty = not verified; the connection test shows the fingerprint": "Порожньо = без перевірки; тест з'єднання покаже відбиток",
+    "Days kept on the server (0 = keep all)": "Днів зберігати на сервері (0 = зберігати все)",
+    "Test connection": "Перевірити з'єднання"
 }

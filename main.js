@@ -9,7 +9,13 @@ const fs = require('node:fs/promises');
 const os = require('node:os');
 const utils = require('@iobroker/adapter-core');
 
-const { normalizeCameras, normalizeTriggers, normalizeSettings, findCamera } = require('./lib/config');
+const {
+    normalizeCameras,
+    normalizeTriggers,
+    normalizeSettings,
+    normalizeTimelapses,
+    findCamera,
+} = require('./lib/config');
 const { protectCameras, revealPassword } = require('./lib/secrets');
 const { FfmpegRunner, probeFfmpeg, resolveFfmpegPath } = require('./lib/ffmpeg-runner');
 const { Recorder } = require('./lib/recorder');
@@ -20,6 +26,14 @@ const { maskSecrets } = require('./lib/mask');
 const { NAMES } = require('./lib/names');
 const { conditionMet, opSymbol } = require('./lib/conditions');
 const { KNOWN, buildMessage } = require('./lib/notify');
+const { Timelapse } = require('./lib/timelapse');
+const {
+    copyFileToRemote,
+    remoteSettingsProblems,
+    settingsForConnectionTest,
+    testRemoteConnection,
+} = require('./lib/remote-copy');
+const { connectSsh2 } = require('./lib/sftp-ssh2');
 
 /**
  * @param {number} bytes - File size
@@ -72,6 +86,9 @@ const CAMERA_STATES = [
             states: { off: 'off', starting: 'starting', running: 'running', restarting: 'restarting' },
         },
     },
+    { id: 'timelapse', common: { type: 'boolean', role: 'button', read: false, write: true, def: false } },
+    { id: 'lastTimelapse', common: { type: 'string', role: 'text', read: true, write: false, def: '' } },
+    { id: 'lastTimelapseTime', common: { type: 'number', role: 'value.time', read: true, write: false, def: 0 } },
 ];
 
 class CamRecorder extends utils.Adapter {
@@ -97,6 +114,10 @@ class CamRecorder extends utils.Adapter {
         this.recorder = null;
         /** @type {Map<string, Prebuffer>} */
         this.prebuffers = new Map();
+        /** @type {Map<string, Timelapse>} */
+        this.timelapses = new Map();
+        /** copies to the SFTP server run one after the other */
+        this.remoteQueue = Promise.resolve();
         this.settings = normalizeSettings({});
         this.storageId = '';
         this.dateFormat = 'DD.MM.YYYY';
@@ -188,9 +209,16 @@ class CamRecorder extends utils.Adapter {
                 onWarning: message => this.log.warn(message),
             });
             await this._startPrebuffers(ffmpegPath);
+            await this._startTimelapses(outputDir);
+            if (this.settings.remote.enabled) {
+                for (const problem of remoteSettingsProblems(this.settings.remote)) {
+                    this.log.warn(`Copy to the SFTP server: ${problem}`);
+                }
+            }
 
             await this.subscribeStatesAsync('cameras.*.record');
             await this.subscribeStatesAsync('cameras.*.snapshot');
+            await this.subscribeStatesAsync('cameras.*.timelapse');
             for (const stateId of this.triggers.keys()) {
                 await this.subscribeForeignStatesAsync(stateId);
             }
@@ -281,6 +309,124 @@ class CamRecorder extends utils.Adapter {
                 this.log.warn(`Pre-recording of camera "${camera.name}" could not start: ${err.message}`);
             }
         }
+    }
+
+    /** @returns {import('./lib/types').Timers} Timers of the adapter, cleared at the stop */
+    _ownTimers() {
+        return {
+            setTimeout: (cb, ms) => this.setTimeout(cb, ms),
+            clearTimeout: handle => this.clearTimeout(handle),
+        };
+    }
+
+    /**
+     * Starts the timelapses of the settings.
+     *
+     * @param {string} outputDir - Media folder
+     */
+    async _startTimelapses(outputDir) {
+        const { jobs, problems } = normalizeTimelapses(this.config.timelapses, this.cameras);
+        for (const problem of problems) {
+            this.log.warn(problem);
+        }
+        if (!this.recorder) {
+            return;
+        }
+        for (const job of jobs) {
+            const timelapse = new Timelapse({
+                camera: job.camera,
+                job,
+                settings: this.settings,
+                outputDir,
+                recorder: this.recorder,
+                timers: this._ownTimers(),
+                onVideo: result => void this._deliverTimelapse(job.camera, result, job.notify),
+                onWarning: message => this.log.warn(message),
+            });
+            this.timelapses.set(job.camera.id, timelapse);
+            await timelapse.start();
+            const at = `${String(job.at.hour).padStart(2, '0')}:${String(job.at.minute).padStart(2, '0')}`;
+            this.log.info(
+                `Timelapse of camera "${job.camera.name}": a picture every ${job.interval} min, video daily at ${at}`,
+            );
+        }
+    }
+
+    /**
+     * Builds the timelapse video of a camera now.
+     *
+     * @param {Camera} camera - Camera
+     * @returns {Promise<RecordResult | null>} The video, null when fewer than two frames wait
+     */
+    async _buildTimelapse(camera) {
+        const timelapse = this.timelapses.get(camera.id);
+        if (!timelapse) {
+            this.log.warn(`Camera "${camera.name}" has no timelapse in the settings`);
+            return null;
+        }
+        try {
+            const result = await timelapse.build();
+            if (!result) {
+                this.log.info(`Timelapse of camera "${camera.name}": fewer than two frames, no video`);
+            }
+            return result;
+        } catch (err) {
+            this.log.warn(`Timelapse of camera "${camera.name}": ${maskSecrets(err.message)}`);
+            throw err;
+        }
+    }
+
+    /**
+     * Publishes a finished timelapse video: states, log, SFTP copy and notifications.
+     *
+     * @param {Camera} camera - Camera
+     * @param {RecordResult} result - Video
+     * @param {boolean} notify - Send it to the notification targets
+     */
+    async _deliverTimelapse(camera, result, notify) {
+        const base = `cameras.${camera.id}`;
+        await this.setState(`${base}.lastTimelapse`, result.file, true);
+        await this.setState(`${base}.lastTimelapseTime`, Date.now(), true);
+        this.log.info(
+            `Camera "${camera.name}": timelapse saved, ${result.duration} s, ${formatSize(result.size)}: ${path.basename(result.file)}`,
+        );
+        this._queueRemote(camera, result);
+        if (notify) {
+            await this._notify(result);
+        }
+    }
+
+    /**
+     * Copies a finished file to the SFTP server in the background, one copy after the other.
+     *
+     * @param {Camera} camera - Camera
+     * @param {RecordResult} result - Finished file
+     */
+    _queueRemote(camera, result) {
+        const remote = this.settings.remote;
+        if (!remote.enabled) {
+            return;
+        }
+        this.remoteQueue = this.remoteQueue
+            .then(async () => {
+                const copy = await copyFileToRemote(
+                    connectSsh2,
+                    remote,
+                    { file: result.file, cameraId: camera.id },
+                    this.log,
+                    this._ownTimers(),
+                );
+                if (copy.ok) {
+                    await this.setState('info.lastRemoteCopy', Date.now(), true);
+                    await this.setState('info.remoteError', '', true);
+                    this.log.debug(`Copied ${path.basename(result.file)} to the SFTP server: ${copy.remoteFile}`);
+                } else {
+                    const message = maskSecrets(copy.message, [remote.password]);
+                    await this.setState('info.remoteError', message, true);
+                    this.log.warn(`Could not copy ${path.basename(result.file)} to the SFTP server: ${message}`);
+                }
+            })
+            .catch(() => undefined);
     }
 
     /** Reads the date format of the system settings for `{date}` in captions. */
@@ -376,6 +522,7 @@ class CamRecorder extends utils.Adapter {
             );
             this.log.debug(`Camera "${camera.name}": full path ${result.file}`);
             await this._copyToFiles(camera, result);
+            this._queueRemote(camera, result);
             if (telegram) {
                 await this._notify(result);
             }
@@ -570,12 +717,16 @@ class CamRecorder extends utils.Adapter {
         if (!state || state.ack || !id.startsWith(`${this.namespace}.cameras.`)) {
             return;
         }
-        const match = /\.cameras\.([^.]+)\.(record|snapshot)$/.exec(id);
+        const match = /\.cameras\.([^.]+)\.(record|snapshot|timelapse)$/.exec(id);
         const camera = match && this.cameras.find(c => c.id === match[1]);
         if (!match || !camera || !state.val) {
             return;
         }
         void this.setState(id, false, true);
+        if (match[2] === 'timelapse') {
+            void this._buildTimelapse(camera).catch(() => undefined);
+            return;
+        }
         this._take(camera, match[2] === 'record' ? 'record' : 'snapshot', {}, false).catch(() => undefined);
     }
 
@@ -599,6 +750,29 @@ class CamRecorder extends utils.Adapter {
         try {
             if (obj.command === 'listCameras') {
                 reply(this.cameras.map(c => ({ value: c.name, label: c.name })));
+                return;
+            }
+            if (obj.command === 'testRemote') {
+                // an empty password field means the saved password, but only for the saved server
+                const form = obj.message && typeof obj.message === 'object' ? obj.message : {};
+                const settings = settingsForConnectionTest(form, this.settings.remote);
+                const result = await testRemoteConnection(connectSsh2, settings, this._ownTimers());
+                const hint =
+                    result.ok && !settings.hostKey && result.fingerprint
+                        ? ` Fingerprint of the server (enter it to trust only this server): ${result.fingerprint}`
+                        : '';
+                reply(result.ok ? { result: `OK: ${result.message}.${hint}` } : { error: result.message });
+                return;
+            }
+            if (obj.command === 'timelapse') {
+                const name = typeof obj.message === 'string' ? obj.message : obj.message?.camera;
+                const camera = findCamera(this.cameras, name);
+                if (!camera) {
+                    reply({ error: `Unknown camera "${name ?? ''}"` });
+                    return;
+                }
+                const result = await this._buildTimelapse(camera);
+                reply(result || { error: 'fewer than two frames are waiting' });
                 return;
             }
             if (obj.command !== 'record' && obj.command !== 'snapshot') {
@@ -636,6 +810,10 @@ class CamRecorder extends utils.Adapter {
                 void buffer.stop();
             }
             this.prebuffers.clear();
+            for (const timelapse of this.timelapses.values()) {
+                timelapse.stop();
+            }
+            this.timelapses.clear();
             this.runner = null;
             this.recorder = null;
             void this.setState('info.connection', false, true);

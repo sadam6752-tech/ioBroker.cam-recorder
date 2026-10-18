@@ -52,6 +52,40 @@ export interface NotifyTarget {
     template: string;
 }
 
+/** Timelapse of one camera */
+export interface TimelapseJob {
+    /** Camera */
+    camera: Camera;
+    /** Minutes between two frames */
+    interval: number;
+    /** Local time of the daily video */
+    at: { hour: number; minute: number };
+    /** Frames per second of the video */
+    fps: number;
+    /** Send the video to the notification targets */
+    notify: boolean;
+}
+
+/** Settings of the copy to an SFTP server (NAS) */
+export interface RemoteSettings {
+    /** Copy every new file */
+    enabled: boolean;
+    /** Server name or address */
+    host: string;
+    /** SSH port, 22 when empty */
+    port: number;
+    /** User of the server */
+    username: string;
+    /** Plain password (decrypted by the controller) */
+    password: string;
+    /** Base folder on the server, a folder per camera below it */
+    directory: string;
+    /** Fingerprint of the server, empty = not verified */
+    hostKey: string;
+    /** Days a file is kept on the server, 0 = keep all */
+    keepDays: number;
+}
+
 /** Adapter settings with limits applied */
 export interface Settings {
     /** Default clip length in seconds */
@@ -94,6 +128,8 @@ export interface Settings {
     maxClipLength: number;
     /** Further notification targets */
     notifyTargets: NotifyTarget[];
+    /** Copy to an SFTP server */
+    remote: RemoteSettings;
 }
 
 /** What a clip is made of */

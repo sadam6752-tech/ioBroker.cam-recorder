@@ -69,5 +69,21 @@
     "Template (JSON, optional)": "Template (JSON, optional)",
     "Only if state: the trigger fires only while that state has the value, e.g. 0_userdata.0.away = true. Empty = always.": "Only if state: the trigger fires only while that state has the value, e.g. 0_userdata.0.away = true. Empty = always.",
     "Triggers with the Notify column checked send their result to this Telegram instance and to the further targets below. Scripts ask for it with telegram: true.": "Triggers with the Notify column checked send their result to this Telegram instance and to the further targets below. Scripts ask for it with telegram: true.",
-    "Further targets: Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "Further targets: Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}."
+    "Further targets: Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "Further targets: Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.",
+    "Timelapse": "Timelapse",
+    "A picture every interval (from the pre-recording while it runs). Once a day at the set time the pictures become an MP4 video with the width of the Recording tab and are deleted. The button cameras.<camera>.timelapse builds the video at once.": "A picture every interval (from the pre-recording while it runs). Once a day at the set time the pictures become an MP4 video with the width of the Recording tab and are deleted. The button cameras.<camera>.timelapse builds the video at once.",
+    "Interval (min)": "Interval (min)",
+    "Video at (HH:MM)": "Video at (HH:MM)",
+    "Frames per second": "Frames per second",
+    "NAS (SFTP)": "NAS (SFTP)",
+    "The copy runs in the background after each clip, snapshot and timelapse video, into a folder per camera. Give the server a user that may only write into this folder. The files are not encrypted on the server.": "The copy runs in the background after each clip, snapshot and timelapse video, into a folder per camera. Give the server a user that may only write into this folder. The files are not encrypted on the server.",
+    "Copy every new file to an SFTP server (NAS)": "Copy every new file to an SFTP server (NAS)",
+    "Host": "Host",
+    "SSH port": "SSH port",
+    "Folder on the server": "Folder on the server",
+    "A folder per camera is created below it": "A folder per camera is created below it",
+    "Fingerprint of the server (SHA256:…)": "Fingerprint of the server (SHA256:…)",
+    "Empty = not verified; the connection test shows the fingerprint": "Empty = not verified; the connection test shows the fingerprint",
+    "Days kept on the server (0 = keep all)": "Days kept on the server (0 = keep all)",
+    "Test connection": "Test connection"
 }

@@ -126,7 +126,16 @@
         "copyToFiles": true,
         "ffmpegPath": "",
         "maxParallel": 2,
-        "rtspTimeout": 10
+        "rtspTimeout": 10,
+        "timelapses": [],
+        "remoteEnabled": false,
+        "remoteHost": "",
+        "remotePort": 22,
+        "remoteUser": "",
+        "remotePassword": "",
+        "remoteDirectory": "/cam-recorder",
+        "remoteHostKey": "",
+        "remoteKeepDays": 0
     },
     "objects": [],
     "instanceObjects": [
@@ -199,7 +208,58 @@
                 "def": ""
             },
             "native": {}
+        },
+        {
+            "_id": "info.lastRemoteCopy",
+            "type": "state",
+            "common": {
+                "role": "value.time",
+                "name": {
+                    "en": "Last copy to the SFTP server",
+                    "de": "Letzte Kopie auf den SFTP-Server",
+                    "ru": "Последняя копия на SFTP-сервер",
+                    "pt": "Última cópia para o servidor SFTP",
+                    "nl": "Laatste kopie naar de SFTP-server",
+                    "fr": "Dernière copie vers le serveur SFTP",
+                    "it": "Ultima copia sul server SFTP",
+                    "es": "Última copia al servidor SFTP",
+                    "pl": "Ostatnia kopia na serwer SFTP",
+                    "uk": "Остання копія на SFTP-сервер",
+                    "zh-cn": "最近一次复制到 SFTP 服务器"
+                },
+                "type": "number",
+                "read": true,
+                "write": false,
+                "def": 0
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.remoteError",
+            "type": "state",
+            "common": {
+                "role": "text",
+                "name": {
+                    "en": "Last error of the SFTP copy",
+                    "de": "Letzter Fehler der SFTP-Kopie",
+                    "ru": "Последняя ошибка копирования по SFTP",
+                    "pt": "Último erro da cópia SFTP",
+                    "nl": "Laatste fout van de SFTP-kopie",
+                    "fr": "Dernière erreur de la copie SFTP",
+                    "it": "Ultimo errore della copia SFTP",
+                    "es": "Último error de la copia SFTP",
+                    "pl": "Ostatni błąd kopii SFTP",
+                    "uk": "Остання помилка копіювання SFTP",
+                    "zh-cn": "SFTP 复制的最后错误"
+                },
+                "type": "string",
+                "read": true,
+                "write": false,
+                "def": ""
+            },
+            "native": {}
         }
     ],
-    "protectedNative": ["cameras"]
+    "protectedNative": ["cameras", "remotePassword"],
+    "encryptedNative": ["remotePassword"]
 }

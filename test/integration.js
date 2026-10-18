@@ -6,6 +6,7 @@ const assert = require('assert/strict');
 const { tests } = require('@iobroker/testing');
 
 const ffmpegPath = require('ffmpeg-static');
+const { startServer } = require('./helpers/sftp-server');
 
 // Run integration tests - See https://github.com/ioBroker/testing for a detailed explanation and further options
 tests.integration(path.join(__dirname, '..'), {
@@ -14,6 +15,9 @@ tests.integration(path.join(__dirname, '..'), {
             let harness;
             let dir;
             let source;
+            let sftp;
+            const disk = { files: new Map(), directories: new Set() };
+            const oldDay = new Date(Date.now() - 2 * 86_400_000);
 
             before(async function () {
                 this.timeout(120_000);
@@ -41,6 +45,18 @@ tests.integration(path.join(__dirname, '..'), {
                     '-y',
                     source,
                 ]);
+                // two frames of a timelapse from two days ago: the start builds the missed video
+                const pad = n => String(n).padStart(2, '0');
+                const day = `${oldDay.getFullYear()}-${pad(oldDay.getMonth() + 1)}-${pad(oldDay.getDate())}`;
+                const frames = path.join(dir, 'media', 'timelapse', 'cafe_door');
+                fs.mkdirSync(frames, { recursive: true });
+                for (const time of ['10-00-00', '10-05-00']) {
+                    execFileSync(String(ffmpegPath), [
+                        ...['-hide_banner', '-loglevel', 'error', '-i', source, '-frames:v', '1', '-y'],
+                        path.join(frames, `${day}_${time}.jpg`),
+                    ]);
+                }
+                sftp = await startServer(disk);
                 harness = getHarness();
                 await harness.changeAdapterConfig('cam-recorder', {
                     native: {
@@ -61,6 +77,14 @@ tests.integration(path.join(__dirname, '..'), {
                                 condValue: 'true',
                             },
                         ],
+                        timelapses: [{ enabled: true, camera: 'Café Door', interval: 60, at: '23:55', fps: 10 }],
+                        remoteEnabled: true,
+                        remoteHost: '127.0.0.1',
+                        remotePort: sftp.port,
+                        remoteUser: 'nas',
+                        remotePassword: 'secret',
+                        remoteDirectory: '/nas',
+                        remoteHostKey: sftp.fingerprint,
                         prebufferEnabled: true,
                         prebufferDir: path.join(dir, 'prebuffer'),
                         outputDir: path.join(dir, 'media'),
@@ -84,6 +108,7 @@ tests.integration(path.join(__dirname, '..'), {
                 // the unload must end the ffmpeg of the pre-recording; on Windows a running
                 // process would keep the source file locked and the removal would fail
                 await harness.stopAdapter();
+                sftp.close();
                 fs.rmSync(dir, { recursive: true, force: true, maxRetries: 5, retryDelay: 500 });
             });
 
@@ -161,6 +186,34 @@ tests.integration(path.join(__dirname, '..'), {
                     after = await shotTime();
                 }
                 assert.ok(after > before, 'the trigger did not fire with the condition met');
+            });
+
+            it('builds the missed timelapse at the start and copies the files to the SFTP server', async function () {
+                this.timeout(60_000);
+                const pad = n => String(n).padStart(2, '0');
+                const day = `${oldDay.getFullYear()}-${pad(oldDay.getMonth() + 1)}-${pad(oldDay.getDate())}`;
+                const remoteVideo = `/nas/cafe_door/cafe_door_timelapse_${day}.mp4`;
+                let last;
+                for (let i = 0; i < 80 && !(last && disk.files.has(remoteVideo)); i++) {
+                    await new Promise(r => setTimeout(r, 250));
+                    last = (await harness.states.getStateAsync('cam-recorder.0.cameras.cafe_door.lastTimelapse'))?.val;
+                }
+                assert.ok(String(last).endsWith(`cafe_door_timelapse_${day}.mp4`), String(last));
+                assert.ok(disk.files.has(remoteVideo), [...disk.files.keys()].join(', '));
+                // the clip and the snapshot of the earlier test were copied as well
+                const copied = [...disk.files.keys()].filter(k => k.startsWith('/nas/cafe_door/'));
+                assert.ok(
+                    copied.some(k => /cafe_door_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}\.mp4$/.test(k)),
+                    copied.join(', '),
+                );
+                assert.ok(
+                    copied.some(k => k.endsWith('.jpg')),
+                    copied.join(', '),
+                );
+                const error = await harness.states.getStateAsync('cam-recorder.0.info.remoteError');
+                assert.equal(error?.val || '', '');
+                const lastCopy = await harness.states.getStateAsync('cam-recorder.0.info.lastRemoteCopy');
+                assert.ok(Number(lastCopy?.val) > 0);
             });
 
             it('runs the pre-recording and puts the seconds before the event into the clip', async function () {

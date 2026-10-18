@@ -132,6 +132,41 @@ For any other adapter enter a **template**: the JSON message for its `send` comm
 `{"to": "{recipient}", "message": "{caption}", "file": "{file}"}`. A template also replaces the built-in format of a
 known adapter. All targets must run on the same host as this adapter, since they read the file from its path.
 
+### Timelapse
+
+One row per camera: a picture every _Interval_ minutes, and once a day at _Video at_ (HH:MM, default 23:55) the
+pictures become an MP4 video (_Frames per second_, width of the _Recording_ tab), named
+`<camera>_timelapse_<YYYY-MM-DD>.mp4` after the day of its first picture. The pictures are deleted after the video
+is made. While the pre-recording runs, the pictures come from the buffer, without a second connection to the camera.
+
+- The button `cameras.<camera>.timelapse` (or `sendTo(…, 'timelapse', 'Front Door')`) makes the video at once.
+- If the adapter was stopped at the time of the video, the missed video is made at the next start.
+- _Notify_ sends the video to Telegram and the further targets.
+- Disk space: one picture per minute at 640 px is about 50 MB a day until the video is made; at most 10 000 pictures
+  wait per camera. Old timelapse videos are deleted after the maximum age of the _Storage_ tab.
+
+### NAS (SFTP)
+
+Every new clip, snapshot and timelapse video is copied to an SFTP server (a NAS such as Synology or QNAP, or any Linux
+server with SSH), into `<folder>/<camera>/`. The adapter opens the SSH connection itself — no mount, no shell
+command.
+
+1. Create a user on the NAS that may only write into the target folder, and enable SFTP.
+2. Enter host, port, user, password and folder, then press _Test connection_. It writes and deletes a small test
+   file and shows the fingerprint of the server.
+3. Enter that fingerprint: from then on a different server is refused before the password is sent. Without a
+   fingerprint every copy warns in the log.
+
+How it behaves:
+
+- The copy runs in the background, one file after the other; notifications do not wait for it.
+- A file appears on the server under its final name only when it is complete (upload as `.part`, size check, rename).
+- A failed copy is logged and shown in `info.remoteError`; it is not retried, the next file is copied again.
+  `info.lastRemoteCopy` holds the time of the last good copy.
+- _Days kept on the server_ deletes older files of this adapter on the server (0 = keep everything); other files in
+  the folders are never touched.
+- The password is stored encrypted. The files are not encrypted on the server, only the transfer is.
+
 ### Storage
 
 Files are written to `iobroker-data/cam-recorder.<instance>/media/` (or the folder you enter), named
@@ -154,19 +189,23 @@ The newest file of each camera and kind is also copied into the ioBroker file st
 
 Per camera below `cam-recorder.0.cameras.<camera>`:
 
-| State              | Meaning                                         |
-| ------------------ | ----------------------------------------------- |
-| `record`           | Button: record a clip with the default settings |
-| `snapshot`         | Button: take a snapshot                         |
-| `lastVideo`        | Path of the newest clip                         |
-| `lastVideoTime`    | Time of the newest clip                         |
-| `lastSnapshot`     | Path of the newest snapshot                     |
-| `lastSnapshotTime` | Time of the newest snapshot                     |
-| `status`           | `idle`, `recording`, `snapshot` or `error`      |
-| `lastError`        | Text of the last error, empty after a success   |
-| `prebuffer`        | `off`, `starting`, `running` or `restarting`    |
+| State               | Meaning                                         |
+| ------------------- | ----------------------------------------------- |
+| `record`            | Button: record a clip with the default settings |
+| `snapshot`          | Button: take a snapshot                         |
+| `lastVideo`         | Path of the newest clip                         |
+| `lastVideoTime`     | Time of the newest clip                         |
+| `lastSnapshot`      | Path of the newest snapshot                     |
+| `lastSnapshotTime`  | Time of the newest snapshot                     |
+| `status`            | `idle`, `recording`, `snapshot` or `error`      |
+| `lastError`         | Text of the last error, empty after a success   |
+| `prebuffer`         | `off`, `starting`, `running` or `restarting`    |
+| `timelapse`         | Button: make the timelapse video now            |
+| `lastTimelapse`     | Path of the newest timelapse video              |
+| `lastTimelapseTime` | Time of the newest timelapse video              |
 
 `info.connection` is true when ffmpeg was found and works, `info.ffmpegVersion` shows its version.
+`info.lastRemoteCopy` and `info.remoteError` report the copy to the SFTP server.
 
 ## Scripts
 
@@ -188,6 +227,7 @@ on({ id: 'doorbird.0.Doorbell.1.trigger', change: 'any' }, () => {
 | ------------- | ------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
 | `record`      | `{ camera, duration?, pre?, format?: 'mp4' \| 'gif', width?, fps?, telegram? }` | `{ file, size, format, duration, pre, extended, fromBuffer, realDuration, camera, time }` or `{ error }` |
 | `snapshot`    | `{ camera, width?, live?, telegram? }` or just the camera name                  | as above, `format: 'jpg'`                                                                                |
+| `timelapse`   | `{ camera }` or just the camera name                                            | the video as above, or `{ error }` when fewer than two pictures wait                                     |
 | `listCameras` | –                                                                               | `[{ value, label }]`                                                                                     |
 
 `telegram: true` sends the result to the configured Telegram instance as well.
@@ -204,6 +244,8 @@ clip); `duration` is always the time after the event, and the answer's `duration
   container this is usually acceptable; give the camera a user that may only view the stream.
 - Recorded files are not encrypted. Files copied into the ioBroker file storage can be opened by every admin user and,
   depending on its settings, through a `web` instance.
+- The SFTP password is stored encrypted (`encryptedNative`). A connection test with an empty password field uses the
+  saved password only for the saved server, so no script can send it to another host.
 
 ## ffmpeg license
 
@@ -217,6 +259,14 @@ adapter.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+
+### **WORK IN PROGRESS**
+
+- (sadam6752-tech) Timelapse: a picture every few minutes, once a day a video; missed videos are made at the next
+  start; pictures from the pre-recording while it runs
+- (sadam6752-tech) Copy of every clip, snapshot and timelapse to an SFTP server (NAS), with fingerprint check,
+  connection test, maximum age on the server
+- (sadam6752-tech) Tables of the settings that arrive as objects (after an update of an older instance) are read
 
 ### 0.3.0 (2026-10-18)
 
