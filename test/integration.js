@@ -71,7 +71,7 @@ tests.integration(path.join(__dirname, '..'), {
                                 camera: 'Café Door',
                                 action: 'snapshot',
                                 cooldown: 60,
-                                telegram: false,
+                                profiles: '',
                                 condState: '0_userdata.0.away',
                                 condOp: 'eq',
                                 condValue: 'true',
@@ -167,6 +167,29 @@ tests.integration(path.join(__dirname, '..'), {
                 assert.match(unknown.error, /Unknown camera/);
             });
 
+            it('answers the Device Manager through js-controller with one card per camera', async function () {
+                this.timeout(30_000);
+                const info = await send('dm:instanceInfo', {});
+                assert.equal(info.apiVersion, 'v3');
+                assert.equal(info.error, undefined);
+                const loaded = await send('dm:loadDevices', {});
+                assert.deepEqual(
+                    loaded.add.map(d => [d.id, d.name]),
+                    [
+                        ['cafe_door', 'Café Door'],
+                        ['garden', 'Garden'],
+                    ],
+                );
+                assert.equal(loaded.total, 2);
+                assert.deepEqual(
+                    loaded.add[0].actions.map(a => a.id),
+                    ['record', 'snapshot'],
+                );
+                // the own commands still work next to it
+                const cameras = await send('listCameras', {});
+                assert.equal(cameras.length, 2);
+            });
+
             it('fires a trigger only while its condition holds, and a skipped event starts no cooldown', async function () {
                 this.timeout(60_000);
                 const shotTime = async () =>
@@ -251,6 +274,83 @@ tests.integration(path.join(__dirname, '..'), {
                 assert.ok(clip.pre > 0 && clip.pre <= 2, `pre ${clip.pre}`);
                 assert.ok(clip.duration > 2, `duration ${clip.duration}`);
                 assert.ok(fs.readdirSync(path.join(dir, 'prebuffer', 'garden')).some(n => n.endsWith('.mkv')));
+            });
+        });
+
+        suite('Notification settings of 0.4.x become profiles at the first start', getHarness => {
+            let harness;
+            const id = 'system.adapter.cam-recorder.0';
+
+            before(async function () {
+                this.timeout(60_000);
+                harness = getHarness();
+                // the whole instance object, so no row of another suite is merged into these tables
+                const obj = await harness.objects.getObjectAsync(id);
+                obj.native = {
+                    ...obj.native,
+                    cameras: [],
+                    prebufferEnabled: false,
+                    remoteEnabled: false,
+                    profiles: [],
+                    profilesMigrated: false,
+                    telegramInstance: 'telegram.0',
+                    telegramUser: 'Alex',
+                    telegramCaption: '{camera} rings',
+                    notifyTargets: [
+                        { enabled: true, name: 'Father', instance: 'max.0', recipient: '222', template: '' },
+                        { enabled: true, name: 'Papa', instance: 'max.0', recipient: '222', template: '' },
+                    ],
+                    triggers: [
+                        { enabled: true, stateId: 'a.0.all', camera: 'Door', telegram: true, recipients: '' },
+                        { enabled: true, stateId: 'a.0.papa', camera: 'Door', telegram: true, recipients: 'Papa' },
+                        { enabled: true, stateId: 'a.0.off', camera: 'Door', telegram: false, recipients: '' },
+                    ],
+                    timelapses: [{ enabled: true, camera: 'Door', notify: true, recipients: 'Telegram' }],
+                };
+                await harness.objects.setObjectAsync(id, obj);
+                // not waiting for info.connection: after the write the adapter waits for the restart
+                // by the js-controller, which the test harness does not do
+                await harness.startAdapterAndWait();
+            });
+
+            after(async function () {
+                this.timeout(30_000);
+                await harness?.stopAdapter();
+            });
+
+            it('writes the profiles once into the instance object and keeps the old keys', async function () {
+                this.timeout(30_000);
+                let native;
+                for (let i = 0; i < 40; i++) {
+                    native = (await harness.objects.getObjectAsync(id))?.native;
+                    if (native?.profilesMigrated === true) {
+                        break;
+                    }
+                    await new Promise(r => setTimeout(r, 500));
+                }
+                assert.equal(native?.profilesMigrated, true);
+                assert.deepEqual(
+                    native.profiles.map(p => [p.name, p.instance, p.recipient, p.attach, p.text]),
+                    [
+                        ['Telegram', 'telegram.0', 'Alex', 'all', '{camera} rings'],
+                        ['Father', 'max.0', '222', 'all', '{camera} rings'],
+                    ],
+                );
+                assert.deepEqual(
+                    native.triggers.map(t => t.profiles),
+                    ['Telegram, Father', 'Father', ''],
+                );
+                assert.deepEqual(
+                    native.timelapses.map(t => t.profiles),
+                    ['Telegram'],
+                );
+                assert.equal(native.telegramInstance, 'telegram.0');
+                assert.equal(native.notifyTargets.length, 2);
+
+                // nothing is written a second time
+                const ts = (await harness.objects.getObjectAsync(id))?.ts;
+                await new Promise(r => setTimeout(r, 3000));
+                assert.equal((await harness.objects.getObjectAsync(id))?.ts, ts);
             });
         });
     },

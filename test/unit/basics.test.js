@@ -147,8 +147,7 @@ describe('configuration', () => {
                 format: '',
                 condition: 'truthy',
                 cooldown: 10,
-                telegram: true,
-                recipients: [],
+                profiles: [],
                 onlyIf: null,
             },
         );

@@ -270,17 +270,12 @@
                             ]
                         },
                         {
-                            "type": "checkbox",
-                            "attr": "telegram",
-                            "title": "Notify",
-                            "width": "5%",
-                            "default": true
-                        },
-                        {
-                            "type": "text",
-                            "attr": "recipients",
-                            "title": "Send to",
-                            "width": "17%",
+                            "type": "autocompleteSendTo",
+                            "attr": "profiles",
+                            "title": "Message",
+                            "width": "22%",
+                            "command": "listProfiles",
+                            "freeSolo": true,
                             "default": ""
                         }
                     ]
@@ -448,54 +443,32 @@
                 }
             }
         },
-        "_telegramTab": {
+        "_sendTab": {
             "type": "panel",
-            "label": "Notifications",
+            "label": "Send",
             "items": {
-                "_telegramHelp": {
+                "_sendHelp": {
                     "type": "staticText",
-                    "text": "Triggers with the Notify column checked send their result to this Telegram instance and to the further targets below. Scripts ask for it with telegram: true.",
+                    "text": "A profile says where a result goes and what is sent. Triggers and timelapses choose profiles by name in their column Message (several separated by commas, empty = no message); scripts with profiles: 'Name'.",
                     "xs": 12,
                     "sm": 12,
                     "md": 12,
                     "lg": 12,
                     "xl": 12
                 },
-                "telegramInstance": {
-                    "type": "instance",
-                    "label": "Telegram instance",
-                    "adapter": "telegram",
-                    "allowDeactivate": true,
-                    "newLine": true,
-                    "xs": 12,
-                    "sm": 6,
-                    "md": 4,
-                    "lg": 3,
-                    "xl": 3
-                },
-                "telegramUser": {
-                    "type": "text",
-                    "label": "Telegram user (empty = all users)",
-                    "xs": 12,
-                    "sm": 6,
-                    "md": 4,
-                    "lg": 3,
-                    "xl": 3
-                },
-                "telegramCaption": {
-                    "type": "text",
-                    "label": "Caption",
-                    "help": "{camera}, {date} and {time} are replaced",
+                "_attachHelp": {
+                    "type": "staticText",
+                    "text": "Attachment: Everything sends snapshots, clips and timelapse videos, Snapshot only and Clip only one kind, Text only sends the text at once when the trigger fires, without a file. Text: {camera}, {date} and {time} are replaced.",
                     "newLine": true,
                     "xs": 12,
                     "sm": 12,
-                    "md": 8,
-                    "lg": 6,
-                    "xl": 6
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
                 },
                 "_targetsHelp": {
                     "type": "staticText",
-                    "text": "Further targets: MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.",
+                    "text": "Telegram, MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.",
                     "newLine": true,
                     "xs": 12,
                     "sm": 12,
@@ -503,17 +476,7 @@
                     "lg": 12,
                     "xl": 12
                 },
-                "_namesHelp": {
-                    "type": "staticText",
-                    "text": "Name: a trigger or timelapse with names in its column Send to notifies only those targets; the Telegram instance above is called Telegram. Send to empty = all targets.",
-                    "newLine": true,
-                    "xs": 12,
-                    "sm": 12,
-                    "md": 12,
-                    "lg": 12,
-                    "xl": 12
-                },
-                "notifyTargets": {
+                "profiles": {
                     "type": "table",
                     "newLine": true,
                     "xs": 12,
@@ -526,24 +489,25 @@
                             "type": "checkbox",
                             "attr": "enabled",
                             "title": "Active",
-                            "width": "6%",
+                            "width": "5%",
                             "default": true
                         },
                         {
                             "type": "text",
                             "attr": "name",
                             "title": "Name",
-                            "width": "14%",
+                            "width": "12%",
                             "default": ""
                         },
                         {
                             "type": "autocomplete",
                             "attr": "instance",
                             "title": "Instance",
-                            "width": "18%",
+                            "width": "13%",
                             "freeSolo": true,
                             "default": "",
                             "options": [
+                                "telegram.0",
                                 "max.0",
                                 "email.0",
                                 "pushover.0",
@@ -552,22 +516,53 @@
                                 "signal-cmb.0",
                                 "whatsapp-cmb.0",
                                 "gotify.0",
-                                "ntfy.0",
-                                "telegram.0"
+                                "ntfy.0"
                             ]
                         },
                         {
                             "type": "text",
                             "attr": "recipient",
                             "title": "Recipient",
-                            "width": "20%",
+                            "width": "14%",
                             "default": ""
+                        },
+                        {
+                            "type": "select",
+                            "attr": "attach",
+                            "title": "Attachment",
+                            "width": "12%",
+                            "default": "all",
+                            "options": [
+                                {
+                                    "label": "Everything",
+                                    "value": "all"
+                                },
+                                {
+                                    "label": "Snapshot only",
+                                    "value": "snapshot"
+                                },
+                                {
+                                    "label": "Clip only",
+                                    "value": "clip"
+                                },
+                                {
+                                    "label": "Text only",
+                                    "value": "none"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "text",
+                            "attr": "text",
+                            "title": "Text",
+                            "width": "18%",
+                            "default": "{camera} {date} {time}"
                         },
                         {
                             "type": "text",
                             "attr": "template",
                             "title": "Template (JSON, optional)",
-                            "width": "42%",
+                            "width": "26%",
                             "default": ""
                         }
                     ]
@@ -638,17 +633,12 @@
                             "default": 10
                         },
                         {
-                            "type": "checkbox",
-                            "attr": "notify",
-                            "title": "Notify",
-                            "width": "12%",
-                            "default": false
-                        },
-                        {
-                            "type": "text",
-                            "attr": "recipients",
-                            "title": "Send to",
-                            "width": "20%",
+                            "type": "autocompleteSendTo",
+                            "attr": "profiles",
+                            "title": "Message",
+                            "width": "32%",
+                            "command": "listProfiles",
+                            "freeSolo": true,
                             "default": ""
                         }
                     ]

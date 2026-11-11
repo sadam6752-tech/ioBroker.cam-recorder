@@ -43,7 +43,7 @@ describe('timelapse: rules', () => {
         const { cameras } = normalizeCameras([{ name: 'Door', url: 'rtsp://h/1' }]);
         const { jobs, problems } = normalizeTimelapses(
             [
-                { camera: 'Door', interval: 0, at: '6:30', fps: 500, notify: true },
+                { camera: 'Door', interval: 0, at: '6:30', fps: 500, profiles: 'Alex' },
                 { camera: 'Door' },
                 { camera: 'Garden' },
             ],
@@ -57,8 +57,7 @@ describe('timelapse: rules', () => {
                 interval: 1,
                 at: { hour: 6, minute: 30 },
                 fps: 60,
-                notify: true,
-                recipients: [],
+                profiles: ['Alex'],
             },
         );
         assert.equal(problems.length, 2);
@@ -99,7 +98,7 @@ describe('timelapse with real ffmpeg', function () {
         });
         return new Timelapse({
             camera,
-            job: { camera, interval: 60, at: { hour: 23, minute: 55 }, fps: 10, notify: false },
+            job: { camera, interval: 60, at: { hour: 23, minute: 55 }, fps: 10, profiles: [] },
             settings,
             outputDir: out,
             recorder,

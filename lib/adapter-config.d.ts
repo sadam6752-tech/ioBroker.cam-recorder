@@ -5,11 +5,18 @@
 import { native } from '../io-package.json';
 
 // the tables are empty in io-package.json, so their row type is declared here
-type _AdapterConfig = Omit<typeof native, 'cameras' | 'triggers' | 'notifyTargets' | 'timelapses'> & {
+type _AdapterConfig = Omit<typeof native, 'cameras' | 'triggers' | 'profiles' | 'timelapses'> & {
     cameras: Array<Record<string, any>>;
     triggers: Array<Record<string, any>>;
-    notifyTargets: Array<Record<string, any>>;
+    profiles: Array<Record<string, any>>;
     timelapses: Array<Record<string, any>>;
+    /** set once the notification settings of the versions before 0.5 became profiles */
+    profilesMigrated?: boolean;
+    // keys of the versions before 0.5, still in older instance objects
+    telegramInstance?: string;
+    telegramUser?: string;
+    telegramCaption?: string;
+    notifyTargets?: Array<Record<string, any>>;
 };
 
 // Augment the globally declared type ioBroker.AdapterConfig

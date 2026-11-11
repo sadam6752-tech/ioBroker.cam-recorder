@@ -14,7 +14,7 @@
 
 Records short video clips (MP4 or GIF) and snapshots (JPEG) from RTSP cameras, for example a
 [DoorBird](https://www.doorbird.com/) door station, when the doorbell rings or motion is detected, and can send the
-result to Telegram.
+result to Telegram, MAX, email and other messengers.
 
 - **ffmpeg is included.** The adapter brings its own ffmpeg binary (package
   [ffmpeg-static](https://github.com/eugeneware/ffmpeg-static)), nothing has to be installed on the system.
@@ -58,8 +58,7 @@ diacritics are transliterated (`ü` → `ue`, `é` → `e`), other special chara
 | Action                     | Video clip, snapshot, or both (both run at the same time, the photo arrives first)            |
 | Duration                   | Seconds, 0 = value of the _Recording_ tab                                                     |
 | Format                     | MP4 video, GIF animation, or _Default_                                                        |
-| Notify                     | Send the result to Telegram and the further targets of the _Notifications_ tab                |
-| Send to                    | Names of notification targets, comma separated; empty = all (see _Recipients by name_)        |
+| Message                    | Profiles of the _Send_ tab that get the result, several comma separated; empty = no message   |
 
 **Conditions.** A trigger with _Only if_ fires only while that state compares as set: `=`, `≠`, `>` or `<`
 against _Value_. Examples: `0_userdata.0.away` `=` `true` (only when nobody is home), `javascript.0.isNight` `=`
@@ -106,19 +105,29 @@ the clip also contains the seconds **before** the event.
 - The pieces go to the system temp folder (`/tmp/iobroker-cam-recorder.0-prebuffer` on Linux) unless you enter a
   folder. A RAM disk (tmpfs) is a good choice on systems with an SD card.
 
-### Notifications
+### Send
 
-**Telegram:** instance, user (empty = all users of the bot) and caption: `{camera}`, `{date}` and `{time}` are replaced, the date in
-the date format of the ioBroker system settings (default caption `{camera} {date} {time}`, e.g.
-`DoorBird 17.10.2026 13:22:12`). The adapter passes
-the file path to the [Telegram adapter](https://github.com/iobroker-community-adapters/ioBroker.telegram), which sends
-MP4 as video, GIF as animation and JPEG as photo. Both adapters must run on the same host.
+A **profile** says where a result goes and what is sent. Triggers and timelapses choose profiles by name in their
+column _Message_ (pick one from the list, or type several names separated by commas; empty or `—` = no message),
+scripts with `profiles: 'Name'`. The list of the column shows the profiles of the saved settings, so save once after
+adding a profile.
 
-**Further targets** get the same results. Pick the instance; _Recipient_ is optional (empty = the default of that
-adapter):
+| Column     | Meaning                                                                                                  |
+| ---------- | -------------------------------------------------------------------------------------------------------- |
+| Name       | Unique name of the profile                                                                               |
+| Instance   | Messaging instance, e.g. `telegram.0`, `max.0`, `email.0` (see the table below)                          |
+| Recipient  | Optional, in the form the adapter expects; empty = the default of that adapter                           |
+| Attachment | _Everything_ (snapshots, clips, timelapse videos), _Snapshot only_, _Clip only_, or _Text only_          |
+| Text       | Caption: `{camera}`, `{date}` and `{time}` are replaced, the date in the format of the system settings   |
+| Template   | Optional JSON message for adapters without a built-in format, or to replace the built-in one (see below) |
+
+_Text only_ sends the text at once when the trigger fires, before the recording is finished, without a file — for
+example a quick "Someone is at the door" while the clip with the file goes through a second profile. For a timelapse
+or a script it is sent when the file is ready.
 
 | Adapter        | What arrives                               | Recipient                                          |
 | -------------- | ------------------------------------------ | -------------------------------------------------- |
+| `telegram`     | the file (MP4 as video, GIF as animation)  | user, empty = all users of the bot                 |
 | `max`          | the file (clip as video, picture as image) | user ID, negative group chat ID, empty = all users |
 | `email`        | the file as attachment, caption as subject | address                                            |
 | `pushover`     | pictures as attachment, a clip as text     | device                                             |
@@ -129,23 +138,67 @@ adapter):
 | `gotify`       | text                                       | –                                                  |
 | `ntfy`         | text                                       | topic                                              |
 
-For any other adapter enter a **template**: the JSON message for its `send` command, with the placeholders `{file}`,
-`{fileName}`, `{fileUrl}`, `{caption}`, `{camera}`, `{format}`, `{duration}`, `{recipient}` and `{text}`, for example
-`{"to": "{recipient}", "message": "{caption}", "file": "{file}"}`. A template also replaces the built-in format of a
-known adapter. All targets must run on the same host as this adapter, since they read the file from its path.
+All messaging adapters must run on the same host as this adapter, since they read the file from its path.
 
-**Recipients by name.** Give targets a _Name_; the Telegram instance of the upper part is always called `Telegram`.
-A trigger or timelapse with names in its column _Send to_ notifies only those targets, an empty _Send to_ notifies
-all of them. Example for a door station with two buttons for two flats:
+Example for a door station with two buttons for two flats:
 
-| Name   | Instance   | Recipient |
-| ------ | ---------- | --------- |
-| Me     | telegram.0 | Alex      |
-| Father | telegram.0 | Father    |
-| Father | max.0      | 123456    |
+| Name         | Instance   | Recipient | Attachment |
+| ------------ | ---------- | --------- | ---------- |
+| Me           | telegram.0 | Alex      | Everything |
+| Father       | telegram.0 | Father    | Clip only  |
+| Father (MAX) | max.0      | 123456    | Text only  |
 
-Trigger `doorbird.0.Doorbell.1.trigger` → _Send to_ `Me`; trigger `doorbird.0.Doorbell.2.trigger` → _Send to_
-`Father` (Telegram and MAX). Several targets may share a name. A name that matches no target is reported at the start.
+Trigger `doorbird.0.Doorbell.1.trigger` → _Message_ `Me`; trigger `doorbird.0.Doorbell.2.trigger` → _Message_
+`Father, Father (MAX)`. A name that matches no active profile is reported at the start.
+
+**Update from 0.4.x.** The first start after the update turns the settings of the former _Notifications_ tab into
+profiles, once: the Telegram instance becomes the profile `Telegram`, every further target a profile with its name
+(identical targets only once, a target without a name is named after instance and recipient), all with the former
+caption. Each trigger and timelapse gets the profiles it sent to before; an empty _Send to_ becomes the list of all
+of them. The instance restarts once after this. Scripts with `telegram: true` keep working (see _Scripts_).
+
+#### Template
+
+The column _Template_ takes the JSON message that the adapter sends to the instance of the profile, as
+`sendTo('<instance>', 'send', <template>)`. Leave it empty for the built-in format of the table above. Enter a
+template for an adapter that is not in the table, or to replace the built-in format, e.g. to add options.
+
+| Placeholder   | Replaced by                                                                   |
+| ------------- | ----------------------------------------------------------------------------- |
+| `{file}`      | full path of the file                                                         |
+| `{fileName}`  | name of the file without folder                                               |
+| `{fileUrl}`   | the path as `file:///…` URL                                                   |
+| `{caption}`   | the _Text_ of the profile, with camera, date and time filled in               |
+| `{camera}`    | name of the camera                                                            |
+| `{format}`    | `mp4`, `gif` or `jpg`                                                         |
+| `{duration}`  | length of the clip in seconds                                                 |
+| `{recipient}` | the _Recipient_ of the profile                                                |
+| `{text}`      | a ready text, e.g. `Door 09:00: mp4 clip 10 s (door_2026-11-11_09-00-00.mp4)` |
+
+- Placeholders are replaced inside the strings of the JSON, so their values are always strings, also `{duration}`.
+  Write numbers and `true`/`false` directly into the JSON.
+- Quotes in the caption cannot break the template: it is parsed as JSON first, the values are filled in after.
+- With _Text only_, `{file}`, `{fileName}`, `{fileUrl}`, `{format}` and `{duration}` are empty.
+- A template that is no valid JSON is reported in the log at the start.
+
+Telegram without notification sound:
+
+```json
+{ "text": "{file}", "caption": "{caption}", "user": "{recipient}", "disable_notification": true }
+```
+
+Pushover with high priority; Pushover attaches pictures only, so set the _Attachment_ of this profile to
+_Snapshot only_:
+
+```json
+{ "message": "{text}", "file": "{file}", "priority": 1 }
+```
+
+Any other adapter:
+
+```json
+{ "to": "{recipient}", "title": "{camera}", "body": "{caption}", "attachment": "{file}" }
+```
 
 ### Timelapse
 
@@ -156,7 +209,7 @@ is made. While the pre-recording runs, the pictures come from the buffer, withou
 
 - The button `cameras.<camera>.timelapse` (or `sendTo(…, 'timelapse', 'Front Door')`) makes the video at once.
 - If the adapter was stopped at the time of the video, the missed video is made at the next start.
-- _Notify_ sends the video to Telegram and the further targets.
+- _Message_ sends the video through the named profiles of the _Send_ tab.
 - Disk space: one picture per minute at 640 px is about 50 MB a day until the video is made; at most 10 000 pictures
   wait per camera. Old timelapse videos are deleted after the maximum age of the _Storage_ tab.
 
@@ -200,6 +253,22 @@ The newest file of each camera and kind is also copied into the ioBroker file st
   allow only one stream at a time.
 - **Camera timeout**: seconds until an unreachable camera counts as failed.
 
+## Device Manager
+
+With admin 7 or newer, the tab _Devices_ (Device Manager) shows one card per configured camera:
+
+- **Status:** online or offline. With pre-recording the camera counts as online while the buffer runs; without it,
+  while the last recording or snapshot worked. The last error appears as a warning on the card.
+- **Recording now:** a red dot with _Recording_ or _Taking a snapshot_ while ffmpeg works for this camera.
+- **Last clip** and **last snapshot** with date and time, and the pre-recording seconds if it is on.
+- **Picture:** the last snapshot, when _Copy the newest file into the ioBroker file storage_ is on (tab _Storage_).
+- **Record now** and **Snapshot:** the same as the buttons `cameras.<camera>.record` and `.snapshot` — a clip with
+  the length and format of the _Recording_ tab, or a picture, without notifications. The dialog shows the file name
+  or the error, then the card is updated.
+
+The cameras, triggers and all other settings stay in the settings of the instance; the Device Manager only shows
+them and starts recordings.
+
 ## States
 
 Per camera below `cam-recorder.0.cameras.<camera>`:
@@ -240,14 +309,16 @@ on({ id: 'doorbird.0.Doorbell.1.trigger', change: 'any' }, () => {
 });
 ```
 
-| Command       | Message                                                                         | Answer                                                                                                   |
-| ------------- | ------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| `record`      | `{ camera, duration?, pre?, format?: 'mp4' \| 'gif', width?, fps?, telegram? }` | `{ file, size, format, duration, pre, extended, fromBuffer, realDuration, camera, time }` or `{ error }` |
-| `snapshot`    | `{ camera, width?, live?, telegram? }` or just the camera name                  | as above, `format: 'jpg'`                                                                                |
-| `timelapse`   | `{ camera }` or just the camera name                                            | the video as above, or `{ error }` when fewer than two pictures wait                                     |
-| `listCameras` | –                                                                               | `[{ value, label }]`                                                                                     |
+| Command        | Message                                                                         | Answer                                                                                                   |
+| -------------- | ------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `record`       | `{ camera, duration?, pre?, format?: 'mp4' \| 'gif', width?, fps?, profiles? }` | `{ file, size, format, duration, pre, extended, fromBuffer, realDuration, camera, time }` or `{ error }` |
+| `snapshot`     | `{ camera, width?, live?, profiles? }` or just the camera name                  | as above, `format: 'jpg'`                                                                                |
+| `timelapse`    | `{ camera }` or just the camera name                                            | the video as above, or `{ error }` when fewer than two pictures wait                                     |
+| `listCameras`  | –                                                                               | `[{ value, label }]`                                                                                     |
+| `listProfiles` | –                                                                               | `[{ value, label }]`                                                                                     |
 
-`telegram: true` sends the result to the notification targets as well, `recipients: 'Father'` (or a list) only to those names.
+`profiles: 'Me, Father'` (or a list) sends the result through those profiles of the _Send_ tab. The way of 0.4.x
+still works: `telegram: true` sends through every active profile, with `recipients: 'Father'` only through those.
 `pre` limits the seconds before the event (at most the value set for the camera, `0` = no pre-recording for this
 clip); `duration` is always the time after the event, and the answer's `duration` is the whole clip.
 
@@ -277,6 +348,14 @@ adapter.
     ### **WORK IN PROGRESS**
 -->
 
+### 0.5.0 (2026-11-11)
+
+- (sadam6752-tech) New tab _Send_ with notification profiles (instance, recipient, attachment, text, template); the
+  trigger and timelapse tables choose profiles in one column _Message_ instead of _Notify_ and _Send to_. The
+  first start turns the settings of 0.4.x into profiles, once; scripts with `telegram: true` keep working
+- (sadam6752-tech) Device Manager: one card per camera with online status, recording now, time of the last clip and
+  snapshot, the last snapshot as picture, and the actions "Record now" and "Snapshot" (admin 7 or newer)
+
 ### 0.4.5 (2026-11-11)
 
 - (sadam6752-tech) Trigger table easier to read: columns in a new order (state, when, cooldown, condition,
@@ -295,11 +374,6 @@ adapter.
 
 - (sadam6752-tech) Built-in notification format for the MAX adapter (clips as video, pictures as image, to a user,
   a group chat or all users); built from the documentation of ioBroker.max, not yet tried with a real MAX bot
-
-### 0.4.1 (2026-10-18)
-
-- (sadam6752-tech) Timelapse: the states `timelapseFrames` (pictures waiting) and `timelapseNextVideo` (time of the
-  next video) show the progress
 
 Older changes are in [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 

@@ -36,24 +36,30 @@ export interface Trigger {
     condition: 'truthy' | 'any';
     /** Seconds in which a further event is ignored */
     cooldown: number;
-    /** Send the result to Telegram and the further notification targets */
-    telegram: boolean;
-    /** Names of the targets to send to, empty = all */
-    recipients: string[];
+    /** Names of the profiles of the tab Send that get the result, empty = none */
+    profiles: string[];
     /** Only fire when this state has the given value; null = always */
     onlyIf: { stateId: string; op: 'eq' | 'ne' | 'gt' | 'lt'; value: string } | null;
 }
 
-/** A further notification target besides the Telegram tab */
+/** Where a message goes */
 export interface NotifyTarget {
-    /** Name that triggers and timelapses use to choose this target, may be empty */
-    name: string;
     /** Instance, e.g. `email.0` */
     instance: string;
     /** Recipient in the form the adapter expects (address, user, phone, channel), empty = its default */
     recipient: string;
     /** JSON message with placeholders for adapters without a known format, empty = built-in format */
     template: string;
+}
+
+/** A row of the tab Send: a reusable notification */
+export interface NotifyProfile extends NotifyTarget {
+    /** Unique name, triggers, timelapses and scripts choose the profile with it */
+    name: string;
+    /** What the profile sends: every file, snapshots, clips (and timelapse videos), or a text without file */
+    attach: 'all' | 'snapshot' | 'clip' | 'none';
+    /** Caption with `{camera}`, `{date}` and `{time}` */
+    text: string;
 }
 
 /** Timelapse of one camera */
@@ -66,10 +72,8 @@ export interface TimelapseJob {
     at: { hour: number; minute: number };
     /** Frames per second of the video */
     fps: number;
-    /** Send the video to the notification targets */
-    notify: boolean;
-    /** Names of the targets to send to, empty = all */
-    recipients: string[];
+    /** Names of the profiles that get the video, empty = none */
+    profiles: string[];
 }
 
 /** Settings of the copy to an SFTP server (NAS) */
@@ -120,20 +124,14 @@ export interface Settings {
     maxAgeDays: number;
     /** Copy the newest result into the ioBroker file storage */
     copyToFiles: boolean;
-    /** e.g. `telegram.0`, empty = off */
-    telegramInstance: string;
-    /** Empty = all users */
-    telegramUser: string;
-    /** Caption with `{camera}`, `{date}` and `{time}` */
-    telegramCaption: string;
     /** Main switch of the pre-recording, off by default */
     prebufferEnabled: boolean;
     /** Folder of the segments, empty = temp folder of the system */
     prebufferDir: string;
     /** Longest clip in seconds when further events extend it */
     maxClipLength: number;
-    /** Further notification targets */
-    notifyTargets: NotifyTarget[];
+    /** Active profiles of the tab Send */
+    profiles: NotifyProfile[];
     /** Copy to an SFTP server */
     remote: RemoteSettings;
 }

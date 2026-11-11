@@ -1,5 +1,10 @@
 # Older changes
 
+### 0.4.1 (2026-10-18)
+
+- (sadam6752-tech) Timelapse: the states `timelapseFrames` (pictures waiting) and `timelapseNextVideo` (time of the
+  next video) show the progress
+
 ### 0.4.0 (2026-10-18)
 
 - (sadam6752-tech) Timelapse: a picture every few minutes, once a day a video; missed videos are made at the next

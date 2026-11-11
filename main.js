@@ -21,12 +21,21 @@ const { FfmpegRunner, probeFfmpeg, resolveFfmpegPath } = require('./lib/ffmpeg-r
 const { Recorder } = require('./lib/recorder');
 const { Prebuffer } = require('./lib/prebuffer');
 const { removePartials } = require('./lib/storage');
-const { triggerDecision, formatCaption } = require('./lib/triggers');
+const { triggerDecision } = require('./lib/triggers');
 const { maskSecrets } = require('./lib/mask');
 const { NAMES } = require('./lib/names');
 const { conditionMet, opSymbol } = require('./lib/conditions');
-const { KNOWN, buildMessage, parseNames, selectTargets } = require('./lib/notify');
+const { KNOWN, parseNames } = require('./lib/notify');
+const {
+    pickProfiles,
+    planNotify,
+    profileMessage,
+    needsMigration,
+    migrateNotify,
+    profileProblems,
+} = require('./lib/profiles');
 const { Timelapse } = require('./lib/timelapse');
+const { CameraDeviceManagement } = require('./lib/device-manager');
 const {
     copyFileToRemote,
     remoteSettingsProblems,
@@ -129,6 +138,9 @@ class CamRecorder extends utils.Adapter {
             this._resolveReady = resolve;
         });
 
+        // one card per camera in the Device Manager; it answers the messages starting with "dm:"
+        this.deviceManagement = new CameraDeviceManagement(this);
+
         this.on('ready', this.onReady.bind(this));
         this.on('stateChange', this.onStateChange.bind(this));
         this.on('message', this.onMessage.bind(this));
@@ -142,16 +154,19 @@ class CamRecorder extends utils.Adapter {
         try {
             await this.setState('info.connection', false, true);
             await this._protectStoredCameras();
+            if (await this._migrateProfiles()) {
+                return;
+            }
 
             this.settings = normalizeSettings(this.config);
             const cams = normalizeCameras(this.config.cameras);
             this.cameras = cams.cameras;
             const trig = normalizeTriggers(this.config.triggers, this.cameras);
-            this._checkTargets();
+            this._checkProfiles();
             for (const trigger of trig.triggers) {
-                this._checkNames(`Trigger ${trigger.stateId}`, trigger.telegram ? trigger.recipients : []);
+                this._checkNames(`Trigger ${trigger.stateId}`, trigger.profiles);
             }
-            for (const problem of [...cams.problems, ...trig.problems]) {
+            for (const problem of [...cams.problems, ...trig.problems, ...profileProblems(this.config.profiles)]) {
                 this.log.warn(problem);
             }
             for (const trigger of trig.triggers) {
@@ -162,15 +177,6 @@ class CamRecorder extends utils.Adapter {
 
             await this._createObjects();
             await this._readDateFormat();
-
-            const silent = trig.triggers.filter(t => t.telegram);
-            if (silent.length && !this.settings.telegramInstance) {
-                this.log.warn(
-                    `${silent.length} trigger(s) should send to Telegram, but no Telegram instance is selected (tab Telegram): ${silent
-                        .map(t => t.stateId)
-                        .join(', ')}`,
-                );
-            }
 
             const outputDir = String(this.config.outputDir || '').trim()
                 ? path.resolve(String(this.config.outputDir).trim())
@@ -236,6 +242,40 @@ class CamRecorder extends utils.Adapter {
             this.log.error(`Start failed: ${maskSecrets(err.message)}`);
         } finally {
             this._resolveReady();
+        }
+    }
+
+    /**
+     * Turns the notification settings of the versions before 0.5 (Telegram instance, further
+     * targets, columns Notify and Send to) into profiles of the tab Send, once. The js-controller
+     * restarts the instance after the write.
+     *
+     * @returns {Promise<boolean>} True when the settings were written and the instance restarts
+     */
+    async _migrateProfiles() {
+        const id = `system.adapter.${this.namespace}`;
+        try {
+            const obj = await this.getForeignObjectAsync(id);
+            const native = obj?.native;
+            if (!native || !needsMigration(native)) {
+                return false;
+            }
+            const changes = migrateNotify(native);
+            Object.assign(this.config, changes);
+            await this.extendForeignObjectAsync(id, { native: changes });
+            this.log.info(
+                `Notifications are now profiles of the tab Send (${changes.profiles.length} profile(s): ${changes.profiles
+                    .map(p => p.name)
+                    .join(', ')}). The adapter restarts once.`,
+            );
+            return true;
+        } catch (err) {
+            this.log.warn(`Could not turn the notification settings into profiles: ${maskSecrets(err.message)}`);
+            if (needsMigration(this.config)) {
+                // run with the profiles in memory, the next start tries the write again
+                Object.assign(this.config, migrateNotify(this.config));
+            }
+            return false;
         }
     }
 
@@ -338,9 +378,7 @@ class CamRecorder extends utils.Adapter {
             return;
         }
         for (const job of jobs) {
-            if (job.notify) {
-                this._checkNames(`Timelapse of camera "${job.camera.name}"`, job.recipients);
-            }
+            this._checkNames(`Timelapse of camera "${job.camera.name}"`, job.profiles);
             const timelapse = new Timelapse({
                 camera: job.camera,
                 job,
@@ -348,7 +386,7 @@ class CamRecorder extends utils.Adapter {
                 outputDir,
                 recorder: this.recorder,
                 timers: this._ownTimers(),
-                onVideo: result => void this._deliverTimelapse(job.camera, result, job.notify ? job.recipients : false),
+                onVideo: result => void this._deliverTimelapse(job.camera, result, job.profiles),
                 onWarning: message => this.log.warn(message),
                 onProgress: ({ frames, nextVideo }) => {
                     void this.setState(`cameras.${job.camera.id}.timelapseFrames`, frames, true);
@@ -393,7 +431,7 @@ class CamRecorder extends utils.Adapter {
      *
      * @param {Camera} camera - Camera
      * @param {RecordResult} result - Video
-     * @param {false | string[]} notify - false, or the names to send to (empty = all)
+     * @param {string[]} notify - Names of the profiles to send to, empty = none
      */
     async _deliverTimelapse(camera, result, notify) {
         const base = `cameras.${camera.id}`;
@@ -403,9 +441,7 @@ class CamRecorder extends utils.Adapter {
             `Camera "${camera.name}": timelapse saved, ${result.duration} s, ${formatSize(result.size)}: ${path.basename(result.file)}`,
         );
         this._queueRemote(camera, result);
-        if (notify) {
-            await this._notify(result, notify);
-        }
+        await this._notify(result, notify);
     }
 
     /**
@@ -498,7 +534,7 @@ class CamRecorder extends utils.Adapter {
      * @param {Camera} camera - Camera
      * @param {'record' | 'snapshot'} kind - What to take
      * @param {RecordRequest} request - Options
-     * @param {false | string[]} notify - false, or the names to send the result to (empty = all)
+     * @param {string[]} notify - Names of the profiles to send the result to, empty = none
      * @returns {Promise<RecordResult>} The finished file
      */
     async _take(camera, kind, request, notify) {
@@ -535,9 +571,7 @@ class CamRecorder extends utils.Adapter {
             this.log.debug(`Camera "${camera.name}": full path ${result.file}`);
             await this._copyToFiles(camera, result);
             this._queueRemote(camera, result);
-            if (notify) {
-                await this._notify(result, notify);
-            }
+            await this._notify(result, notify);
             return result;
         } catch (err) {
             failed = true;
@@ -576,105 +610,72 @@ class CamRecorder extends utils.Adapter {
     }
 
     /**
-     * @param {RecordResult} result - Finished file
-     */
-    /**
-     * Sends the file to the Telegram instance of the Notifications tab and the further targets,
-     * or only to the named ones.
+     * Sends the file through the named profiles of the tab Send. A profile sends only the kinds
+     * of files of its column Attachment; a profile "Text only" sends the caption without file.
      *
      * @param {RecordResult} result - Finished file
-     * @param {string[]} [names] - Names to send to, empty = all
+     * @param {string[]} names - Names of the profiles, empty = none
      */
-    async _notify(result, names = []) {
-        const caption = formatCaption(
-            this.settings.telegramCaption,
-            result.camera,
-            new Date(result.time),
-            this.dateFormat,
-        ).trim();
-        const choice = selectTargets(names, this.settings.notifyTargets);
-        const jobs = choice.telegram ? [this._sendTelegram(result)] : [];
-        for (const target of choice.targets) {
-            jobs.push(this._sendToTarget(target, result, caption));
-        }
-        await Promise.all(jobs);
+    async _notify(result, names) {
+        const time = new Date(result.time);
+        await Promise.all(
+            planNotify(names, this.settings.profiles, result).map(send =>
+                this._sendProfile(send.profile, send.result, result.camera, time),
+            ),
+        );
     }
 
     /**
-     * @param {import('./lib/types').NotifyTarget} target - Target
-     * @param {RecordResult} result - Finished file
-     * @param {string} caption - Caption
+     * @param {import('./lib/types').NotifyProfile} profile - Profile
+     * @param {RecordResult | null} result - Finished file, null for a text without file
+     * @param {string} camera - Camera name
+     * @param {Date} time - Time of the event
      */
-    async _sendToTarget(target, result, caption) {
-        const name = path.basename(result.file);
+    async _sendProfile(profile, result, camera, time) {
+        const what = result ? path.basename(result.file) : `the text of "${camera}"`;
         try {
-            const { command, message } = buildMessage(target, result, caption);
-            await this.sendToAsync(target.instance, command, message, { timeout: 60_000 });
-            this.log.info(`Sent ${name} to ${target.instance}${target.recipient ? ` (${target.recipient})` : ''}`);
+            const { command, message } = profileMessage(profile, result, camera, time, this.dateFormat);
+            await this.sendToAsync(profile.instance, command, message, { timeout: 60_000 });
+            this.log.info(
+                `Sent ${what} through profile "${profile.name}" to ${profile.instance}${profile.recipient ? ` (${profile.recipient})` : ''}`,
+            );
         } catch (err) {
-            this.log.warn(`Could not send ${name} to ${target.instance}: ${err.message}`);
+            this.log.warn(
+                `Could not send ${what} through profile "${profile.name}" to ${profile.instance}: ${err.message}`,
+            );
         }
     }
 
     /**
-     * Warns about recipient names that match no target.
+     * Warns about profile names that match no profile.
      *
      * @param {string} where - Trigger or timelapse, for the message
      * @param {string[]} names - Names it sends to
      */
     _checkNames(where, names) {
-        const { unknown } = selectTargets(names, this.settings.notifyTargets);
+        const { unknown } = pickProfiles(names, this.settings.profiles);
         if (unknown.length) {
             this.log.warn(
-                `${where}: no notification target is named ${unknown.map(n => `"${n}"`).join(', ')} (tab Notifications, column Name)`,
+                `${where}: no active profile is named ${unknown.map(n => `"${n}"`).join(', ')} (tab Send, column Name)`,
             );
         }
     }
 
-    /** Names problems of the notification targets once at the start. */
-    _checkTargets() {
-        for (const target of this.settings.notifyTargets) {
-            const adapter = target.instance.split('.')[0];
-            if (target.template) {
+    /** Names problems of the profiles once at the start. */
+    _checkProfiles() {
+        for (const profile of this.settings.profiles) {
+            const adapter = profile.instance.split('.')[0];
+            if (profile.template) {
                 try {
-                    JSON.parse(target.template);
+                    JSON.parse(profile.template);
                 } catch (err) {
-                    this.log.warn(
-                        `Notification target ${target.instance}: the template is no valid JSON (${err.message})`,
-                    );
+                    this.log.warn(`Profile "${profile.name}": the template is no valid JSON (${err.message})`);
                 }
             } else if (!KNOWN.includes(adapter)) {
                 this.log.warn(
-                    `Notification target ${target.instance}: no built-in message format for "${adapter}", enter a template`,
+                    `Profile "${profile.name}": no built-in message format for "${adapter}", enter a template`,
                 );
             }
-        }
-    }
-
-    /**
-     * @param {RecordResult} result - Finished file
-     */
-    async _sendTelegram(result) {
-        const { telegramInstance, telegramUser, telegramCaption } = this.settings;
-        if (!telegramInstance) {
-            return;
-        }
-        /** @type {Record<string, string>} */
-        const payload = { text: result.file };
-        const caption = formatCaption(telegramCaption, result.camera, new Date(result.time), this.dateFormat).trim();
-        if (caption) {
-            payload.caption = caption;
-        }
-        if (telegramUser) {
-            payload.user = telegramUser;
-        }
-        try {
-            await this.sendToAsync(telegramInstance, 'send', payload, { timeout: 60_000 });
-            this.log.info(
-                `Sent ${path.basename(result.file)} to ${telegramInstance}${telegramUser ? ` (${telegramUser})` : ''}`,
-            );
-        } catch (err) {
-            this.log.warn(`Could not send ${path.basename(result.file)} to ${telegramInstance}: ${err.message}`);
         }
     }
 
@@ -703,12 +704,18 @@ class CamRecorder extends utils.Adapter {
         if (trigger.format) {
             request.format = trigger.format;
         }
-        const jobs = [];
+        // profiles "Text only" send their text at once, the others get the files when they are ready
+        const { chosen } = pickProfiles(trigger.profiles, this.settings.profiles);
+        const fileProfiles = chosen.filter(p => p.attach !== 'none').map(p => p.name);
+        /** @type {Promise<unknown>[]} */
+        const jobs = chosen
+            .filter(p => p.attach === 'none')
+            .map(p => this._sendProfile(p, null, camera.name, new Date()));
         if (trigger.action !== 'record') {
-            jobs.push(this._take(camera, 'snapshot', {}, trigger.telegram ? trigger.recipients : false));
+            jobs.push(this._take(camera, 'snapshot', {}, fileProfiles));
         }
         if (trigger.action !== 'snapshot') {
-            jobs.push(this._take(camera, 'record', request, trigger.telegram ? trigger.recipients : false));
+            jobs.push(this._take(camera, 'record', request, fileProfiles));
         }
         await Promise.allSettled(jobs);
         return true;
@@ -757,17 +764,19 @@ class CamRecorder extends utils.Adapter {
             void this._buildTimelapse(camera).catch(() => undefined);
             return;
         }
-        this._take(camera, match[2] === 'record' ? 'record' : 'snapshot', {}, false).catch(() => undefined);
+        this._take(camera, match[2] === 'record' ? 'record' : 'snapshot', {}, []).catch(() => undefined);
     }
 
     /**
-     * Commands: `record` and `snapshot` with `{camera, duration, format, width, fps, telegram}`,
-     * `listCameras` for the trigger table of the admin.
+     * Commands: `record` and `snapshot` with `{camera, duration, format, width, fps, profiles}`
+     * (`telegram: true` with `recipients` of the versions before 0.5 still works), `listCameras` and
+     * `listProfiles` for the tables of the admin.
      *
      * @param {ioBroker.Message} obj - Message
      */
     async onMessage(obj) {
-        if (!obj || typeof obj !== 'object') {
+        if (!obj || typeof obj !== 'object' || String(obj.command).startsWith('dm:')) {
+            // messages of the Device Manager are answered by this.deviceManagement
             return;
         }
         /** @param {ioBroker.MessagePayload} answer - Answer for the caller */
@@ -780,6 +789,10 @@ class CamRecorder extends utils.Adapter {
         try {
             if (obj.command === 'listCameras') {
                 reply(this.cameras.map(c => ({ value: c.name, label: c.name })));
+                return;
+            }
+            if (obj.command === 'listProfiles') {
+                reply(this.settings.profiles.map(p => ({ value: p.name, label: p.name })));
                 return;
             }
             if (obj.command === 'testRemote') {
@@ -809,7 +822,7 @@ class CamRecorder extends utils.Adapter {
                 reply({ error: `Unknown command "${obj.command}"` });
                 return;
             }
-            /** @type {RecordRequest & {camera?: string, telegram?: boolean, recipients?: string | string[]}} */
+            /** @type {RecordRequest & {camera?: string, profiles?: string | string[], telegram?: boolean, recipients?: string | string[]}} */
             const message =
                 typeof obj.message === 'string'
                     ? { camera: obj.message }
@@ -821,12 +834,29 @@ class CamRecorder extends utils.Adapter {
                 reply({ error: `Unknown camera "${message.camera ?? ''}"` });
                 return;
             }
-            const notify = message.telegram === true ? parseNames(message.recipients) : false;
-            const result = await this._take(camera, obj.command, message, notify);
+            const result = await this._take(camera, obj.command, message, this._scriptProfiles(message));
             reply(result);
         } catch (err) {
             reply({ error: err.message });
         }
+    }
+
+    /**
+     * Profiles a script asks for: `profiles: 'Alex, Father'`, or the way of the versions before
+     * 0.5, `telegram: true` with `recipients` (empty = every active profile).
+     *
+     * @param {{profiles?: unknown, telegram?: unknown, recipients?: unknown}} message - Message of the script
+     * @returns {string[]} Names of the profiles, empty = none
+     */
+    _scriptProfiles(message) {
+        if (message.profiles !== undefined) {
+            return parseNames(message.profiles);
+        }
+        if (message.telegram !== true) {
+            return [];
+        }
+        const names = parseNames(message.recipients);
+        return names.length ? names : this.settings.profiles.map(p => p.name);
     }
 
     /**

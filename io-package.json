@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "cam-recorder",
-        "version": "0.4.5",
+        "version": "0.5.0",
         "news": {
+            "0.5.0": {
+                "en": "New tab Send with notification profiles, chosen per trigger and timelapse in the column Message; settings of 0.4.x become profiles once. Device Manager: a card per camera with status, last recording, picture and the actions Record now and Snapshot",
+                "de": "Neuer Reiter Senden mit Benachrichtigungsprofilen, pro Auslöser und Zeitraffer in der Spalte Nachricht gewählt; Einstellungen von 0.4.x werden einmalig zu Profilen. Geräte-Manager: eine Karte pro Kamera mit Status, letzter Aufnahme, Bild und den Aktionen Aufnahme jetzt und Schnappschuss",
+                "ru": "Новая вкладка «Отправка» с профилями уведомлений, которые выбираются для триггера и таймлапса в столбце «Сообщение»; настройки 0.4.x один раз превращаются в профили. Менеджер устройств: карточка на камеру со статусом, последней записью, снимком и действиями «Записать сейчас» и «Снимок»",
+                "pt": "Nova aba Envio com perfis de notificação, escolhidos por gatilho e timelapse na coluna Mensagem; as definições da 0.4.x tornam-se perfis uma vez. Gestor de dispositivos: um cartão por câmera com estado, última gravação, imagem e as ações Gravar agora e Instantâneo",
+                "nl": "Nieuw tabblad Versturen met meldingsprofielen, per trigger en tijdopname gekozen in de kolom Bericht; instellingen van 0.4.x worden eenmalig profielen. Apparaatbeheer: een kaart per camera met status, laatste opname, beeld en de acties Nu opnemen en Momentopname",
+                "fr": "Nouvel onglet Envoi avec des profils de notification, choisis par déclencheur et accéléré dans la colonne Message ; les réglages de la 0.4.x deviennent des profils une seule fois. Gestionnaire d'appareils : une carte par caméra avec état, dernier enregistrement, image et les actions Enregistrer maintenant et Photo",
+                "it": "Nuova scheda Invio con profili di notifica, scelti per attivatore e timelapse nella colonna Messaggio; le impostazioni della 0.4.x diventano profili una sola volta. Gestione dispositivi: una scheda per telecamera con stato, ultima registrazione, immagine e le azioni Registra ora e Istantanea",
+                "es": "Nueva pestaña Envío con perfiles de notificación, elegidos por disparador y timelapse en la columna Mensaje; los ajustes de la 0.4.x se convierten en perfiles una vez. Gestor de dispositivos: una tarjeta por cámara con estado, última grabación, imagen y las acciones Grabar ahora e Instantánea",
+                "pl": "Nowa karta Wysyłanie z profilami powiadomień, wybieranymi dla wyzwalacza i filmu poklatkowego w kolumnie Wiadomość; ustawienia z 0.4.x jednorazowo stają się profilami. Menedżer urządzeń: karta dla każdej kamery ze stanem, ostatnim nagraniem, obrazem i akcjami Nagraj teraz i Zdjęcie",
+                "uk": "Нова вкладка «Надсилання» з профілями сповіщень, які вибираються для тригера й таймлапсу у стовпці «Повідомлення»; налаштування 0.4.x один раз стають профілями. Менеджер пристроїв: картка на камеру зі статусом, останнім записом, знімком і діями «Записати зараз» і «Знімок»",
+                "zh-cn": "新增“发送”选项卡，提供通知配置文件，可在触发器和延时摄影的“消息”列中选择；0.4.x 的设置会一次性转换为配置文件。设备管理器：每台摄像机一张卡片，显示状态、最近录制、画面，并提供“立即录制”和“快照”操作"
+            },
             "0.4.5": {
                 "en": "Trigger table easier to read: columns in a new order with fitting widths, shorter headers (When, Only if)",
                 "de": "Auslöser-Tabelle übersichtlicher: Spalten in neuer Reihenfolge mit passenden Breiten, kürzere Überschriften (Wann, Nur wenn, Nachricht)",
@@ -80,19 +93,6 @@
                 "pl": "Film poklatkowy: zdjęcie co kilka minut, raz dziennie film. Kopia każdego klipu, zdjęcia i filmu poklatkowego na serwer SFTP (NAS) ze sprawdzaniem odcisku i testem połączenia",
                 "uk": "Таймлапс: знімок кожні кілька хвилин, раз на добу відео. Копія кожного кліпу, знімка й таймлапсу на SFTP-сервер (NAS) з перевіркою відбитка й тестом з'єднання",
                 "zh-cn": "延时摄影：每隔几分钟拍一张图片，每天生成一段视频。每个片段、快照和延时视频都会复制到 SFTP 服务器（NAS），支持指纹校验和连接测试"
-            },
-            "0.3.0": {
-                "en": "Further events extend a clip (with pre-recording). Snapshots from the pre-recording. Trigger conditions. Further notification targets: email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify, ntfy and templates. Requires js-controller 7.0.7",
-                "de": "Weitere Ereignisse verlängern einen Clip (mit Voraufnahme). Schnappschüsse aus der Voraufnahme. Bedingungen für Auslöser. Weitere Benachrichtigungsziele: E-Mail, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify, ntfy und Vorlagen. Benötigt js-controller 7.0.7",
-                "ru": "Повторные события продлевают клип (с предзаписью). Снимки из предзаписи. Условия для триггеров. Дополнительные получатели: email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify, ntfy и шаблоны. Требуется js-controller 7.0.7",
-                "pt": "Novos eventos prolongam um clipe (com pré-gravação). Instantâneos a partir da pré-gravação. Condições para gatilhos. Destinos de notificação adicionais: email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify, ntfy e modelos. Requer js-controller 7.0.7",
-                "nl": "Volgende gebeurtenissen verlengen een clip (met vooropname). Momentopnamen uit de vooropname. Voorwaarden voor triggers. Verdere meldingsdoelen: e-mail, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify, ntfy en sjablonen. Vereist js-controller 7.0.7",
-                "fr": "De nouveaux événements prolongent un clip (avec pré-enregistrement). Photos tirées du pré-enregistrement. Conditions pour les déclencheurs. Autres destinataires : e-mail, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify, ntfy et modèles. Nécessite js-controller 7.0.7",
-                "it": "Ulteriori eventi prolungano una clip (con pre-registrazione). Istantanee dalla pre-registrazione. Condizioni per gli attivatori. Altri destinatari: email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify, ntfy e modelli. Richiede js-controller 7.0.7",
-                "es": "Nuevos eventos alargan un clip (con pregrabación). Instantáneas desde la pregrabación. Condiciones para disparadores. Destinos de notificación adicionales: correo, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify, ntfy y plantillas. Requiere js-controller 7.0.7",
-                "pl": "Kolejne zdarzenia wydłużają klip (z nagrywaniem wstępnym). Zdjęcia z nagrywania wstępnego. Warunki dla wyzwalaczy. Dalsi odbiorcy powiadomień: e-mail, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify, ntfy i szablony. Wymaga js-controller 7.0.7",
-                "uk": "Повторні події подовжують кліп (з попереднім записом). Знімки з попереднього запису. Умови для тригерів. Додаткові отримувачі: email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify, ntfy і шаблони. Потрібен js-controller 7.0.7",
-                "zh-cn": "后续事件会延长片段（启用预录时）。从预录中截取快照。触发器条件。更多通知目标：Email、Pushover、Discord、Matrix、Signal、WhatsApp、Gotify、ntfy 和模板。需要 js-controller 7.0.7"
             }
         },
         "titleLang": {
@@ -152,7 +152,11 @@
                 "admin": ">=7.6.20"
             }
         ],
-        "messagebox": true
+        "messagebox": true,
+        "supportedMessages": {
+            "custom": true,
+            "deviceManager": true
+        }
     },
     "native": {
         "cameras": [],
@@ -168,10 +172,7 @@
         "snapshotWidth": 0,
         "prebufferEnabled": false,
         "prebufferDir": "",
-        "telegramInstance": "",
-        "telegramUser": "",
-        "telegramCaption": "{camera} {date} {time}",
-        "notifyTargets": [],
+        "profiles": [],
         "outputDir": "",
         "keepFiles": 20,
         "maxAgeDays": 7,
