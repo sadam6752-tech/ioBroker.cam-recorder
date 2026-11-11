@@ -8,7 +8,7 @@
     "Password": "Mot de passe",
     "Transport": "Transport",
     "Key frames only": "Images clés uniquement",
-    "Key frames only: use it when snapshots of an H.265 camera come out grey.": "Images clés uniquement : à utiliser lorsque les photos d'une caméra H.265 sont grises.",
+    "Key frames only: use it when snapshots of an H.265 camera come out grey. Sound: mp4 clips get the sound of the camera (AAC), when the camera sends it in its RTSP stream; GIFs and snapshots stay silent.": "Images clés uniquement : à utiliser lorsque les photos d'une caméra H.265 sont grises. Son : les clips mp4 reçoivent le son de la caméra (AAC), si la caméra l'envoie dans son flux RTSP ; les GIF et les instantanés restent muets.",
     "Triggers": "Déclencheurs",
     "A trigger starts a recording when a state is written, e.g. the doorbell or motion state of the DoorBird adapter. Every write counts, the cooldown ignores further writes for some seconds. Duration 0 and format Default use the values of the Recording tab.": "Un déclencheur lance un enregistrement lorsqu'un état est écrit, par exemple la sonnette ou le mouvement de l'adaptateur DoorBird. Chaque écriture compte, le délai d'attente ignore les écritures suivantes pendant quelques secondes. Durée 0 et format Par défaut utilisent les valeurs de l'onglet Enregistrement.",
     "State": "État",
@@ -89,5 +89,6 @@
     "A profile says where a result goes and what is sent. Triggers and timelapses choose profiles by name in their column Message (several separated by commas, empty = no message); scripts with profiles: 'Name'.": "Un profil indique où va un résultat et ce qui est envoyé. Les déclencheurs et les accélérés choisissent des profils par nom dans leur colonne Message (plusieurs séparés par des virgules, vide = aucun message) ; les scripts avec profiles: 'Name'.",
     "Attachment: Everything sends snapshots, clips and timelapse videos, Snapshot only and Clip only one kind, Text only sends the text at once when the trigger fires, without a file. Text: {camera}, {date} and {time} are replaced.": "Pièce jointe : Tout envoie photos, clips et vidéos accélérées, Photo seulement et Clip seulement un seul type, Texte seulement envoie le texte dès que le déclencheur réagit, sans fichier. Texte : {camera}, {date} et {time} sont remplacés.",
     "Telegram, MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "Telegram, MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify, ntfy sont intégrés (les messageries qui ne peuvent pas envoyer de fichiers reçoivent un texte). Pour d'autres adaptateurs, saisissez un message JSON avec {file}, {caption}, {camera}, {text}.",
-    "Devices": "Appareils"
+    "Devices": "Appareils",
+    "Sound": "Son"
 }

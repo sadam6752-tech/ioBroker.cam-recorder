@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "cam-recorder",
-        "version": "0.5.1",
+        "version": "0.5.2",
         "news": {
+            "0.5.2": {
+                "en": "Sound: a new column Sound in the camera table takes the sound of the camera into mp4 clips. Device Manager: a camera that is off no longer shows as online, every camera is checked on the network every minute",
+                "de": "Ton: eine neue Spalte Ton in der Kameratabelle nimmt den Ton der Kamera in mp4-Clips auf. Device Manager: eine ausgeschaltete Kamera erscheint nicht mehr als online, jede Kamera wird jede Minute im Netzwerk geprüft",
+                "ru": "Звук: новая колонка «Звук» в таблице камер записывает звук камеры в клипы mp4. Device Manager: выключенная камера больше не показывается как онлайн, каждая камера проверяется в сети раз в минуту",
+                "pt": "Som: uma nova coluna Som na tabela de câmaras grava o som da câmara nos clips mp4. Device Manager: uma câmara desligada já não aparece como online, cada câmara é verificada na rede a cada minuto",
+                "nl": "Geluid: een nieuwe kolom Geluid in de cameratabel neemt het geluid van de camera op in mp4-clips. Device Manager: een uitgeschakelde camera verschijnt niet meer als online, elke camera wordt elke minuut in het netwerk gecontroleerd",
+                "fr": "Son : une nouvelle colonne Son dans le tableau des caméras enregistre le son de la caméra dans les clips mp4. Device Manager : une caméra éteinte n'apparaît plus en ligne, chaque caméra est vérifiée sur le réseau chaque minute",
+                "it": "Audio: una nuova colonna Audio nella tabella delle telecamere registra l'audio della telecamera nei clip mp4. Device Manager: una telecamera spenta non appare più online, ogni telecamera viene controllata in rete ogni minuto",
+                "es": "Sonido: una nueva columna Sonido en la tabla de cámaras graba el sonido de la cámara en los clips mp4. Device Manager: una cámara apagada ya no aparece en línea, cada cámara se comprueba en la red cada minuto",
+                "pl": "Dźwięk: nowa kolumna Dźwięk w tabeli kamer nagrywa dźwięk kamery w klipach mp4. Device Manager: wyłączona kamera nie jest już pokazywana jako online, każda kamera jest sprawdzana w sieci co minutę",
+                "uk": "Звук: нова колонка «Звук» у таблиці камер записує звук камери в кліпи mp4. Device Manager: вимкнена камера більше не показується як онлайн, кожна камера перевіряється в мережі щохвилини",
+                "zh-cn": "声音：摄像头表格中新增“声音”列，将摄像头的声音录入 mp4 片段。设备管理器：关闭的摄像头不再显示为在线，每台摄像头每分钟在网络上检查一次"
+            },
             "0.5.1": {
                 "en": "The Device Manager also as tab Devices in the instance settings",
                 "de": "Der Device Manager auch als Reiter Geräte in den Instanzeinstellungen",
@@ -80,19 +93,6 @@
                 "pl": "Wbudowany odbiorca dla adaptera MAX: klipy jako wideo, zdjęcia jako obraz, do użytkownika, czatu grupowego lub wszystkich użytkowników",
                 "uk": "Вбудований отримувач для адаптера MAX: кліпи як відео, знімки як зображення, користувачу, у груповий чат або всім користувачам",
                 "zh-cn": "为 MAX 适配器内置通知目标：片段作为视频、图片作为图像，发送给某个用户、群聊或所有用户"
-            },
-            "0.4.1": {
-                "en": "Timelapse: the states timelapseFrames and timelapseNextVideo show the waiting pictures and the time of the next video",
-                "de": "Zeitraffer: die Datenpunkte timelapseFrames und timelapseNextVideo zeigen die wartenden Bilder und den Zeitpunkt des nächsten Videos",
-                "ru": "Таймлапс: состояния timelapseFrames и timelapseNextVideo показывают накопленные кадры и время следующего видео",
-                "pt": "Timelapse: os estados timelapseFrames e timelapseNextVideo mostram as imagens em espera e a hora do próximo vídeo",
-                "nl": "Tijdopname: de statussen timelapseFrames en timelapseNextVideo tonen de wachtende beelden en het tijdstip van de volgende video",
-                "fr": "Accéléré : les états timelapseFrames et timelapseNextVideo indiquent les images en attente et l'heure de la prochaine vidéo",
-                "it": "Timelapse: gli stati timelapseFrames e timelapseNextVideo mostrano le immagini in attesa e l'ora del prossimo video",
-                "es": "Timelapse: los estados timelapseFrames y timelapseNextVideo muestran las imágenes en espera y la hora del próximo vídeo",
-                "pl": "Film poklatkowy: stany timelapseFrames i timelapseNextVideo pokazują oczekujące zdjęcia i czas następnego filmu",
-                "uk": "Таймлапс: стани timelapseFrames і timelapseNextVideo показують накопичені кадри й час наступного відео",
-                "zh-cn": "延时摄影：状态 timelapseFrames 和 timelapseNextVideo 显示等待中的图片和下一个视频的时间"
             }
         },
         "titleLang": {

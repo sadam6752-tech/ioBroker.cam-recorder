@@ -16,6 +16,8 @@ export interface Camera {
     transport: 'tcp' | 'udp';
     /** Decode snapshots from key frames only */
     keyframesOnly: boolean;
+    /** Record the sound of the camera into mp4 clips (AAC); missing = off */
+    audio?: boolean;
     /** Seconds kept before an event (pre-recording), 0 = off */
     prebuffer: number;
 }
@@ -148,6 +150,8 @@ export interface ClipOptions {
     width: number;
     /** Frames per second, 0 = original */
     fps: number;
+    /** mp4 only: take the sound of the camera along (AAC); missing = no sound */
+    audio?: boolean;
 }
 
 /** Options of a record request (sendTo, trigger) */

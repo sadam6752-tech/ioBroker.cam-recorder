@@ -8,7 +8,7 @@
     "Password": "密码",
     "Transport": "传输",
     "Key frames only": "仅关键帧",
-    "Key frames only: use it when snapshots of an H.265 camera come out grey.": "仅关键帧：当 H.265 摄像机的快照显示为灰色时使用。",
+    "Key frames only: use it when snapshots of an H.265 camera come out grey. Sound: mp4 clips get the sound of the camera (AAC), when the camera sends it in its RTSP stream; GIFs and snapshots stay silent.": "仅关键帧：当 H.265 摄像机的快照显示为灰色时使用。 声音：如果摄像头在其 RTSP 流中发送声音，mp4 片段会包含摄像头的声音（AAC）；GIF 和快照保持无声。",
     "Triggers": "触发器",
     "A trigger starts a recording when a state is written, e.g. the doorbell or motion state of the DoorBird adapter. Every write counts, the cooldown ignores further writes for some seconds. Duration 0 and format Default use the values of the Recording tab.": "当写入某个状态时（例如 DoorBird 适配器的门铃或移动状态），触发器会开始录制。每次写入都会计数，冷却时间会在几秒内忽略后续写入。时长 0 和默认格式使用“录制”选项卡中的值。",
     "State": "状态",
@@ -89,5 +89,6 @@
     "A profile says where a result goes and what is sent. Triggers and timelapses choose profiles by name in their column Message (several separated by commas, empty = no message); scripts with profiles: 'Name'.": "配置文件决定结果发往何处以及发送什么。触发器和延时摄影在“消息”列中按名称选择配置文件（多个用逗号分隔，留空 = 不发送消息）；脚本使用 profiles: 'Name'。",
     "Attachment: Everything sends snapshots, clips and timelapse videos, Snapshot only and Clip only one kind, Text only sends the text at once when the trigger fires, without a file. Text: {camera}, {date} and {time} are replaced.": "附件：“全部”发送快照、视频片段和延时视频，“仅快照”和“仅视频片段”只发送一种，“仅文本”在触发时立即发送文本，不带文件。文本：{camera}、{date} 和 {time} 会被替换。",
     "Telegram, MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "Telegram, MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify, ntfy 已内置（无法发送文件的消息工具会收到文本）。其他适配器请输入包含 {file}、{caption}、{camera}、{text} 的 JSON 消息。",
-    "Devices": "设备"
+    "Devices": "设备",
+    "Sound": "声音"
 }

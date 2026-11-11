@@ -43,6 +43,16 @@ start. Special characters in passwords are fine, the adapter encodes them for ff
 _Transport_ is TCP by default; it works reliably also from Docker containers. _Key frames only_ helps when snapshots
 of an H.265 camera come out grey.
 
+_Sound_ takes the sound of the camera into the mp4 clips, also into those from the pre-recording, so they play with
+sound in Telegram and elsewhere. The camera must send the sound in its RTSP stream; many cameras have it off by default
+or only in one of their streams (look for audio in the video or stream settings of the camera). Cameras send G.711 or
+AAC; the adapter always writes AAC, which mp4 and the messengers need, also when the picture is copied. GIFs, snapshots
+and timelapse videos stay silent. A camera without sound still records, only without sound.
+
+With sound, picture and sound keep their times. A clip recorded live starts at the connection: a camera with a key
+frame only every few seconds shows its first picture a moment after the sound starts. Clips from the pre-recording do
+not have this gap.
+
 The camera name becomes the object id: `Front Door` → `cam-recorder.0.cameras.front_door`. Letters with
 diacritics are transliterated (`ü` → `ue`, `é` → `e`), other special characters become `_`.
 
@@ -258,8 +268,9 @@ The newest file of each camera and kind is also copied into the ioBroker file st
 With admin 7 or newer, the Device Manager shows one card per configured camera, in the tab _Devices_ of the
 instance settings and under _Devices_ in the menu of the admin:
 
-- **Status:** online or offline. With pre-recording the camera counts as online while the buffer runs; without it,
-  while the last recording or snapshot worked. The last error appears as a warning on the card.
+- **Status:** online or offline. The adapter opens a TCP connection to the host and port of the camera URL at the
+  start and every minute (no login, no ffmpeg) and writes the result into `cameras.<camera>.reachable`. The last
+  error appears as a warning on the card.
 - **Recording now:** a red dot with _Recording_ or _Taking a snapshot_ while ffmpeg works for this camera.
 - **Last clip** and **last snapshot** with date and time, and the pre-recording seconds if it is on.
 - **Picture:** the last snapshot, when _Copy the newest file into the ioBroker file storage_ is on (tab _Storage_).
@@ -284,6 +295,7 @@ Per camera below `cam-recorder.0.cameras.<camera>`:
 | `lastSnapshotTime`   | Time of the newest snapshot                     |
 | `status`             | `idle`, `recording`, `snapshot` or `error`      |
 | `lastError`          | Text of the last error, empty after a success   |
+| `reachable`          | Answers on the network (checked each minute)    |
 | `prebuffer`          | `off`, `starting`, `running` or `restarting`    |
 | `timelapse`          | Button: make the timelapse video now            |
 | `lastTimelapse`      | Path of the newest timelapse video              |
@@ -349,6 +361,13 @@ adapter.
     ### **WORK IN PROGRESS**
 -->
 
+### 0.5.2 (2026-11-11)
+
+- (sadam6752-tech) Sound: a new column _Sound_ in the camera table takes the sound of the camera into mp4 clips
+  (as AAC, also from the pre-recording and with a copied picture); GIFs and snapshots stay silent
+- (sadam6752-tech) Device Manager: a camera that is off showed as online. The adapter now checks every camera on the
+  network at the start and every minute (state `reachable`), and the card shows that
+
 ### 0.5.1 (2026-11-11)
 
 - (sadam6752-tech) The Device Manager also as tab _Devices_ in the instance settings, after _Cameras_
@@ -370,10 +389,6 @@ adapter.
 
 - (sadam6752-tech) Recipients by name: notification targets get a name, triggers and timelapses a column "Send to",
   so for example the two buttons of a door station notify two different people on any messenger
-
-### 0.4.3 (2026-10-18)
-
-- (sadam6752-tech) A variable named like a wait function is renamed (false positive W5051 of the repository checker)
 
 Older changes are in [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 

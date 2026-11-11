@@ -362,6 +362,38 @@ describe('pre-recording with a live test source (real ffmpeg)', function () {
         }
     });
 
+    it('keeps the sound of a camera with sound in the buffer and in the clip', async () => {
+        const withSound = path.join(dir, 'live-sound.mkv');
+        execFileSync(ffmpegPath, [
+            ...['-hide_banner', '-loglevel', 'error', '-f', 'lavfi', '-i', 'testsrc=size=320x240:rate=10'],
+            ...['-f', 'lavfi', '-i', 'sine=frequency=440:sample_rate=8000', '-t', '20'],
+            ...['-c:v', 'libx264', '-g', '10', '-pix_fmt', 'yuv420p', '-c:a', 'pcm_alaw', '-y', withSound],
+        ]);
+        const cam = { ...camera(), url: withSound, audio: true, prebuffer: 2 };
+        const settings = normalizeSettings({ rtspTimeout: 2 });
+        const buffer = new Prebuffer({ camera: cam, settings, seconds: 2, dir: path.join(dir, 'sound'), ffmpegPath, timers });
+        await buffer.start();
+        try {
+            await waitFor(() => buffer.isRunning(), 20_000);
+            await new Promise(r => setTimeout(r, 3000));
+            const recorder = new Recorder({
+                runner: new FfmpegRunner({ ffmpegPath, maxParallel: 2, timers }),
+                outputDir: fs.mkdtempSync(path.join(dir, 'out-')),
+                settings,
+                withPassword: c => c,
+                getPrebuffer: () => buffer,
+            });
+            const clip = await recorder.record(cam, { duration: 1 });
+            assert.equal(clip.fromBuffer, true);
+            const info = spawnSync(ffmpegPath, ['-hide_banner', '-i', clip.file], { encoding: 'utf8' }).stderr;
+            assert.match(info, /Audio: aac/);
+            const seconds = mediaSeconds(clip.file);
+            assert.ok(seconds > 2 && seconds < 4.5, `clip has ${seconds} s`);
+        } finally {
+            await buffer.stop();
+        }
+    });
+
     it('restarts a failing buffer and never shows the password', async () => {
         const settings = normalizeSettings({ rtspTimeout: 2 });
         const warnings = [];

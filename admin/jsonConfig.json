@@ -42,7 +42,7 @@
                             "type": "text",
                             "attr": "url",
                             "title": "RTSP URL",
-                            "width": "30%",
+                            "width": "26%",
                             "default": "rtsp://"
                         },
                         {
@@ -63,7 +63,7 @@
                             "type": "select",
                             "attr": "transport",
                             "title": "Transport",
-                            "width": "9%",
+                            "width": "8%",
                             "default": "tcp",
                             "noTranslation": true,
                             "options": [
@@ -81,7 +81,14 @@
                             "type": "checkbox",
                             "attr": "keyframesOnly",
                             "title": "Key frames only",
-                            "width": "10%",
+                            "width": "9%",
+                            "default": false
+                        },
+                        {
+                            "type": "checkbox",
+                            "attr": "audio",
+                            "title": "Sound",
+                            "width": "6%",
                             "default": false
                         },
                         {
@@ -97,7 +104,7 @@
                 },
                 "_keyframesHelp": {
                     "type": "staticText",
-                    "text": "Key frames only: use it when snapshots of an H.265 camera come out grey.",
+                    "text": "Key frames only: use it when snapshots of an H.265 camera come out grey. Sound: mp4 clips get the sound of the camera (AAC), when the camera sends it in its RTSP stream; GIFs and snapshots stay silent.",
                     "newLine": true,
                     "xs": 12,
                     "sm": 12,

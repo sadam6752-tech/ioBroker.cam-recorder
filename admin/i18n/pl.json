@@ -8,7 +8,7 @@
     "Password": "Hasło",
     "Transport": "Transport",
     "Key frames only": "Tylko klatki kluczowe",
-    "Key frames only: use it when snapshots of an H.265 camera come out grey.": "Tylko klatki kluczowe: użyj, gdy zdjęcia z kamery H.265 wychodzą szare.",
+    "Key frames only: use it when snapshots of an H.265 camera come out grey. Sound: mp4 clips get the sound of the camera (AAC), when the camera sends it in its RTSP stream; GIFs and snapshots stay silent.": "Tylko klatki kluczowe: użyj, gdy zdjęcia z kamery H.265 wychodzą szare. Dźwięk: klipy mp4 dostają dźwięk kamery (AAC), jeśli kamera wysyła go w swoim strumieniu RTSP; GIF-y i zdjęcia pozostają bez dźwięku.",
     "Triggers": "Wyzwalacze",
     "A trigger starts a recording when a state is written, e.g. the doorbell or motion state of the DoorBird adapter. Every write counts, the cooldown ignores further writes for some seconds. Duration 0 and format Default use the values of the Recording tab.": "Wyzwalacz uruchamia nagrywanie, gdy zapisywany jest stan, np. dzwonek lub ruch z adaptera DoorBird. Liczy się każdy zapis, czas blokady ignoruje kolejne zapisy przez kilka sekund. Czas 0 i format Domyślny używają wartości z karty Nagrywanie.",
     "State": "Stan",
@@ -89,5 +89,6 @@
     "A profile says where a result goes and what is sent. Triggers and timelapses choose profiles by name in their column Message (several separated by commas, empty = no message); scripts with profiles: 'Name'.": "Profil określa, dokąd trafia wynik i co jest wysyłane. Wyzwalacze i filmy poklatkowe wybierają profile po nazwie w kolumnie Wiadomość (kilka oddzielonych przecinkami, puste = bez wiadomości); skrypty przez profiles: 'Name'.",
     "Attachment: Everything sends snapshots, clips and timelapse videos, Snapshot only and Clip only one kind, Text only sends the text at once when the trigger fires, without a file. Text: {camera}, {date} and {time} are replaced.": "Załącznik: Wszystko wysyła zdjęcia, klipy i filmy poklatkowe, Tylko zdjęcie i Tylko klip jeden rodzaj, Tylko tekst wysyła tekst od razu po zadziałaniu wyzwalacza, bez pliku. Tekst: {camera}, {date} i {time} są zastępowane.",
     "Telegram, MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "Telegram, MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify, ntfy są wbudowane (komunikatory, które nie wysyłają plików, dostają tekst). Dla innych adapterów wpisz wiadomość JSON z {file}, {caption}, {camera}, {text}.",
-    "Devices": "Urządzenia"
+    "Devices": "Urządzenia",
+    "Sound": "Dźwięk"
 }

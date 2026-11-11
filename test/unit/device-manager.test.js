@@ -117,21 +117,14 @@ describe('Device Manager', () => {
         assert.equal(door.id, 'door');
         assert.equal(door.name, 'Door');
         assert.equal(door.identifier, 'cameras.door');
-        // with pre-recording the camera is online while the buffer runs
-        assert.deepEqual(door.status.connection, {
-            stateId: `${NS}.cameras.door.prebuffer`,
-            mapping: {
-                running: 'connected',
-                starting: 'disconnected',
-                restarting: 'disconnected',
-                off: 'disconnected',
-            },
-        });
+        // online follows the check of the camera on the network, with and without pre-recording
+        for (const card of [door, garden]) {
+            assert.deepEqual(card.status.connection, {
+                stateId: `${NS}.cameras.${card.id}.reachable`,
+                mapping: { true: 'connected', false: 'disconnected' },
+            });
+        }
         assert.deepEqual(door.status.warning, { stateId: `${NS}.cameras.door.lastError` });
-        // without, it follows the status of the last recording
-        assert.equal(garden.status.connection.stateId, `${NS}.cameras.garden.status`);
-        assert.equal(garden.status.connection.mapping.error, 'disconnected');
-        assert.equal(garden.status.connection.mapping.idle, 'connected');
         // "recording now" follows the status state live
         const [activity] = door.indicators;
         assert.equal(activity.value.stateId, `${NS}.cameras.door.status`);

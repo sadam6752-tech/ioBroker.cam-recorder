@@ -6,7 +6,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const { execFileSync, spawn } = require('node:child_process');
+const { execFileSync, spawn, spawnSync } = require('node:child_process');
 const { FfmpegRunner, probeFfmpeg, resolveFfmpegPath, mediaDuration } = require('../../lib/ffmpeg-runner');
 const { Recorder } = require('../../lib/recorder');
 const { normalizeSettings } = require('../../lib/config');
@@ -31,6 +31,18 @@ function camera(url, extra = {}) {
         keyframesOnly: false,
         ...extra,
     };
+}
+
+/**
+ * @param {string} file - Media file
+ * @returns {string} The stream lines ffmpeg prints for it
+ */
+function streams(file) {
+    const out = spawnSync(String(ffmpegPath), ['-hide_banner', '-i', file], { encoding: 'utf8' }).stderr;
+    return out
+        .split('\n')
+        .filter(line => line.includes('Stream #'))
+        .join('\n');
 }
 
 describe('ffmpeg runner and recorder (real ffmpeg)', function () {
@@ -167,6 +179,32 @@ describe('ffmpeg runner and recorder (real ffmpeg)', function () {
         } finally {
             sender.kill('SIGKILL');
         }
+    });
+
+    it('records the sound of a camera with sound as AAC, also into a copied mp4', async () => {
+        // a camera that sends G.711 (PCMA) like most IP cameras
+        const withSound = path.join(dir, 'sound.mkv');
+        execFileSync(ffmpegPath, [
+            ...['-hide_banner', '-loglevel', 'error', '-f', 'lavfi', '-i', 'testsrc=size=320x240:rate=10'],
+            ...['-f', 'lavfi', '-i', 'sine=frequency=440:sample_rate=8000', '-t', '6'],
+            ...['-c:v', 'libx264', '-g', '10', '-pix_fmt', 'yuv420p', '-c:a', 'pcm_alaw', '-y', withSound],
+        ]);
+        const { recorder } = makeRecorder();
+        const clip = await recorder.record(camera(withSound, { audio: true }), { duration: 2 });
+        assert.match(streams(clip.file), /Audio: aac/);
+        const silent = await recorder.record(camera(withSound), { duration: 1 });
+        assert.doesNotMatch(streams(silent.file), /Audio/);
+        const gif = await recorder.record(camera(withSound, { audio: true }), { duration: 1, format: 'gif' });
+        assert.equal(fs.readFileSync(gif.file).subarray(0, 3).toString(), 'GIF');
+
+        const copied = makeRecorder({ videoMode: 'copy' }).recorder;
+        const copy = await copied.record(camera(withSound, { audio: true }), { duration: 2 });
+        assert.match(streams(copy.file), /Video: h264[\s\S]*Audio: aac/);
+
+        // "Sound" on, but the camera sends none: the clip is recorded without sound
+        const mute = await recorder.record(camera(source, { audio: true }), { duration: 1 });
+        assert.match(streams(mute.file), /Video: h264/);
+        assert.doesNotMatch(streams(mute.file), /Audio/);
     });
 
     it('shares one run between two overlapping requests of the same kind', async () => {

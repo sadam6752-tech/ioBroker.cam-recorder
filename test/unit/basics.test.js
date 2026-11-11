@@ -218,6 +218,26 @@ describe('ffmpeg arguments', () => {
         assert.equal(gif[gif.length - 1], 'out.part');
     });
 
+    it('takes the sound along only into mp4 clips of a camera with sound, always as AAC', () => {
+        const base = { duration: 5, format: 'mp4', mode: 'transcode', width: 640, fps: 10 };
+        const mp4 = clipArgs({ ...base, audio: true }, 'out.part');
+        const text = mp4.join(' ');
+        assert.ok(!mp4.includes('-an'), text);
+        assert.match(text, /-map 0:v:0 -map 0:a:0\? /);
+        assert.match(text, /-c:a aac -b:a 64k -ac 1/);
+        // picture and sound keep their times: no reset of the picture alone
+        assert.ok(!text.includes('setpts'), text);
+        assert.ok(text.includes('-vf scale=640:-2'), text);
+        const copy = clipArgs({ ...base, mode: 'copy', audio: true }, 'out.part');
+        assert.match(copy.join(' '), /-c:v copy -c:a aac/);
+        const plain = clipArgs({ ...base, width: 0, audio: true }, 'out.part');
+        assert.ok(!plain.includes('-vf'), plain.join(' '));
+        const gif = clipArgs({ ...base, format: 'gif', audio: true }, 'out.part');
+        assert.ok(gif.includes('-an') && !gif.includes('aac'));
+        const silent = clipArgs(base, 'out.part');
+        assert.ok(silent.includes('-an') && !silent.includes('-map'));
+    });
+
     it('builds a snapshot with and without scaling', () => {
         assert.ok(snapshotArgs(320, 'a.part').includes('scale=320:-2'));
         assert.ok(!snapshotArgs(0, 'a.part').includes('-vf'));

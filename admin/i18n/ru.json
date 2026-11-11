@@ -8,7 +8,7 @@
     "Password": "Пароль",
     "Transport": "Транспорт",
     "Key frames only": "Только ключевые кадры",
-    "Key frames only: use it when snapshots of an H.265 camera come out grey.": "Только ключевые кадры: включите, если снимки с камеры H.265 получаются серыми.",
+    "Key frames only: use it when snapshots of an H.265 camera come out grey. Sound: mp4 clips get the sound of the camera (AAC), when the camera sends it in its RTSP stream; GIFs and snapshots stay silent.": "Только ключевые кадры: включите, если снимки с камеры H.265 получаются серыми. Звук: клипы mp4 получают звук камеры (AAC), если камера передаёт его в своём RTSP-потоке; GIF и снимки остаются без звука.",
     "Triggers": "Триггеры",
     "A trigger starts a recording when a state is written, e.g. the doorbell or motion state of the DoorBird adapter. Every write counts, the cooldown ignores further writes for some seconds. Duration 0 and format Default use the values of the Recording tab.": "Триггер запускает запись, когда в состояние записывается значение, например звонок или движение из адаптера DoorBird. Учитывается каждая запись, пауза игнорирует последующие записи несколько секунд. Длительность 0 и формат «По умолчанию» берут значения со вкладки «Запись».",
     "State": "Состояние",
@@ -89,5 +89,6 @@
     "A profile says where a result goes and what is sent. Triggers and timelapses choose profiles by name in their column Message (several separated by commas, empty = no message); scripts with profiles: 'Name'.": "Профиль задаёт, куда уходит результат и что отправляется. Триггеры и таймлапсы выбирают профили по имени в столбце «Сообщение» (несколько через запятую, пусто = без сообщения); скрипты — через profiles: 'Name'.",
     "Attachment: Everything sends snapshots, clips and timelapse videos, Snapshot only and Clip only one kind, Text only sends the text at once when the trigger fires, without a file. Text: {camera}, {date} and {time} are replaced.": "Вложение: «Всё» отправляет снимки, клипы и видео таймлапса, «Только снимок» и «Только клип» — один вид, «Только текст» отправляет текст сразу при срабатывании, без файла. Текст: {camera}, {date} и {time} заменяются.",
     "Telegram, MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "Telegram, MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify, ntfy встроены (мессенджеры, которые не умеют отправлять файлы, получают текст). Для других адаптеров введите JSON-сообщение с {file}, {caption}, {camera}, {text}.",
-    "Devices": "Устройства"
+    "Devices": "Устройства",
+    "Sound": "Звук"
 }

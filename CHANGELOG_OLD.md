@@ -1,5 +1,9 @@
 # Older changes
 
+### 0.4.3 (2026-10-18)
+
+- (sadam6752-tech) A variable named like a wait function is renamed (false positive W5051 of the repository checker)
+
 ### 0.4.2 (2026-10-18)
 
 - (sadam6752-tech) Built-in notification format for the MAX adapter (clips as video, pictures as image, to a user,

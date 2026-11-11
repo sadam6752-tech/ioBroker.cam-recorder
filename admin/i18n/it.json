@@ -8,7 +8,7 @@
     "Password": "Password",
     "Transport": "Trasporto",
     "Key frames only": "Solo fotogrammi chiave",
-    "Key frames only: use it when snapshots of an H.265 camera come out grey.": "Solo fotogrammi chiave: usarlo quando le istantanee di una telecamera H.265 risultano grigie.",
+    "Key frames only: use it when snapshots of an H.265 camera come out grey. Sound: mp4 clips get the sound of the camera (AAC), when the camera sends it in its RTSP stream; GIFs and snapshots stay silent.": "Solo fotogrammi chiave: usarlo quando le istantanee di una telecamera H.265 risultano grigie. Audio: i clip mp4 ricevono l'audio della telecamera (AAC), se la telecamera lo invia nel suo flusso RTSP; GIF e istantanee restano muti.",
     "Triggers": "Attivatori",
     "A trigger starts a recording when a state is written, e.g. the doorbell or motion state of the DoorBird adapter. Every write counts, the cooldown ignores further writes for some seconds. Duration 0 and format Default use the values of the Recording tab.": "Un attivatore avvia una registrazione quando viene scritto uno stato, ad es. il campanello o il movimento dell'adattatore DoorBird. Ogni scrittura conta, il tempo di attesa ignora le scritture successive per alcuni secondi. Durata 0 e formato Predefinito usano i valori della scheda Registrazione.",
     "State": "Stato",
@@ -89,5 +89,6 @@
     "A profile says where a result goes and what is sent. Triggers and timelapses choose profiles by name in their column Message (several separated by commas, empty = no message); scripts with profiles: 'Name'.": "Un profilo stabilisce dove va un risultato e cosa viene inviato. Attivatori e timelapse scelgono i profili per nome nella colonna Messaggio (più nomi separati da virgole, vuoto = nessun messaggio); gli script con profiles: 'Name'.",
     "Attachment: Everything sends snapshots, clips and timelapse videos, Snapshot only and Clip only one kind, Text only sends the text at once when the trigger fires, without a file. Text: {camera}, {date} and {time} are replaced.": "Allegato: Tutto invia istantanee, clip e video timelapse, Solo istantanea e Solo clip un solo tipo, Solo testo invia il testo subito quando scatta l'attivatore, senza file. Testo: {camera}, {date} e {time} vengono sostituiti.",
     "Telegram, MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "Telegram, MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify, ntfy sono integrati (i messenger che non possono inviare file ricevono un testo). Per altri adattatori inserire un messaggio JSON con {file}, {caption}, {camera}, {text}.",
-    "Devices": "Dispositivi"
+    "Devices": "Dispositivi",
+    "Sound": "Audio"
 }

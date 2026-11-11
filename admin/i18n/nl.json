@@ -8,7 +8,7 @@
     "Password": "Wachtwoord",
     "Transport": "Transport",
     "Key frames only": "Alleen sleutelbeelden",
-    "Key frames only: use it when snapshots of an H.265 camera come out grey.": "Alleen sleutelbeelden: gebruik dit als momentopnamen van een H.265-camera grijs worden.",
+    "Key frames only: use it when snapshots of an H.265 camera come out grey. Sound: mp4 clips get the sound of the camera (AAC), when the camera sends it in its RTSP stream; GIFs and snapshots stay silent.": "Alleen sleutelbeelden: gebruik dit als momentopnamen van een H.265-camera grijs worden. Geluid: mp4-clips krijgen het geluid van de camera (AAC), als de camera het in zijn RTSP-stream meestuurt; GIF's en momentopnamen blijven stil.",
     "Triggers": "Triggers",
     "A trigger starts a recording when a state is written, e.g. the doorbell or motion state of the DoorBird adapter. Every write counts, the cooldown ignores further writes for some seconds. Duration 0 and format Default use the values of the Recording tab.": "Een trigger start een opname wanneer een status wordt geschreven, bijv. de deurbel- of bewegingsstatus van de DoorBird-adapter. Elke schrijfactie telt, de wachttijd negeert verdere schrijfacties enkele seconden. Duur 0 en formaat Standaard gebruiken de waarden van het tabblad Opname.",
     "State": "Status",
@@ -89,5 +89,6 @@
     "A profile says where a result goes and what is sent. Triggers and timelapses choose profiles by name in their column Message (several separated by commas, empty = no message); scripts with profiles: 'Name'.": "Een profiel bepaalt waar een resultaat heen gaat en wat er wordt verstuurd. Triggers en tijdopnames kiezen profielen op naam in hun kolom Bericht (meerdere gescheiden door komma's, leeg = geen bericht); scripts met profiles: 'Name'.",
     "Attachment: Everything sends snapshots, clips and timelapse videos, Snapshot only and Clip only one kind, Text only sends the text at once when the trigger fires, without a file. Text: {camera}, {date} and {time} are replaced.": "Bijlage: Alles stuurt momentopnames, clips en tijdopnamevideo's, Alleen momentopname en Alleen clip één soort, Alleen tekst stuurt de tekst meteen bij het afgaan van de trigger, zonder bestand. Tekst: {camera}, {date} en {time} worden vervangen.",
     "Telegram, MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "Telegram, MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify, ntfy zijn ingebouwd (messengers die geen bestanden kunnen versturen krijgen een tekst). Voer voor andere adapters een JSON-bericht in met {file}, {caption}, {camera}, {text}.",
-    "Devices": "Apparaten"
+    "Devices": "Apparaten",
+    "Sound": "Geluid"
 }

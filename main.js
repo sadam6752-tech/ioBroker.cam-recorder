@@ -21,6 +21,7 @@ const { FfmpegRunner, probeFfmpeg, resolveFfmpegPath } = require('./lib/ffmpeg-r
 const { Recorder } = require('./lib/recorder');
 const { Prebuffer } = require('./lib/prebuffer');
 const { removePartials } = require('./lib/storage');
+const { CHECK_INTERVAL_MS, probeTarget, isReachable } = require('./lib/reachability');
 const { triggerDecision } = require('./lib/triggers');
 const { maskSecrets } = require('./lib/mask');
 const { NAMES } = require('./lib/names');
@@ -84,6 +85,7 @@ const CAMERA_STATES = [
         },
     },
     { id: 'lastError', common: { type: 'string', role: 'text', read: true, write: false, def: '' } },
+    { id: 'reachable', common: { type: 'boolean', role: 'indicator.reachable', read: true, write: false } },
     {
         id: 'prebuffer',
         common: {
@@ -127,6 +129,9 @@ class CamRecorder extends utils.Adapter {
         this.prebuffers = new Map();
         /** @type {Map<string, Timelapse>} */
         this.timelapses = new Map();
+        /** @type {ioBroker.Interval | undefined} check of the cameras on the network */
+        this.reachTimer = undefined;
+        this.reachRunning = false;
         /** copies to the SFTP server run one after the other */
         this.remoteQueue = Promise.resolve();
         this.settings = normalizeSettings({});
@@ -316,6 +321,41 @@ class CamRecorder extends utils.Adapter {
      *
      * @param {string} ffmpegPath - Path of ffmpeg
      */
+    /**
+     * Checks every camera on the network: a TCP connection to the host and port of its URL,
+     * without login and without ffmpeg. The result goes into `cameras.<camera>.reachable`.
+     */
+    async _checkReachable() {
+        if (this.reachRunning) {
+            return;
+        }
+        this.reachRunning = true;
+        try {
+            await Promise.all(
+                this.cameras.map(async camera => {
+                    const target = probeTarget(camera.url);
+                    if (!target) {
+                        return;
+                    }
+                    const ok = await isReachable(target, this.settings.rtspTimeout * 1000);
+                    const id = `cameras.${camera.id}.reachable`;
+                    const before = await this.getStateAsync(id);
+                    if (before?.val !== ok) {
+                        if (before && before.val !== null) {
+                            const how = ok ? 'is reachable again' : `is not reachable (${target.host}:${target.port})`;
+                            this.log[ok ? 'info' : 'warn'](`Camera "${camera.name}" ${how}`);
+                        }
+                        await this.setState(id, ok, true);
+                    }
+                }),
+            );
+        } catch (err) {
+            this.log.debug(`Check of the cameras failed: ${err.message}`);
+        } finally {
+            this.reachRunning = false;
+        }
+    }
+
     async _startPrebuffers(ffmpegPath) {
         const wanted = this.cameras.filter(c => c.prebuffer > 0);
         if (!wanted.length) {
@@ -520,6 +560,9 @@ class CamRecorder extends utils.Adapter {
             await this.setState(`cameras.${camera.id}.status`, 'idle', true);
             await this.setState(`cameras.${camera.id}.prebuffer`, 'off', true);
         }
+        // online or offline on the cards: a TCP connection to the camera, at once and every minute
+        await this._checkReachable();
+        this.reachTimer = this.setInterval(() => void this._checkReachable(), CHECK_INTERVAL_MS);
         if (this.settings.copyToFiles) {
             this.storageId = `${this.namespace}.storage`;
             await this.setForeignObjectNotExistsAsync(this.storageId, {
@@ -866,6 +909,10 @@ class CamRecorder extends utils.Adapter {
      */
     onUnload(callback) {
         try {
+            if (this.reachTimer) {
+                this.clearInterval(this.reachTimer);
+                this.reachTimer = undefined;
+            }
             this.runner?.stopAll();
             for (const buffer of this.prebuffers.values()) {
                 void buffer.stop();
