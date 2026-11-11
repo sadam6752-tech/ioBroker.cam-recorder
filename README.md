@@ -48,20 +48,20 @@ diacritics are transliterated (`ü` → `ue`, `é` → `e`), other special chara
 
 ### Triggers
 
-| Column                           | Meaning                                                                                       |
-| -------------------------------- | --------------------------------------------------------------------------------------------- |
-| State                            | Any state, e.g. `doorbird.0.Doorbell.1.trigger` or `doorbird.0.Motion.trigger`                |
-| Camera                           | Name of a camera of the first tab                                                             |
-| Action                           | Video clip, snapshot, or both (both run at the same time, the photo arrives first)            |
-| Duration                         | Seconds, 0 = value of the _Recording_ tab                                                     |
-| Format                           | MP4 video, GIF animation, or _Default_                                                        |
-| Condition                        | _Value is true_ (default) or _Every write_                                                    |
-| Cooldown                         | Seconds in which further writes start no new clip (a doorbell pressed three times = one clip) |
-| Notify                           | Send the result to Telegram and the further targets of the _Notifications_ tab                |
-| Send to                          | Names of notification targets, comma separated; empty = all (see _Recipients by name_)        |
-| Only if state, Comparison, Value | Optional condition, see below                                                                 |
+| Column                     | Meaning                                                                                       |
+| -------------------------- | --------------------------------------------------------------------------------------------- |
+| State                      | Any state, e.g. `doorbird.0.Doorbell.1.trigger` or `doorbird.0.Motion.trigger`                |
+| When                       | _Value is true_ (default) or _Every write_                                                    |
+| Cooldown                   | Seconds in which further writes start no new clip (a doorbell pressed three times = one clip) |
+| Only if, Comparison, Value | Optional condition, see below                                                                 |
+| Camera                     | Name of a camera of the first tab                                                             |
+| Action                     | Video clip, snapshot, or both (both run at the same time, the photo arrives first)            |
+| Duration                   | Seconds, 0 = value of the _Recording_ tab                                                     |
+| Format                     | MP4 video, GIF animation, or _Default_                                                        |
+| Notify                     | Send the result to Telegram and the further targets of the _Notifications_ tab                |
+| Send to                    | Names of notification targets, comma separated; empty = all (see _Recipients by name_)        |
 
-**Conditions.** A trigger with _Only if state_ fires only while that state compares as set: `=`, `≠`, `>` or `<`
+**Conditions.** A trigger with _Only if_ fires only while that state compares as set: `=`, `≠`, `>` or `<`
 against _Value_. Examples: `0_userdata.0.away` `=` `true` (only when nobody is home), `javascript.0.isNight` `=`
 `true`, `hm-rpc.0.ABC.LUX` `<` `50`. A boolean state also matches `1`/`0`, `on`/`off`, `yes`/`no`; texts are compared
 without case. The state is read at the moment of the event; a skipped event is logged and starts no cooldown.
@@ -277,6 +277,11 @@ adapter.
     ### **WORK IN PROGRESS**
 -->
 
+### 0.4.5 (2026-11-11)
+
+- (sadam6752-tech) Trigger table easier to read: columns in a new order (state, when, cooldown, condition,
+  camera, action, duration, format, notify, send to) with widths that fit, shorter headers _When_ and _Only if_
+
 ### 0.4.4 (2026-10-18)
 
 - (sadam6752-tech) Recipients by name: notification targets get a name, triggers and timelapses a column "Send to",
@@ -295,14 +300,6 @@ adapter.
 
 - (sadam6752-tech) Timelapse: the states `timelapseFrames` (pictures waiting) and `timelapseNextVideo` (time of the
   next video) show the progress
-
-### 0.4.0 (2026-10-18)
-
-- (sadam6752-tech) Timelapse: a picture every few minutes, once a day a video; missed videos are made at the next
-  start; pictures from the pre-recording while it runs
-- (sadam6752-tech) Copy of every clip, snapshot and timelapse to an SFTP server (NAS), with fingerprint check,
-  connection test, maximum age on the server
-- (sadam6752-tech) Tables of the settings that arrive as objects (after an update of an older instance) are read
 
 Older changes are in [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 

@@ -1,5 +1,13 @@
 # Older changes
 
+### 0.4.0 (2026-10-18)
+
+- (sadam6752-tech) Timelapse: a picture every few minutes, once a day a video; missed videos are made at the next
+  start; pictures from the pre-recording while it runs
+- (sadam6752-tech) Copy of every clip, snapshot and timelapse to an SFTP server (NAS), with fingerprint check,
+  connection test, maximum age on the server
+- (sadam6752-tech) Tables of the settings that arrive as objects (after an update of an older instance) are read
+
 ### 0.3.0 (2026-10-18)
 
 - (sadam6752-tech) A further event while a clip is being cut from the pre-recording extends the clip (up to the new

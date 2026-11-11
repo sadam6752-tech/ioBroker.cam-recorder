@@ -140,7 +140,73 @@
                             "type": "objectId",
                             "attr": "stateId",
                             "title": "State",
-                            "width": "15%",
+                            "width": "14%",
+                            "default": ""
+                        },
+                        {
+                            "type": "select",
+                            "attr": "condition",
+                            "title": "When",
+                            "width": "9%",
+                            "default": "truthy",
+                            "options": [
+                                {
+                                    "label": "Value is true",
+                                    "value": "truthy"
+                                },
+                                {
+                                    "label": "Every write",
+                                    "value": "any"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "number",
+                            "attr": "cooldown",
+                            "title": "Cooldown (s)",
+                            "width": "6%",
+                            "min": 0,
+                            "max": 3600,
+                            "default": 10
+                        },
+                        {
+                            "type": "objectId",
+                            "attr": "condState",
+                            "title": "Only if",
+                            "width": "10%",
+                            "default": ""
+                        },
+                        {
+                            "type": "select",
+                            "attr": "condOp",
+                            "title": "Comparison",
+                            "width": "6%",
+                            "default": "eq",
+                            "noTranslation": true,
+                            "options": [
+                                {
+                                    "label": "=",
+                                    "value": "eq"
+                                },
+                                {
+                                    "label": "≠",
+                                    "value": "ne"
+                                },
+                                {
+                                    "label": ">",
+                                    "value": "gt"
+                                },
+                                {
+                                    "label": "<",
+                                    "value": "lt"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "text",
+                            "attr": "condValue",
+                            "title": "Value",
+                            "width": "5%",
                             "default": ""
                         },
                         {
@@ -156,7 +222,7 @@
                             "type": "select",
                             "attr": "action",
                             "title": "Action",
-                            "width": "9%",
+                            "width": "8%",
                             "default": "record",
                             "options": [
                                 {
@@ -204,32 +270,6 @@
                             ]
                         },
                         {
-                            "type": "select",
-                            "attr": "condition",
-                            "title": "Condition",
-                            "width": "8%",
-                            "default": "truthy",
-                            "options": [
-                                {
-                                    "label": "Value is true",
-                                    "value": "truthy"
-                                },
-                                {
-                                    "label": "Every write",
-                                    "value": "any"
-                                }
-                            ]
-                        },
-                        {
-                            "type": "number",
-                            "attr": "cooldown",
-                            "title": "Cooldown (s)",
-                            "width": "5%",
-                            "min": 0,
-                            "max": 3600,
-                            "default": 10
-                        },
-                        {
                             "type": "checkbox",
                             "attr": "telegram",
                             "title": "Notify",
@@ -240,54 +280,14 @@
                             "type": "text",
                             "attr": "recipients",
                             "title": "Send to",
-                            "width": "10%",
-                            "default": ""
-                        },
-                        {
-                            "type": "objectId",
-                            "attr": "condState",
-                            "title": "Only if state",
-                            "width": "12%",
-                            "default": ""
-                        },
-                        {
-                            "type": "select",
-                            "attr": "condOp",
-                            "title": "Comparison",
-                            "width": "5%",
-                            "default": "eq",
-                            "noTranslation": true,
-                            "options": [
-                                {
-                                    "label": "=",
-                                    "value": "eq"
-                                },
-                                {
-                                    "label": "≠",
-                                    "value": "ne"
-                                },
-                                {
-                                    "label": ">",
-                                    "value": "gt"
-                                },
-                                {
-                                    "label": "<",
-                                    "value": "lt"
-                                }
-                            ]
-                        },
-                        {
-                            "type": "text",
-                            "attr": "condValue",
-                            "title": "Value",
-                            "width": "7%",
+                            "width": "17%",
                             "default": ""
                         }
                     ]
                 },
                 "_conditionHelp": {
                     "type": "staticText",
-                    "text": "Only if state: the trigger fires only while that state has the value, e.g. 0_userdata.0.away = true. Empty = always.",
+                    "text": "Only if: the trigger fires only while the state of this column has the value, e.g. 0_userdata.0.away = true. Empty = always.",
                     "newLine": true,
                     "xs": 12,
                     "sm": 12,
