@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "cam-recorder",
-        "version": "0.5.0",
+        "version": "0.5.1",
         "news": {
+            "0.5.1": {
+                "en": "The Device Manager also as tab Devices in the instance settings",
+                "de": "Der Device Manager auch als Reiter Geräte in den Instanzeinstellungen",
+                "ru": "Device Manager также доступен как вкладка «Устройства» в настройках экземпляра",
+                "pt": "O Device Manager também como separador Dispositivos nas definições da instância",
+                "nl": "De Device Manager ook als tabblad Apparaten in de instantie-instellingen",
+                "fr": "Le Device Manager aussi comme onglet Appareils dans les paramètres de l'instance",
+                "it": "Il Device Manager anche come scheda Dispositivi nelle impostazioni dell'istanza",
+                "es": "El Device Manager también como pestaña Dispositivos en la configuración de la instancia",
+                "pl": "Device Manager także jako zakładka Urządzenia w ustawieniach instancji",
+                "uk": "Device Manager також доступний як вкладка «Пристрої» в налаштуваннях екземпляра",
+                "zh-cn": "设备管理器也作为实例设置中的“设备”选项卡提供"
+            },
             "0.5.0": {
                 "en": "New tab Send with notification profiles, chosen per trigger and timelapse in the column Message; settings of 0.4.x become profiles once. Device Manager: a card per camera with status, last recording, picture and the actions Record now and Snapshot",
                 "de": "Neuer Reiter Senden mit Benachrichtigungsprofilen, pro Auslöser und Zeitraffer in der Spalte Nachricht gewählt; Einstellungen von 0.4.x werden einmalig zu Profilen. Geräte-Manager: eine Karte pro Kamera mit Status, letzter Aufnahme, Bild und den Aktionen Aufnahme jetzt und Schnappschuss",
@@ -80,19 +93,6 @@
                 "pl": "Film poklatkowy: stany timelapseFrames i timelapseNextVideo pokazują oczekujące zdjęcia i czas następnego filmu",
                 "uk": "Таймлапс: стани timelapseFrames і timelapseNextVideo показують накопичені кадри й час наступного відео",
                 "zh-cn": "延时摄影：状态 timelapseFrames 和 timelapseNextVideo 显示等待中的图片和下一个视频的时间"
-            },
-            "0.4.0": {
-                "en": "Timelapse: a picture every few minutes, once a day a video. Copy of every clip, snapshot and timelapse to an SFTP server (NAS) with fingerprint check and connection test",
-                "de": "Zeitraffer: alle paar Minuten ein Bild, einmal täglich ein Video. Kopie jedes Clips, Schnappschusses und Zeitraffers auf einen SFTP-Server (NAS) mit Fingerabdruck-Prüfung und Verbindungstest",
-                "ru": "Таймлапс: снимок каждые несколько минут, раз в сутки видео. Копия каждого клипа, снимка и таймлапса на SFTP-сервер (NAS) с проверкой отпечатка и тестом соединения",
-                "pt": "Timelapse: uma imagem a cada poucos minutos, um vídeo por dia. Cópia de cada clipe, instantâneo e timelapse para um servidor SFTP (NAS) com verificação da impressão digital e teste de conexão",
-                "nl": "Tijdopname: om de paar minuten een beeld, eenmaal per dag een video. Kopie van elke clip, momentopname en tijdopname naar een SFTP-server (NAS) met vingerafdrukcontrole en verbindingstest",
-                "fr": "Accéléré : une image toutes les quelques minutes, une vidéo par jour. Copie de chaque clip, photo et accéléré vers un serveur SFTP (NAS) avec vérification de l'empreinte et test de connexion",
-                "it": "Timelapse: un'immagine ogni pochi minuti, un video al giorno. Copia di ogni clip, istantanea e timelapse su un server SFTP (NAS) con verifica dell'impronta e test di connessione",
-                "es": "Timelapse: una imagen cada pocos minutos, un vídeo al día. Copia de cada clip, instantánea y timelapse a un servidor SFTP (NAS) con comprobación de la huella y prueba de conexión",
-                "pl": "Film poklatkowy: zdjęcie co kilka minut, raz dziennie film. Kopia każdego klipu, zdjęcia i filmu poklatkowego na serwer SFTP (NAS) ze sprawdzaniem odcisku i testem połączenia",
-                "uk": "Таймлапс: знімок кожні кілька хвилин, раз на добу відео. Копія кожного кліпу, знімка й таймлапсу на SFTP-сервер (NAS) з перевіркою відбитка й тестом з'єднання",
-                "zh-cn": "延时摄影：每隔几分钟拍一张图片，每天生成一段视频。每个片段、快照和延时视频都会复制到 SFTP 服务器（NAS），支持指纹校验和连接测试"
             }
         },
         "titleLang": {

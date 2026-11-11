@@ -1,5 +1,10 @@
 # Older changes
 
+### 0.4.2 (2026-10-18)
+
+- (sadam6752-tech) Built-in notification format for the MAX adapter (clips as video, pictures as image, to a user,
+  a group chat or all users); built from the documentation of ioBroker.max, not yet tried with a real MAX bot
+
 ### 0.4.1 (2026-10-18)
 
 - (sadam6752-tech) Timelapse: the states `timelapseFrames` (pictures waiting) and `timelapseNextVideo` (time of the

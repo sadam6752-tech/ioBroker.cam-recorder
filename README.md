@@ -255,7 +255,8 @@ The newest file of each camera and kind is also copied into the ioBroker file st
 
 ## Device Manager
 
-With admin 7 or newer, the tab _Devices_ (Device Manager) shows one card per configured camera:
+With admin 7 or newer, the Device Manager shows one card per configured camera, in the tab _Devices_ of the
+instance settings and under _Devices_ in the menu of the admin:
 
 - **Status:** online or offline. With pre-recording the camera counts as online while the buffer runs; without it,
   while the last recording or snapshot worked. The last error appears as a warning on the card.
@@ -348,6 +349,10 @@ adapter.
     ### **WORK IN PROGRESS**
 -->
 
+### 0.5.1 (2026-11-11)
+
+- (sadam6752-tech) The Device Manager also as tab _Devices_ in the instance settings, after _Cameras_
+
 ### 0.5.0 (2026-11-11)
 
 - (sadam6752-tech) New tab _Send_ with notification profiles (instance, recipient, attachment, text, template); the
@@ -369,11 +374,6 @@ adapter.
 ### 0.4.3 (2026-10-18)
 
 - (sadam6752-tech) A variable named like a wait function is renamed (false positive W5051 of the repository checker)
-
-### 0.4.2 (2026-10-18)
-
-- (sadam6752-tech) Built-in notification format for the MAX adapter (clips as video, pictures as image, to a user,
-  a group chat or all users); built from the documentation of ioBroker.max, not yet tried with a real MAX bot
 
 Older changes are in [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 
