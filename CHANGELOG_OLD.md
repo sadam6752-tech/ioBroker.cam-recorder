@@ -1,5 +1,13 @@
 # Older changes
 
+### 0.5.0 (2026-11-11)
+
+- (sadam6752-tech) New tab _Send_ with notification profiles (instance, recipient, attachment, text, template); the
+  trigger and timelapse tables choose profiles in one column _Message_ instead of _Notify_ and _Send to_. The
+  first start turns the settings of 0.4.x into profiles, once; scripts with `telegram: true` keep working
+- (sadam6752-tech) Device Manager: one card per camera with online status, recording now, time of the last clip and
+  snapshot, the last snapshot as picture, and the actions "Record now" and "Snapshot" (admin 7 or newer)
+
 ### 0.4.5 (2026-11-11)
 
 - (sadam6752-tech) Trigger table easier to read: columns in a new order (state, when, cooldown, condition,

@@ -112,6 +112,11 @@ the clip also contains the seconds **before** the event.
   60 s, then every 5 minutes, with a warning in the log. While the buffer is not running, clips are recorded from the
   event on as without pre-recording, with a warning in the log. After a start of the adapter the buffer needs about
   10 seconds (ffmpeg analyses the stream, then waits for key frames) until `prebuffer` shows `running`.
+- **Reading the warning.** It tells how long the stream ran and the last warnings of ffmpeg, e.g.
+  `received no data for 20 s after 37 s of stream: [rtsp] RTP: missed 12 packets (5×)`. _before any data came_ means
+  the camera never sent (wrong URL, login, port); _after … s of stream_ with the same time again and again means the
+  camera stops sending after a while, e.g. because another client (the app of the camera, a video recorder) takes the
+  stream or a session ends. Try the other transport (TCP/UDP) or switch the sound of the camera off and on.
 - The pieces go to the system temp folder (`/tmp/iobroker-cam-recorder.0-prebuffer` on Linux) unless you enter a
   folder. A RAM disk (tmpfs) is a good choice on systems with an SD card.
 
@@ -398,6 +403,11 @@ adapter.
     ### **WORK IN PROGRESS**
 -->
 
+### 0.6.2 (2026-11-12)
+
+- (sadam6752-tech) Pre-recording: the warning of a stopped buffer tells how long the stream ran (or that no data came at
+  all) and the last warnings of ffmpeg, repeated ones counted, to find why a camera stops sending
+
 ### 0.6.1 (2026-11-12)
 
 - (sadam6752-tech) AI check: the question to pi-agent names the date and time of the snapshot instead of
@@ -421,14 +431,6 @@ adapter.
 ### 0.5.1 (2026-11-11)
 
 - (sadam6752-tech) The Device Manager also as tab _Devices_ in the instance settings, after _Cameras_
-
-### 0.5.0 (2026-11-11)
-
-- (sadam6752-tech) New tab _Send_ with notification profiles (instance, recipient, attachment, text, template); the
-  trigger and timelapse tables choose profiles in one column _Message_ instead of _Notify_ and _Send to_. The
-  first start turns the settings of 0.4.x into profiles, once; scripts with `telegram: true` keep working
-- (sadam6752-tech) Device Manager: one card per camera with online status, recording now, time of the last clip and
-  snapshot, the last snapshot as picture, and the actions "Record now" and "Snapshot" (admin 7 or newer)
 
 Older changes are in [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 
