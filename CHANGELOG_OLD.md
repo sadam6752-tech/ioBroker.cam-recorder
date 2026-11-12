@@ -1,5 +1,10 @@
 # Older changes
 
+### 0.4.5 (2026-11-11)
+
+- (sadam6752-tech) Trigger table easier to read: columns in a new order (state, when, cooldown, condition,
+  camera, action, duration, format, notify, send to) with widths that fit, shorter headers _When_ and _Only if_
+
 ### 0.4.4 (2026-10-18)
 
 - (sadam6752-tech) Recipients by name: notification targets get a name, triggers and timelapses a column "Send to",

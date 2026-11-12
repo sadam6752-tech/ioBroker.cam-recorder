@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "cam-recorder",
-        "version": "0.6.0",
+        "version": "0.6.1",
         "news": {
+            "0.6.1": {
+                "en": "AI check: the question to pi-agent names date and time of the snapshot, so its chat shows when each picture came",
+                "de": "KI-Prüfung: Die Frage an pi-agent nennt Datum und Uhrzeit des Schnappschusses, so zeigt dessen Chat, wann jedes Bild kam",
+                "ru": "ИИ-проверка: вопрос к pi-agent содержит дату и время снимка, поэтому в его чате видно, когда пришло каждое изображение",
+                "pt": "Verificação por IA: a pergunta ao pi-agent indica a data e a hora do instantâneo, assim o chat mostra quando chegou cada imagem",
+                "nl": "AI-controle: de vraag aan pi-agent noemt datum en tijd van de momentopname, zodat de chat toont wanneer elk beeld kwam",
+                "fr": "Vérification par IA : la question à pi-agent indique la date et l'heure de la photo, ainsi son chat montre quand chaque image est arrivée",
+                "it": "Controllo IA: la domanda a pi-agent indica data e ora dell'istantanea, così la chat mostra quando è arrivata ogni immagine",
+                "es": "Comprobación por IA: la pregunta a pi-agent indica la fecha y la hora de la instantánea, así su chat muestra cuándo llegó cada imagen",
+                "pl": "Kontrola AI: pytanie do pi-agent podaje datę i godzinę zdjęcia, więc czat pokazuje, kiedy przyszedł każdy obraz",
+                "uk": "ШІ-перевірка: запитання до pi-agent містить дату й час знімка, тож у його чаті видно, коли надійшло кожне зображення",
+                "zh-cn": "AI 检查：发给 pi-agent 的问题包含快照的日期和时间，因此其聊天中可以看到每张图片的到达时间"
+            },
             "0.6.0": {
                 "en": "AI check: on the new tab AI check, criteria in your own words (a person, an animal in the garden) name profiles; with ioBroker.pi-agent the snapshot of an event is checked and a profile whose criterion is met gets an extra message with what was seen, while the files go out as before. The adapter answers the message help for AI agents",
                 "de": "KI-Prüfung: auf dem neuen Reiter KI-Prüfung nennen Kriterien in eigenen Worten (eine Person, ein Tier im Garten) Profile; mit ioBroker.pi-agent wird der Schnappschuss eines Ereignisses geprüft, und ein Profil, dessen Kriterium erfüllt ist, bekommt eine zusätzliche Nachricht mit dem Gesehenen, während die Dateien wie bisher hinausgehen. Der Adapter beantwortet die Nachricht help für KI-Agenten",
@@ -80,19 +93,6 @@
                 "pl": "Odbiorcy według nazwy: odbiorcy powiadomień dostają nazwę, wyzwalacze i filmy poklatkowe kolumnę Wyślij do, np. dwa przyciski dzwonka powiadamiają dwie różne osoby w dowolnym komunikatorze",
                 "uk": "Отримувачі за іменем: отримувачі мають ім'я, тригери й таймлапси стовпець «Надіслати», наприклад дві кнопки дзвінка сповіщають двох різних людей у будь-якому месенджері",
                 "zh-cn": "按名称选择接收者：通知目标可设置名称，触发器和延时摄影新增“发送给”列，例如两个门铃按钮可在任意消息工具中分别通知两个人"
-            },
-            "0.4.3": {
-                "en": "Internal: a variable was renamed that the repository checker took for a wait function (W5051)",
-                "de": "Intern: eine Variable umbenannt, die der Repository-Checker für eine Wartefunktion hielt (W5051)",
-                "ru": "Внутреннее: переименована переменная, которую проверка репозитория приняла за функцию ожидания (W5051)",
-                "pt": "Interno: renomeada uma variável que o verificador do repositório confundiu com uma função de espera (W5051)",
-                "nl": "Intern: een variabele hernoemd die de repository-checker voor een wachtfunctie aanzag (W5051)",
-                "fr": "Interne : renommage d'une variable que le vérificateur du dépôt prenait pour une fonction d'attente (W5051)",
-                "it": "Interno: rinominata una variabile che il controllo del repository scambiava per una funzione di attesa (W5051)",
-                "es": "Interno: se renombró una variable que el verificador del repositorio tomaba por una función de espera (W5051)",
-                "pl": "Wewnętrzne: zmieniono nazwę zmiennej, którą sprawdzanie repozytorium uznawało za funkcję oczekiwania (W5051)",
-                "uk": "Внутрішнє: перейменовано змінну, яку перевірка репозиторію вважала функцією очікування (W5051)",
-                "zh-cn": "内部：重命名了一个被仓库检查器误认为等待函数的变量（W5051）"
             }
         },
         "titleLang": {

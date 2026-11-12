@@ -64,6 +64,12 @@ describe('AI check of a snapshot', () => {
         assert.match(question, /1\. a person\n2\. a car\n3\. an animal/);
         assert.match(question, /"matches": \[true or false, true or false, true or false\]/);
         assert.match(buildQuestion('Door', [], 'xx'), /in English[\s\S]*\{"description": "…"\}$/);
+        assert.match(question, /^Picture of the camera "Door", taken just now\./);
+        // date and time of the picture, so the chat of the agent shows when it came
+        assert.match(
+            buildQuestion('Door', [], 'de', '12.11.2026 09:05:07'),
+            /^Picture of the camera "Door", taken 12\.11\.2026 09:05:07\.\n/,
+        );
         assert.match(INSTRUCTIONS, /Do not call any tools/);
     });
 

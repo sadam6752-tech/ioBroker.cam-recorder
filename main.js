@@ -22,7 +22,7 @@ const { Recorder } = require('./lib/recorder');
 const { Prebuffer } = require('./lib/prebuffer');
 const { removePartials } = require('./lib/storage');
 const { CHECK_INTERVAL_MS, probeTarget, isReachable } = require('./lib/reachability');
-const { triggerDecision } = require('./lib/triggers');
+const { triggerDecision, formatCaption } = require('./lib/triggers');
 const { maskSecrets } = require('./lib/mask');
 const { NAMES } = require('./lib/names');
 const { conditionMet, opSymbol } = require('./lib/conditions');
@@ -748,7 +748,12 @@ class CamRecorder extends utils.Adapter {
                         agent,
                         'ask',
                         {
-                            text: buildQuestion(camera.name, conditions, this.systemLanguage),
+                            text: buildQuestion(
+                                camera.name,
+                                conditions,
+                                this.systemLanguage,
+                                formatCaption('{date} {time}', '', new Date(snapshot.time), this.dateFormat),
+                            ),
                             images: [{ data, mimeType: 'image/jpeg' }],
                             conversation: `cam-recorder-${camera.id}`,
                             instructions: INSTRUCTIONS,

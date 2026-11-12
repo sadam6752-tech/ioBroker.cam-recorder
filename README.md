@@ -398,6 +398,11 @@ adapter.
     ### **WORK IN PROGRESS**
 -->
 
+### 0.6.1 (2026-11-12)
+
+- (sadam6752-tech) AI check: the question to pi-agent names the date and time of the snapshot instead of
+  "just now", so the chat of pi-agent shows when each picture came
+
 ### 0.6.0 (2026-11-12)
 
 - (sadam6752-tech) AI check: on the new tab _AI check_ criteria in your own words ("a person", "an animal in the
@@ -424,11 +429,6 @@ adapter.
   first start turns the settings of 0.4.x into profiles, once; scripts with `telegram: true` keep working
 - (sadam6752-tech) Device Manager: one card per camera with online status, recording now, time of the last clip and
   snapshot, the last snapshot as picture, and the actions "Record now" and "Snapshot" (admin 7 or newer)
-
-### 0.4.5 (2026-11-11)
-
-- (sadam6752-tech) Trigger table easier to read: columns in a new order (state, when, cooldown, condition,
-  camera, action, duration, format, notify, send to) with widths that fit, shorter headers _When_ and _Only if_
 
 Older changes are in [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 
