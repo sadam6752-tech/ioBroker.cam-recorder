@@ -90,5 +90,11 @@
     "Attachment: Everything sends snapshots, clips and timelapse videos, Snapshot only and Clip only one kind, Text only sends the text at once when the trigger fires, without a file. Text: {camera}, {date} and {time} are replaced.": "附件：“全部”发送快照、视频片段和延时视频，“仅快照”和“仅视频片段”只发送一种，“仅文本”在触发时立即发送文本，不带文件。文本：{camera}、{date} 和 {time} 会被替换。",
     "Telegram, MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "Telegram, MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify, ntfy 已内置（无法发送文件的消息工具会收到文本）。其他适配器请输入包含 {file}、{caption}、{camera}、{text} 的 JSON 消息。",
     "Devices": "设备",
-    "Sound": "声音"
+    "Sound": "声音",
+    "pi-agent instance for the AI check": "用于 AI 检查的 pi-agent 实例",
+    "AI check": "AI 检查",
+    "Optional, with ioBroker.pi-agent and a model that understands pictures: when a trigger fires, the files go out as before, and pi-agent looks at a snapshot. When the picture meets a criterion, the profiles of its row get an extra message, e.g. \"🔍 Door: a person — A man with a parcel at the door\". One row per criterion in your own words (e.g. \"a person\" or \"an animal in the garden\"). Without a match, or when pi-agent does not answer in time, there is no extra message; nothing else is lost.": "可选，需要 ioBroker.pi-agent 和能理解图片的模型：触发器触发时，文件照常发送，同时 pi-agent 查看一张快照。如果画面符合某条标准，该行的配置文件会额外收到一条消息，例如“🔍 大门：一个人 — 门口有一名拿着包裹的男子”。每条标准一行，用自己的话描述（例如“一个人”或“花园里有动物”）。没有匹配或 pi-agent 未及时回答时，不会有额外消息；其他内容不会丢失。",
+    "Wait for the answer of pi-agent (s)": "等待 pi-agent 的回答（秒）",
+    "Criterion": "标准",
+    "Profiles": "配置文件"
 }

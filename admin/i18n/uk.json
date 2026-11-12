@@ -90,5 +90,11 @@
     "Attachment: Everything sends snapshots, clips and timelapse videos, Snapshot only and Clip only one kind, Text only sends the text at once when the trigger fires, without a file. Text: {camera}, {date} and {time} are replaced.": "Вкладення: «Усе» надсилає знімки, кліпи й відео таймлапсу, «Лише знімок» і «Лише кліп» — один вид, «Лише текст» надсилає текст одразу при спрацюванні, без файлу. Текст: {camera}, {date} і {time} замінюються.",
     "Telegram, MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "Telegram, MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify, ntfy вбудовані (месенджери, які не вміють надсилати файли, отримують текст). Для інших адаптерів введіть JSON-повідомлення з {file}, {caption}, {camera}, {text}.",
     "Devices": "Пристрої",
-    "Sound": "Звук"
+    "Sound": "Звук",
+    "pi-agent instance for the AI check": "Екземпляр pi-agent для ШІ-перевірки",
+    "AI check": "ШІ-перевірка",
+    "Optional, with ioBroker.pi-agent and a model that understands pictures: when a trigger fires, the files go out as before, and pi-agent looks at a snapshot. When the picture meets a criterion, the profiles of its row get an extra message, e.g. \"🔍 Door: a person — A man with a parcel at the door\". One row per criterion in your own words (e.g. \"a person\" or \"an animal in the garden\"). Without a match, or when pi-agent does not answer in time, there is no extra message; nothing else is lost.": "Необов’язково, з ioBroker.pi-agent і моделлю, що розуміє зображення: коли спрацьовує тригер, файли надсилаються як раніше, а pi-agent дивиться на знімок. Якщо кадр відповідає критерію, профілі його рядка отримують додаткове повідомлення, наприклад «🔍 Двері: людина — Чоловік із посилкою біля дверей». Один рядок на критерій своїми словами (наприклад, «людина» або «тварина в саду»). Без збігу або якщо pi-agent не відповість вчасно, додаткового повідомлення немає; більше нічого не втрачається.",
+    "Wait for the answer of pi-agent (s)": "Чекати на відповідь pi-agent (с)",
+    "Criterion": "Критерій",
+    "Profiles": "Профілі"
 }

@@ -210,6 +210,39 @@ Any other adapter:
 { "to": "{recipient}", "title": "{camera}", "body": "{caption}", "attachment": "{file}" }
 ```
 
+### AI check
+
+With [ioBroker.pi-agent](https://github.com/sadam6752-tech/ioBroker.pi-agent) and a model that understands pictures,
+a profile of the _Send_ tab gets an extra message when the picture of an event shows what matters to its recipient.
+The files of the event go out as before, whatever the check says, so a failed recognition never costs a message.
+
+Choose the pi-agent instance on the tab _AI check_ and add one row per criterion, in your own words and language,
+with the profiles that get the extra message when the picture meets it:
+
+| Active | Criterion                  | Profiles   |
+| ------ | -------------------------- | ---------- |
+| ✓      | a person                   | Me, Father |
+| ✓      | an animal in the garden    | Garden     |
+| ✓      | a car in front of the gate | Me         |
+
+When a trigger fires, the clip and the snapshot are made and sent as before. At the same time the adapter takes a
+snapshot (from the pre-recording when it runs) and asks pi-agent once, with every criterion of the profiles of this
+trigger. A profile whose criteria the picture meets gets one more message through its own instance and recipient:
+
+```
+🔍 Front door: a person — A man with a parcel at the door.
+```
+
+- The description comes in the language of the system settings; the state `description` of the camera keeps the
+  newest one.
+- _Wait for the answer of pi-agent_ (5–120 s, default 30). Without a match, when pi-agent does not answer in time, or
+  when the check fails (pi-agent stopped, a model without image input) there is no extra message, and the log says
+  why.
+- pi-agent keeps one conversation per camera (`cam-recorder-<camera>`). It sends the picture to its model only with
+  this question; later questions see a text of it. One check costs one request with one picture, and the daily token
+  limit of pi-agent counts it.
+- Scripts get the same check for `record` and `snapshot` with `profiles`. Timelapse videos are not checked.
+
 ### Timelapse
 
 One row per camera: a picture every _Interval_ minutes, and once a day at _Video at_ (HH:MM, default 23:55) the
@@ -295,6 +328,7 @@ Per camera below `cam-recorder.0.cameras.<camera>`:
 | `lastSnapshotTime`   | Time of the newest snapshot                     |
 | `status`             | `idle`, `recording`, `snapshot` or `error`      |
 | `lastError`          | Text of the last error, empty after a success   |
+| `description`        | What the AI check saw in the newest snapshot    |
 | `reachable`          | Answers on the network (checked each minute)    |
 | `prebuffer`          | `off`, `starting`, `running` or `restarting`    |
 | `timelapse`          | Button: make the timelapse video now            |
@@ -329,9 +363,12 @@ on({ id: 'doorbird.0.Doorbell.1.trigger', change: 'any' }, () => {
 | `timelapse`    | `{ camera }` or just the camera name                                            | the video as above, or `{ error }` when fewer than two pictures wait                                     |
 | `listCameras`  | –                                                                               | `[{ value, label }]`                                                                                     |
 | `listProfiles` | –                                                                               | `[{ value, label }]`                                                                                     |
+| `help`         | –                                                                               | `{ help }`: the commands, states and rules as text for an AI agent                                       |
 
 `profiles: 'Me, Father'` (or a list) sends the result through those profiles of the _Send_ tab. The way of 0.4.x
 still works: `telegram: true` sends through every active profile, with `recipients: 'Father'` only through those.
+When a profile of the message has a criterion of the tab _AI check_, the snapshot is checked as well (see _AI
+check_), and the answer has `description`.
 `pre` limits the seconds before the event (at most the value set for the camera, `0` = no pre-recording for this
 clip); `duration` is always the time after the event, and the answer's `duration` is the whole clip.
 
@@ -361,6 +398,14 @@ adapter.
     ### **WORK IN PROGRESS**
 -->
 
+### 0.6.0 (2026-11-12)
+
+- (sadam6752-tech) AI check: on the new tab _AI check_ criteria in your own words ("a person", "an animal in the
+  garden") name profiles; with ioBroker.pi-agent the snapshot of an event is checked, and a profile whose criterion
+  the picture meets gets an extra message with what was seen. The files go out as before; the new state
+  `description` keeps the newest description
+- (sadam6752-tech) The adapter answers the message `help` with a description of its commands for AI agents
+
 ### 0.5.2 (2026-11-11)
 
 - (sadam6752-tech) Sound: a new column _Sound_ in the camera table takes the sound of the camera into mp4 clips
@@ -384,11 +429,6 @@ adapter.
 
 - (sadam6752-tech) Trigger table easier to read: columns in a new order (state, when, cooldown, condition,
   camera, action, duration, format, notify, send to) with widths that fit, shorter headers _When_ and _Only if_
-
-### 0.4.4 (2026-10-18)
-
-- (sadam6752-tech) Recipients by name: notification targets get a name, triggers and timelapses a column "Send to",
-  so for example the two buttons of a door station notify two different people on any messenger
 
 Older changes are in [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 

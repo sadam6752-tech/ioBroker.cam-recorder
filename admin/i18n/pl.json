@@ -90,5 +90,11 @@
     "Attachment: Everything sends snapshots, clips and timelapse videos, Snapshot only and Clip only one kind, Text only sends the text at once when the trigger fires, without a file. Text: {camera}, {date} and {time} are replaced.": "Załącznik: Wszystko wysyła zdjęcia, klipy i filmy poklatkowe, Tylko zdjęcie i Tylko klip jeden rodzaj, Tylko tekst wysyła tekst od razu po zadziałaniu wyzwalacza, bez pliku. Tekst: {camera}, {date} i {time} są zastępowane.",
     "Telegram, MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "Telegram, MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify, ntfy są wbudowane (komunikatory, które nie wysyłają plików, dostają tekst). Dla innych adapterów wpisz wiadomość JSON z {file}, {caption}, {camera}, {text}.",
     "Devices": "Urządzenia",
-    "Sound": "Dźwięk"
+    "Sound": "Dźwięk",
+    "pi-agent instance for the AI check": "Instancja pi-agent do kontroli AI",
+    "AI check": "Kontrola AI",
+    "Optional, with ioBroker.pi-agent and a model that understands pictures: when a trigger fires, the files go out as before, and pi-agent looks at a snapshot. When the picture meets a criterion, the profiles of its row get an extra message, e.g. \"🔍 Door: a person — A man with a parcel at the door\". One row per criterion in your own words (e.g. \"a person\" or \"an animal in the garden\"). Without a match, or when pi-agent does not answer in time, there is no extra message; nothing else is lost.": "Opcjonalnie, z ioBroker.pi-agent i modelem rozumiejącym obrazy: gdy wyzwalacz zadziała, pliki wychodzą jak dotąd, a pi-agent ogląda zdjęcie. Jeśli obraz spełnia kryterium, profile z jego wiersza dostają dodatkową wiadomość, np. \"🔍 Drzwi: osoba — Mężczyzna z paczką przy drzwiach\". Jeden wiersz na kryterium własnymi słowami (np. \"osoba\" lub \"zwierzę w ogrodzie\"). Bez trafienia lub gdy pi-agent nie odpowie na czas, nie ma dodatkowej wiadomości; nic innego nie ginie.",
+    "Wait for the answer of pi-agent (s)": "Czekaj na odpowiedź pi-agent (s)",
+    "Criterion": "Kryterium",
+    "Profiles": "Profile"
 }

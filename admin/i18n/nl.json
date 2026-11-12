@@ -90,5 +90,11 @@
     "Attachment: Everything sends snapshots, clips and timelapse videos, Snapshot only and Clip only one kind, Text only sends the text at once when the trigger fires, without a file. Text: {camera}, {date} and {time} are replaced.": "Bijlage: Alles stuurt momentopnames, clips en tijdopnamevideo's, Alleen momentopname en Alleen clip één soort, Alleen tekst stuurt de tekst meteen bij het afgaan van de trigger, zonder bestand. Tekst: {camera}, {date} en {time} worden vervangen.",
     "Telegram, MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "Telegram, MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify, ntfy zijn ingebouwd (messengers die geen bestanden kunnen versturen krijgen een tekst). Voer voor andere adapters een JSON-bericht in met {file}, {caption}, {camera}, {text}.",
     "Devices": "Apparaten",
-    "Sound": "Geluid"
+    "Sound": "Geluid",
+    "pi-agent instance for the AI check": "pi-agent-instantie voor de AI-controle",
+    "AI check": "AI-controle",
+    "Optional, with ioBroker.pi-agent and a model that understands pictures: when a trigger fires, the files go out as before, and pi-agent looks at a snapshot. When the picture meets a criterion, the profiles of its row get an extra message, e.g. \"🔍 Door: a person — A man with a parcel at the door\". One row per criterion in your own words (e.g. \"a person\" or \"an animal in the garden\"). Without a match, or when pi-agent does not answer in time, there is no extra message; nothing else is lost.": "Optioneel, met ioBroker.pi-agent en een model dat afbeeldingen begrijpt: als een trigger afgaat, gaan de bestanden zoals voorheen de deur uit en bekijkt pi-agent een momentopname. Als de afbeelding aan een criterium voldoet, krijgen de profielen van die rij een extra bericht, bijv. \"🔍 Voordeur: een persoon — Een man met een pakket aan de deur\". Eén rij per criterium in eigen woorden (bijv. \"een persoon\" of \"een dier in de tuin\"). Zonder treffer, of als pi-agent niet op tijd antwoordt, komt er geen extra bericht; verder gaat niets verloren.",
+    "Wait for the answer of pi-agent (s)": "Wachten op het antwoord van pi-agent (s)",
+    "Criterion": "Criterium",
+    "Profiles": "Profielen"
 }

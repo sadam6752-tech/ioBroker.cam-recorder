@@ -60,8 +60,18 @@ export interface NotifyProfile extends NotifyTarget {
     name: string;
     /** What the profile sends: every file, snapshots, clips (and timelapse videos), or a text without file */
     attach: 'all' | 'snapshot' | 'clip' | 'none';
-    /** Caption with `{camera}`, `{date}` and `{time}` */
+    /** Caption with `{camera}`, `{date}`, `{time}` and `{description}` */
     text: string;
+    /** Criteria of the tab AI check that name this profile: it is sent when the snapshot meets one; empty = always */
+    conditions: string[];
+}
+
+/** A row of the tab AI check */
+export interface AgentCheck {
+    /** What the snapshot must show, in the user's words (e.g. "a person") */
+    criterion: string;
+    /** Names of the profiles that get the message when it is met */
+    profiles: string[];
 }
 
 /** Timelapse of one camera */
@@ -134,6 +144,12 @@ export interface Settings {
     maxClipLength: number;
     /** Active profiles of the tab Send */
     profiles: NotifyProfile[];
+    /** Instance of ioBroker.pi-agent that checks snapshots for the criteria, '' = none */
+    agentInstance: string;
+    /** Seconds to wait for the answer of the agent; then every profile is sent */
+    agentTimeout: number;
+    /** Active rows of the tab AI check */
+    agentChecks: AgentCheck[];
     /** Copy to an SFTP server */
     remote: RemoteSettings;
 }

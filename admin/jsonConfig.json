@@ -595,6 +595,79 @@
                 }
             }
         },
+        "_aiTab": {
+            "type": "panel",
+            "label": "AI check",
+            "items": {
+                "_agentHelp": {
+                    "type": "staticText",
+                    "text": "Optional, with ioBroker.pi-agent and a model that understands pictures: when a trigger fires, the files go out as before, and pi-agent looks at a snapshot. When the picture meets a criterion, the profiles of its row get an extra message, e.g. \"🔍 Door: a person — A man with a parcel at the door\". One row per criterion in your own words (e.g. \"a person\" or \"an animal in the garden\"). Without a match, or when pi-agent does not answer in time, there is no extra message; nothing else is lost.",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "agentInstance": {
+                    "type": "instance",
+                    "adapter": "pi-agent",
+                    "allowDeactivate": true,
+                    "label": "pi-agent instance for the AI check",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3
+                },
+                "agentTimeout": {
+                    "type": "number",
+                    "label": "Wait for the answer of pi-agent (s)",
+                    "min": 5,
+                    "max": 120,
+                    "default": 30,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3
+                },
+                "agentChecks": {
+                    "type": "table",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12,
+                    "items": [
+                        {
+                            "type": "checkbox",
+                            "attr": "enabled",
+                            "title": "Active",
+                            "width": "7%",
+                            "default": true
+                        },
+                        {
+                            "type": "text",
+                            "attr": "criterion",
+                            "title": "Criterion",
+                            "width": "50%",
+                            "default": ""
+                        },
+                        {
+                            "type": "autocompleteSendTo",
+                            "attr": "profiles",
+                            "title": "Profiles",
+                            "width": "43%",
+                            "command": "listProfiles",
+                            "freeSolo": true,
+                            "default": ""
+                        }
+                    ]
+                }
+            }
+        },
         "_timelapseTab": {
             "type": "panel",
             "label": "Timelapse",

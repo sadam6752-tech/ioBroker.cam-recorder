@@ -1,5 +1,10 @@
 # Older changes
 
+### 0.4.4 (2026-10-18)
+
+- (sadam6752-tech) Recipients by name: notification targets get a name, triggers and timelapses a column "Send to",
+  so for example the two buttons of a door station notify two different people on any messenger
+
 ### 0.4.3 (2026-10-18)
 
 - (sadam6752-tech) A variable named like a wait function is renamed (false positive W5051 of the repository checker)

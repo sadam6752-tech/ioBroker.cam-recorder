@@ -26,7 +26,7 @@ const { triggerDecision } = require('./lib/triggers');
 const { maskSecrets } = require('./lib/mask');
 const { NAMES } = require('./lib/names');
 const { conditionMet, opSymbol } = require('./lib/conditions');
-const { KNOWN, parseNames } = require('./lib/notify');
+const { KNOWN, parseNames, buildMessage } = require('./lib/notify');
 const {
     pickProfiles,
     planNotify,
@@ -36,6 +36,16 @@ const {
     profileProblems,
 } = require('./lib/profiles');
 const { Timelapse } = require('./lib/timelapse');
+const {
+    INSTRUCTIONS,
+    needsAgent,
+    conditionsOf,
+    buildQuestion,
+    parseVerdict,
+    matchesOf,
+    matchText,
+} = require('./lib/agent-check');
+const { HELP } = require('./lib/help');
 const { CameraDeviceManagement } = require('./lib/device-manager');
 const {
     copyFileToRemote,
@@ -63,6 +73,8 @@ const MAX_COPY_BYTES = 25 * 1024 * 1024;
  * @typedef {import('./lib/types').Trigger} Trigger
  * @typedef {import('./lib/types').RecordRequest} RecordRequest
  * @typedef {import('./lib/types').RecordResult} RecordResult
+ * @typedef {import('./lib/types').NotifyProfile} NotifyProfile
+ * @typedef {import('./lib/agent-check').Verdict} Verdict
  */
 
 /** @type {Array<{id: string, common: Partial<ioBroker.StateCommon>}>} */
@@ -85,6 +97,7 @@ const CAMERA_STATES = [
         },
     },
     { id: 'lastError', common: { type: 'string', role: 'text', read: true, write: false, def: '' } },
+    { id: 'description', common: { type: 'string', role: 'text', read: true, write: false, def: '' } },
     { id: 'reachable', common: { type: 'boolean', role: 'indicator.reachable', read: true, write: false } },
     {
         id: 'prebuffer',
@@ -137,6 +150,7 @@ class CamRecorder extends utils.Adapter {
         this.settings = normalizeSettings({});
         this.storageId = '';
         this.dateFormat = 'DD.MM.YYYY';
+        this.systemLanguage = 'en';
         /** @type {(value?: unknown) => void} */
         this._resolveReady = () => undefined;
         this.ready = new Promise(resolve => {
@@ -525,6 +539,10 @@ class CamRecorder extends utils.Adapter {
             if (typeof format === 'string' && format.trim()) {
                 this.dateFormat = format.trim();
             }
+            const language = config?.common?.language;
+            if (typeof language === 'string' && language) {
+                this.systemLanguage = language;
+            }
         } catch {
             // keep the default
         }
@@ -669,7 +687,103 @@ class CamRecorder extends utils.Adapter {
     }
 
     /**
-     * @param {import('./lib/types').NotifyProfile} profile - Profile
+     * After the check of the AI agent: each profile whose criteria the picture meets gets an extra message with what
+     * was found. The files of the event do not wait for it and go out anyway.
+     *
+     * @param {Camera} camera - Camera
+     * @param {NotifyProfile[]} profiles - Profiles of the event
+     * @param {Promise<Verdict | null> | null} verdict - Check of the AI agent, null = none
+     */
+    async _sendMatches(camera, profiles, verdict) {
+        const checked = verdict ? await verdict : null;
+        if (!checked) {
+            return;
+        }
+        await Promise.all(
+            profiles.map(async profile => {
+                const matched = matchesOf(profile, checked);
+                if (!matched.length) {
+                    return;
+                }
+                const text = matchText(camera.name, matched, checked.description);
+                try {
+                    const { command, message } = buildMessage(profile, null, text, camera.name);
+                    await this.sendToAsync(profile.instance, command, message, { timeout: 60_000 });
+                    this.log.info(
+                        `Camera "${camera.name}": match for profile "${profile.name}": ${matched.join(', ')}`,
+                    );
+                } catch (err) {
+                    this.log.warn(
+                        `Could not send the match of "${camera.name}" through profile "${profile.name}": ${err.message}`,
+                    );
+                }
+            }),
+        );
+    }
+
+    /**
+     * Asks the AI agent (ioBroker.pi-agent) about a snapshot of the event: what it shows and which criteria of the
+     * profiles it meets. A failed check only costs the extra messages, the files go out anyway.
+     *
+     * @param {Camera} camera - Camera
+     * @param {NotifyProfile[]} profiles - Profiles of the event
+     * @returns {Promise<Verdict | null> | null} The verdict, null when no profile has criteria
+     */
+    _checkPicture(camera, profiles) {
+        const agent = this.settings.agentInstance;
+        if (!agent || !profiles.some(needsAgent)) {
+            return null;
+        }
+        const conditions = conditionsOf(profiles);
+        const check = async () => {
+            const began = Date.now();
+            try {
+                if (!this.recorder) {
+                    throw new Error('ffmpeg is not available');
+                }
+                const snapshot = await this.recorder.snapshot(camera, {});
+                const data = (await fs.readFile(snapshot.file)).toString('base64');
+                const answer = /** @type {{answer?: unknown, error?: unknown} | undefined} */ (
+                    await this.sendToAsync(
+                        agent,
+                        'ask',
+                        {
+                            text: buildQuestion(camera.name, conditions, this.systemLanguage),
+                            images: [{ data, mimeType: 'image/jpeg' }],
+                            conversation: `cam-recorder-${camera.id}`,
+                            instructions: INSTRUCTIONS,
+                        },
+                        { timeout: this.settings.agentTimeout * 1000 },
+                    )
+                );
+                if (answer?.error) {
+                    throw new Error(String(answer.error));
+                }
+                const verdict = parseVerdict(answer?.answer, conditions);
+                const took = ((Date.now() - began) / 1000).toFixed(1);
+                const decided = conditions
+                    .filter(c => verdict.matches.has(c))
+                    .map(c => `"${c}" ${verdict.matches.get(c) ? 'yes' : 'no'}`);
+                this.log.info(
+                    `Camera "${camera.name}": ${agent} in ${took} s: ${verdict.description || '(no description)'}${decided.length ? ` (${decided.join(', ')})` : ''}`,
+                );
+                if (verdict.error) {
+                    this.log.warn(`Camera "${camera.name}": ${agent}: ${verdict.error}, no match for it`);
+                }
+                await this.setState(`cameras.${camera.id}.description`, verdict.description, true);
+                return verdict;
+            } catch (err) {
+                this.log.warn(
+                    `Camera "${camera.name}": the check by ${agent} failed (${maskSecrets(err.message, [camera.username])}), no match messages`,
+                );
+                return null;
+            }
+        };
+        return check();
+    }
+
+    /**
+     * @param {NotifyProfile} profile - Profile
      * @param {RecordResult | null} result - Finished file, null for a text without file
      * @param {string} camera - Camera name
      * @param {Date} time - Time of the event
@@ -706,6 +820,15 @@ class CamRecorder extends utils.Adapter {
 
     /** Names problems of the profiles once at the start. */
     _checkProfiles() {
+        const needing = this.settings.profiles.filter(needsAgent).map(p => `"${p.name}"`);
+        if (needing.length && !this.settings.agentInstance) {
+            this.log.warn(
+                `Profiles ${needing.join(', ')} have criteria, but no pi-agent instance is chosen (tab AI check): no snapshot is checked`,
+            );
+        }
+        for (const check of this.settings.agentChecks) {
+            this._checkNames(`AI check "${check.criterion}"`, check.profiles);
+        }
         for (const profile of this.settings.profiles) {
             const adapter = profile.instance.split('.')[0];
             if (profile.template) {
@@ -750,6 +873,8 @@ class CamRecorder extends utils.Adapter {
         // profiles "Text only" send their text at once, the others get the files when they are ready
         const { chosen } = pickProfiles(trigger.profiles, this.settings.profiles);
         const fileProfiles = chosen.filter(p => p.attach !== 'none').map(p => p.name);
+        // one check of the AI agent for the whole event; the files do not wait for it
+        const verdict = this._checkPicture(camera, chosen);
         /** @type {Promise<unknown>[]} */
         const jobs = chosen
             .filter(p => p.attach === 'none')
@@ -760,6 +885,7 @@ class CamRecorder extends utils.Adapter {
         if (trigger.action !== 'snapshot') {
             jobs.push(this._take(camera, 'record', request, fileProfiles));
         }
+        jobs.push(this._sendMatches(camera, chosen, verdict));
         await Promise.allSettled(jobs);
         return true;
     }
@@ -830,6 +956,10 @@ class CamRecorder extends utils.Adapter {
         };
         await this.ready;
         try {
+            if (obj.command === 'help') {
+                reply({ help: HELP });
+                return;
+            }
             if (obj.command === 'listCameras') {
                 reply(this.cameras.map(c => ({ value: c.name, label: c.name })));
                 return;
@@ -877,8 +1007,15 @@ class CamRecorder extends utils.Adapter {
                 reply({ error: `Unknown camera "${message.camera ?? ''}"` });
                 return;
             }
-            const result = await this._take(camera, obj.command, message, this._scriptProfiles(message));
-            reply(result);
+            const names = this._scriptProfiles(message);
+            const { chosen } = pickProfiles(names, this.settings.profiles);
+            const verdict = this._checkPicture(camera, chosen);
+            const [result] = await Promise.all([
+                this._take(camera, obj.command, message, names),
+                this._sendMatches(camera, chosen, verdict),
+            ]);
+            const checked = verdict ? await verdict : null;
+            reply(checked ? { ...result, description: checked.description } : result);
         } catch (err) {
             reply({ error: err.message });
         }

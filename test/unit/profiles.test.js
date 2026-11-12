@@ -64,8 +64,16 @@ describe('notification profiles', () => {
             { name: 'Mail', instance: 'email.0', attach: 'weird' },
         ];
         assert.deepEqual(normalizeProfiles(rows), [
-            { name: 'Alex', instance: 'telegram.0', recipient: 'Alex', attach: 'clip', text: 'x', template: '' },
-            { name: 'Mail', instance: 'email.0', recipient: '', attach: 'all', text: '', template: '' },
+            {
+                name: 'Alex',
+                instance: 'telegram.0',
+                recipient: 'Alex',
+                attach: 'clip',
+                text: 'x',
+                template: '',
+                conditions: [],
+            },
+            { name: 'Mail', instance: 'email.0', recipient: '', attach: 'all', text: '', template: '', conditions: [] },
         ]);
         assert.equal(profileProblems(rows).length, 3);
         assert.deepEqual(normalizeSettings({ profiles: rows }).profiles, normalizeProfiles(rows));

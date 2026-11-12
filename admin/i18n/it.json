@@ -90,5 +90,11 @@
     "Attachment: Everything sends snapshots, clips and timelapse videos, Snapshot only and Clip only one kind, Text only sends the text at once when the trigger fires, without a file. Text: {camera}, {date} and {time} are replaced.": "Allegato: Tutto invia istantanee, clip e video timelapse, Solo istantanea e Solo clip un solo tipo, Solo testo invia il testo subito quando scatta l'attivatore, senza file. Testo: {camera}, {date} e {time} vengono sostituiti.",
     "Telegram, MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify and ntfy are built in (messengers that cannot send files get a text). For other adapters enter a JSON message with {file}, {caption}, {camera}, {text}.": "Telegram, MAX, Email, Pushover, Discord, Matrix, Signal, WhatsApp, Gotify, ntfy sono integrati (i messenger che non possono inviare file ricevono un testo). Per altri adattatori inserire un messaggio JSON con {file}, {caption}, {camera}, {text}.",
     "Devices": "Dispositivi",
-    "Sound": "Audio"
+    "Sound": "Audio",
+    "pi-agent instance for the AI check": "Istanza pi-agent per il controllo IA",
+    "AI check": "Controllo IA",
+    "Optional, with ioBroker.pi-agent and a model that understands pictures: when a trigger fires, the files go out as before, and pi-agent looks at a snapshot. When the picture meets a criterion, the profiles of its row get an extra message, e.g. \"🔍 Door: a person — A man with a parcel at the door\". One row per criterion in your own words (e.g. \"a person\" or \"an animal in the garden\"). Without a match, or when pi-agent does not answer in time, there is no extra message; nothing else is lost.": "Facoltativo, con ioBroker.pi-agent e un modello che comprende le immagini: quando scatta un trigger, i file partono come prima e pi-agent guarda un'istantanea. Se l'immagine soddisfa un criterio, i profili della sua riga ricevono un messaggio in più, ad es. \"🔍 Porta: una persona — Un uomo con un pacco alla porta\". Una riga per criterio con parole proprie (ad es. \"una persona\" o \"un animale in giardino\"). Senza corrispondenza, o se pi-agent non risponde in tempo, non c'è un messaggio in più; nient'altro va perso.",
+    "Wait for the answer of pi-agent (s)": "Attendere la risposta di pi-agent (s)",
+    "Criterion": "Criterio",
+    "Profiles": "Profili"
 }

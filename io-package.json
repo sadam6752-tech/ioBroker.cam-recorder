@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "cam-recorder",
-        "version": "0.5.2",
+        "version": "0.6.0",
         "news": {
+            "0.6.0": {
+                "en": "AI check: on the new tab AI check, criteria in your own words (a person, an animal in the garden) name profiles; with ioBroker.pi-agent the snapshot of an event is checked and a profile whose criterion is met gets an extra message with what was seen, while the files go out as before. The adapter answers the message help for AI agents",
+                "de": "KI-Prüfung: auf dem neuen Reiter KI-Prüfung nennen Kriterien in eigenen Worten (eine Person, ein Tier im Garten) Profile; mit ioBroker.pi-agent wird der Schnappschuss eines Ereignisses geprüft, und ein Profil, dessen Kriterium erfüllt ist, bekommt eine zusätzliche Nachricht mit dem Gesehenen, während die Dateien wie bisher hinausgehen. Der Adapter beantwortet die Nachricht help für KI-Agenten",
+                "ru": "ИИ-проверка: на новой вкладке «ИИ-проверка» критерии своими словами (человек, животное в саду) связываются с профилями; с ioBroker.pi-agent снимок события проверяется, и профиль, чей критерий выполнен, получает дополнительное сообщение с тем, что было замечено, а файлы отправляются как раньше. Адаптер отвечает на сообщение help для ИИ-агентов",
+                "pt": "Verificação por IA: no novo separador Verificação por IA, critérios com as suas palavras (uma pessoa, um animal no jardim) indicam perfis; com o ioBroker.pi-agent o instantâneo de um evento é verificado e um perfil cujo critério é cumprido recebe uma mensagem extra com o que foi visto, enquanto os ficheiros saem como antes. O adaptador responde à mensagem help para agentes de IA",
+                "nl": "AI-controle: op het nieuwe tabblad AI-controle noemen criteria in eigen woorden (een persoon, een dier in de tuin) profielen; met ioBroker.pi-agent wordt de momentopname van een gebeurtenis gecontroleerd en krijgt een profiel waarvan het criterium is vervuld een extra bericht met wat er te zien was, terwijl de bestanden zoals voorheen verzonden worden. De adapter beantwoordt het bericht help voor AI-agenten",
+                "fr": "Vérification par IA : dans le nouvel onglet Vérification par IA, des critères dans vos propres mots (une personne, un animal dans le jardin) désignent des profils ; avec ioBroker.pi-agent, l'instantané d'un événement est vérifié et un profil dont le critère est rempli reçoit un message supplémentaire avec ce qui a été vu, tandis que les fichiers partent comme avant. L'adaptateur répond au message help pour les agents IA",
+                "it": "Controllo IA: nella nuova scheda Controllo IA criteri con parole proprie (una persona, un animale in giardino) indicano profili; con ioBroker.pi-agent l'istantanea di un evento viene controllata e un profilo il cui criterio è soddisfatto riceve un messaggio in più con ciò che è stato visto, mentre i file partono come prima. L'adattatore risponde al messaggio help per gli agenti IA",
+                "es": "Comprobación por IA: en la nueva pestaña Comprobación por IA, criterios con sus propias palabras (una persona, un animal en el jardín) nombran perfiles; con ioBroker.pi-agent se comprueba la instantánea de un evento y un perfil cuyo criterio se cumple recibe un mensaje adicional con lo que se vio, mientras los archivos salen como antes. El adaptador responde al mensaje help para agentes de IA",
+                "pl": "Kontrola AI: na nowej karcie Kontrola AI kryteria własnymi słowami (osoba, zwierzę w ogrodzie) wskazują profile; z ioBroker.pi-agent zdjęcie zdarzenia jest sprawdzane, a profil, którego kryterium jest spełnione, dostaje dodatkową wiadomość z tym, co widać, podczas gdy pliki wychodzą jak dotąd. Adapter odpowiada na wiadomość help dla agentów AI",
+                "uk": "ШІ-перевірка: на новій вкладці «ШІ-перевірка» критерії своїми словами (людина, тварина в саду) пов’язуються з профілями; з ioBroker.pi-agent знімок події перевіряється, і профіль, чий критерій виконано, отримує додаткове повідомлення з тим, що було помічено, а файли надсилаються як раніше. Адаптер відповідає на повідомлення help для ШІ-агентів",
+                "zh-cn": "AI 检查：在新的 AI 检查选项卡中，用自己的话写的标准（一个人、花园里的动物）对应配置文件；借助 ioBroker.pi-agent 检查事件的快照，符合标准的配置文件会额外收到一条描述所见内容的消息，文件仍照常发送。适配器为 AI 代理回答 help 消息"
+            },
             "0.5.2": {
                 "en": "Sound: a new column Sound in the camera table takes the sound of the camera into mp4 clips. Device Manager: a camera that is off no longer shows as online, every camera is checked on the network every minute",
                 "de": "Ton: eine neue Spalte Ton in der Kameratabelle nimmt den Ton der Kamera in mp4-Clips auf. Device Manager: eine ausgeschaltete Kamera erscheint nicht mehr als online, jede Kamera wird jede Minute im Netzwerk geprüft",
@@ -80,19 +93,6 @@
                 "pl": "Wewnętrzne: zmieniono nazwę zmiennej, którą sprawdzanie repozytorium uznawało za funkcję oczekiwania (W5051)",
                 "uk": "Внутрішнє: перейменовано змінну, яку перевірка репозиторію вважала функцією очікування (W5051)",
                 "zh-cn": "内部：重命名了一个被仓库检查器误认为等待函数的变量（W5051）"
-            },
-            "0.4.2": {
-                "en": "Built-in notification target for the MAX adapter: clips as video, pictures as image, to a user, a group chat or all users",
-                "de": "Eingebautes Benachrichtigungsziel für den MAX-Adapter: Clips als Video, Bilder als Bild, an einen Benutzer, einen Gruppenchat oder alle Benutzer",
-                "ru": "Встроенный получатель для адаптера MAX: клипы как видео, снимки как изображение, пользователю, в групповой чат или всем пользователям",
-                "pt": "Destino de notificação integrado para o adaptador MAX: clipes como vídeo, imagens como imagem, para um usuário, um chat de grupo ou todos os usuários",
-                "nl": "Ingebouwd meldingsdoel voor de MAX-adapter: clips als video, beelden als afbeelding, naar een gebruiker, een groepschat of alle gebruikers",
-                "fr": "Destinataire intégré pour l'adaptateur MAX : clips en vidéo, photos en image, vers un utilisateur, un chat de groupe ou tous les utilisateurs",
-                "it": "Destinatario integrato per l'adattatore MAX: clip come video, immagini come immagine, a un utente, a una chat di gruppo o a tutti gli utenti",
-                "es": "Destino de notificación integrado para el adaptador MAX: clips como vídeo, imágenes como imagen, a un usuario, un chat de grupo o todos los usuarios",
-                "pl": "Wbudowany odbiorca dla adaptera MAX: klipy jako wideo, zdjęcia jako obraz, do użytkownika, czatu grupowego lub wszystkich użytkowników",
-                "uk": "Вбудований отримувач для адаптера MAX: кліпи як відео, знімки як зображення, користувачу, у груповий чат або всім користувачам",
-                "zh-cn": "为 MAX 适配器内置通知目标：片段作为视频、图片作为图像，发送给某个用户、群聊或所有用户"
             }
         },
         "titleLang": {
@@ -173,6 +173,9 @@
         "prebufferEnabled": false,
         "prebufferDir": "",
         "profiles": [],
+        "agentInstance": "",
+        "agentTimeout": 30,
+        "agentChecks": [],
         "outputDir": "",
         "keepFiles": 20,
         "maxAgeDays": 7,
