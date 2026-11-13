@@ -98,5 +98,17 @@
     "Criterion": "Критерій",
     "Profiles": "Профілі",
     "Hold (s)": "Утримання (с)",
-    "State: each camera gets the state cameras.<camera>.ai.<criterion>, true for the hold time after pi-agent saw the criterion in a snapshot of a trigger, then false again (like a motion sensor). Scripts, Blockly or the Scenes adapter can react to it, e.g. switch on the light only for a person. A criterion with State is checked at every trigger, also without profiles. The answer comes some seconds after the trigger.": "Стан: кожна камера отримує стан cameras.<camera>.ai.<criterion>, який на час утримання стає true після того, як pi-agent побачив критерій на знімку тригера, а потім знову false (як датчик руху). На нього можуть реагувати скрипти, Blockly або адаптер сцен, наприклад вмикати світло лише для людини. Критерій зі станом перевіряється при кожному тригері, навіть без профілів. Відповідь приходить через кілька секунд після тригера."
+    "State: each camera gets the state cameras.<camera>.ai.<criterion>, true for the hold time after pi-agent saw the criterion in a snapshot of a trigger, then false again (like a motion sensor). Scripts, Blockly or the Scenes adapter can react to it, e.g. switch on the light only for a person. A criterion with State is checked at every trigger, also without profiles. The answer comes some seconds after the trigger.": "Стан: кожна камера отримує стан cameras.<camera>.ai.<criterion>, який на час утримання стає true після того, як pi-agent побачив критерій на знімку тригера, а потім знову false (як датчик руху). На нього можуть реагувати скрипти, Blockly або адаптер сцен, наприклад вмикати світло лише для людини. Критерій зі станом перевіряється при кожному тригері, навіть без профілів. Відповідь приходить через кілька секунд після тригера.",
+    "↻": "↻",
+    "0°": "0°",
+    "90°": "90°",
+    "180°": "180°",
+    "270°": "270°",
+    "Mirror ↔": "Дзеркально ↔",
+    "Mirror ↕": "Дзеркально ↕",
+    "↻: turns the picture of a camera that is mounted upside down or on its side (clockwise), or mirrors it. Snapshots, GIFs and re-encoded clips are turned; a copied mp4 (MP4 encoding: copy) only gets a mark that players and Telegram apply when they show the video.": "↻: повертає зображення камери, встановленої догори дриґом або на боці (за годинниковою стрілкою), або дзеркально відображає його. Знімки, GIF і перекодовані кліпи повертаються; скопійований mp4 (кодування MP4: копіювання) отримує лише позначку, яку програвачі та Telegram застосовують під час показу відео.",
+    "Sort into month folders (camera/yyyy-mm)": "Сортувати за папками місяців (камера/рррр-мм)",
+    "Keeps all files: the limits below are off, delete old folders yourself": "Зберігає всі файли: обмеження нижче вимкнені, старі папки видаляйте самі",
+    "Month folders on the server (camera/yyyy-mm)": "Папки місяців на сервері (камера/рррр-мм)",
+    "Keeps all files on the server: the days below are off": "Зберігає всі файли на сервері: дні нижче вимкнені"
 }

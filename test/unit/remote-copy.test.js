@@ -33,6 +33,7 @@ const settings = (extra = {}) => ({
     username: 'nas',
     password: 'secret',
     directory: '/cam-recorder',
+    monthFolders: false,
     hostKey: '',
     keepDays: 0,
     ...extra,
@@ -135,6 +136,21 @@ describe('SFTP copy: real server', function () {
             [...disk.files.keys()].filter(k => k.endsWith('.part')),
             [],
         );
+    });
+
+    it('copies into the month folder of the file with month folders', async () => {
+        const file = path.join(dir, 'door_2026-10-31_23-59-58.jpg');
+        fs.writeFileSync(file, 'x');
+        const result = await copyFileToRemote(
+            connectSsh2,
+            settings({ port: server.port, monthFolders: true }),
+            { file, cameraId: 'door', time: Date.UTC(2026, 10, 2) },
+            log,
+            timers,
+        );
+        assert.equal(result.ok, true, result.message);
+        assert.equal(result.remoteFile, '/cam-recorder/door/2026-10/door_2026-10-31_23-59-58.jpg');
+        assert.ok(disk.files.has(result.remoteFile));
     });
 
     it('deletes old own files on the server but not foreign ones', async () => {

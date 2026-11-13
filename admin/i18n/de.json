@@ -98,5 +98,17 @@
     "Criterion": "Kriterium",
     "Profiles": "Profile",
     "Hold (s)": "Haltezeit (s)",
-    "State: each camera gets the state cameras.<camera>.ai.<criterion>, true for the hold time after pi-agent saw the criterion in a snapshot of a trigger, then false again (like a motion sensor). Scripts, Blockly or the Scenes adapter can react to it, e.g. switch on the light only for a person. A criterion with State is checked at every trigger, also without profiles. The answer comes some seconds after the trigger.": "Datenpunkt: Jede Kamera erhält den Datenpunkt cameras.<camera>.ai.<criterion>, der für die Haltezeit true ist, nachdem pi-agent das Kriterium in einem Schnappschuss eines Auslösers erkannt hat, und danach wieder false (wie ein Bewegungsmelder). Skripte, Blockly oder der Szenen-Adapter können darauf reagieren, z. B. das Licht nur bei einer Person einschalten. Ein Kriterium mit Datenpunkt wird bei jedem Auslöser geprüft, auch ohne Profile. Die Antwort kommt einige Sekunden nach dem Auslöser."
+    "State: each camera gets the state cameras.<camera>.ai.<criterion>, true for the hold time after pi-agent saw the criterion in a snapshot of a trigger, then false again (like a motion sensor). Scripts, Blockly or the Scenes adapter can react to it, e.g. switch on the light only for a person. A criterion with State is checked at every trigger, also without profiles. The answer comes some seconds after the trigger.": "Datenpunkt: Jede Kamera erhält den Datenpunkt cameras.<camera>.ai.<criterion>, der für die Haltezeit true ist, nachdem pi-agent das Kriterium in einem Schnappschuss eines Auslösers erkannt hat, und danach wieder false (wie ein Bewegungsmelder). Skripte, Blockly oder der Szenen-Adapter können darauf reagieren, z. B. das Licht nur bei einer Person einschalten. Ein Kriterium mit Datenpunkt wird bei jedem Auslöser geprüft, auch ohne Profile. Die Antwort kommt einige Sekunden nach dem Auslöser.",
+    "↻": "↻",
+    "0°": "0°",
+    "90°": "90°",
+    "180°": "180°",
+    "270°": "270°",
+    "Mirror ↔": "Spiegeln ↔",
+    "Mirror ↕": "Spiegeln ↕",
+    "↻: turns the picture of a camera that is mounted upside down or on its side (clockwise), or mirrors it. Snapshots, GIFs and re-encoded clips are turned; a copied mp4 (MP4 encoding: copy) only gets a mark that players and Telegram apply when they show the video.": "↻: dreht das Bild einer Kamera, die kopfüber oder seitlich montiert ist (im Uhrzeigersinn), oder spiegelt es. Schnappschüsse, GIFs und neu kodierte Clips werden gedreht; ein kopiertes mp4 (MP4-Kodierung: kopieren) bekommt nur eine Markierung, die Player und Telegram beim Abspielen anwenden.",
+    "Sort into month folders (camera/yyyy-mm)": "In Monatsordner sortieren (Kamera/jjjj-mm)",
+    "Keeps all files: the limits below are off, delete old folders yourself": "Behält alle Dateien: die Grenzen darunter sind aus, alte Ordner selbst löschen",
+    "Month folders on the server (camera/yyyy-mm)": "Monatsordner auf dem Server (Kamera/jjjj-mm)",
+    "Keeps all files on the server: the days below are off": "Behält alle Dateien auf dem Server: die Tage darunter sind aus"
 }

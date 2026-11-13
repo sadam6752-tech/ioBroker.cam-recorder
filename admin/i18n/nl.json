@@ -98,5 +98,17 @@
     "Criterion": "Criterium",
     "Profiles": "Profielen",
     "Hold (s)": "Houdtijd (s)",
-    "State: each camera gets the state cameras.<camera>.ai.<criterion>, true for the hold time after pi-agent saw the criterion in a snapshot of a trigger, then false again (like a motion sensor). Scripts, Blockly or the Scenes adapter can react to it, e.g. switch on the light only for a person. A criterion with State is checked at every trigger, also without profiles. The answer comes some seconds after the trigger.": "Status: elke camera krijgt het datapunt cameras.<camera>.ai.<criterion>, dat gedurende de houdtijd true is nadat pi-agent het criterium in een momentopname van een trigger zag, en daarna weer false (zoals een bewegingsmelder). Scripts, Blockly of de Scenes-adapter kunnen erop reageren, bijv. het licht alleen voor een persoon aanzetten. Een criterium met status wordt bij elke trigger gecontroleerd, ook zonder profielen. Het antwoord komt enkele seconden na de trigger."
+    "State: each camera gets the state cameras.<camera>.ai.<criterion>, true for the hold time after pi-agent saw the criterion in a snapshot of a trigger, then false again (like a motion sensor). Scripts, Blockly or the Scenes adapter can react to it, e.g. switch on the light only for a person. A criterion with State is checked at every trigger, also without profiles. The answer comes some seconds after the trigger.": "Status: elke camera krijgt het datapunt cameras.<camera>.ai.<criterion>, dat gedurende de houdtijd true is nadat pi-agent het criterium in een momentopname van een trigger zag, en daarna weer false (zoals een bewegingsmelder). Scripts, Blockly of de Scenes-adapter kunnen erop reageren, bijv. het licht alleen voor een persoon aanzetten. Een criterium met status wordt bij elke trigger gecontroleerd, ook zonder profielen. Het antwoord komt enkele seconden na de trigger.",
+    "↻": "↻",
+    "0°": "0°",
+    "90°": "90°",
+    "180°": "180°",
+    "270°": "270°",
+    "Mirror ↔": "Spiegelen ↔",
+    "Mirror ↕": "Spiegelen ↕",
+    "↻: turns the picture of a camera that is mounted upside down or on its side (clockwise), or mirrors it. Snapshots, GIFs and re-encoded clips are turned; a copied mp4 (MP4 encoding: copy) only gets a mark that players and Telegram apply when they show the video.": "↻: draait het beeld van een camera die ondersteboven of op zijn kant is gemonteerd (met de klok mee), of spiegelt het. Momentopnamen, GIF's en opnieuw gecodeerde clips worden gedraaid; een gekopieerde mp4 (MP4-codering: kopiëren) krijgt alleen een markering die spelers en Telegram toepassen bij het afspelen.",
+    "Sort into month folders (camera/yyyy-mm)": "Sorteren in maandmappen (camera/jjjj-mm)",
+    "Keeps all files: the limits below are off, delete old folders yourself": "Bewaart alle bestanden: de grenzen hieronder zijn uit, oude mappen zelf verwijderen",
+    "Month folders on the server (camera/yyyy-mm)": "Maandmappen op de server (camera/jjjj-mm)",
+    "Keeps all files on the server: the days below are off": "Bewaart alle bestanden op de server: de dagen hieronder zijn uit"
 }

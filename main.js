@@ -21,6 +21,7 @@ const { FfmpegRunner, probeFfmpeg, resolveFfmpegPath } = require('./lib/ffmpeg-r
 const { Recorder } = require('./lib/recorder');
 const { Prebuffer } = require('./lib/prebuffer');
 const { removePartials } = require('./lib/storage');
+const { supportsDisplayMatrix } = require('./lib/orientation');
 const { CHECK_INTERVAL_MS, probeTarget, isReachable } = require('./lib/reachability');
 const { triggerDecision, formatCaption } = require('./lib/triggers');
 const { maskSecrets } = require('./lib/mask');
@@ -234,6 +235,13 @@ class CamRecorder extends utils.Adapter {
                 return;
             }
             await this.setState('info.ffmpegVersion', version, true);
+            this.settings.displayMatrix = supportsDisplayMatrix(version);
+            const turned = this.cameras.filter(c => c.orientation && c.orientation !== '0').map(c => c.name);
+            if (!this.settings.displayMatrix && this.settings.videoMode === 'copy' && turned.length) {
+                this.log.info(
+                    `ffmpeg before 6.0 cannot mark a copied mp4 as turned: the clips of ${turned.join(', ')} are re-encoded`,
+                );
+            }
 
             this.runner = new FfmpegRunner({
                 ffmpegPath,
@@ -527,7 +535,7 @@ class CamRecorder extends utils.Adapter {
                 const copy = await copyFileToRemote(
                     connectSsh2,
                     remote,
-                    { file: result.file, cameraId: camera.id },
+                    { file: result.file, cameraId: camera.id, time: result.time },
                     this.log,
                     this._ownTimers(),
                 );

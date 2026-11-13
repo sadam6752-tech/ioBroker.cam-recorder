@@ -1,5 +1,12 @@
 # Older changes
 
+### 0.5.2 (2026-11-11)
+
+- (sadam6752-tech) Sound: a new column _Sound_ in the camera table takes the sound of the camera into mp4 clips
+  (as AAC, also from the pre-recording and with a copied picture); GIFs and snapshots stay silent
+- (sadam6752-tech) Device Manager: a camera that is off showed as online. The adapter now checks every camera on the
+  network at the start and every minute (state `reachable`), and the card shows that
+
 ### 0.5.1 (2026-11-11)
 
 - (sadam6752-tech) The Device Manager also as tab _Devices_ in the instance settings, after _Cameras_

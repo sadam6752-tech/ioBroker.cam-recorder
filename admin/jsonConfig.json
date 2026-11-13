@@ -35,14 +35,14 @@
                             "type": "text",
                             "attr": "name",
                             "title": "Name",
-                            "width": "13%",
+                            "width": "12%",
                             "default": ""
                         },
                         {
                             "type": "text",
                             "attr": "url",
                             "title": "RTSP URL",
-                            "width": "26%",
+                            "width": "22%",
                             "default": "rtsp://"
                         },
                         {
@@ -95,16 +95,59 @@
                             "type": "number",
                             "attr": "prebuffer",
                             "title": "Pre-recording (s)",
-                            "width": "11%",
+                            "width": "9%",
                             "min": 0,
                             "max": 30,
                             "default": 0
+                        },
+                        {
+                            "type": "select",
+                            "attr": "orientation",
+                            "title": "↻",
+                            "width": "7%",
+                            "default": "0",
+                            "options": [
+                                {
+                                    "label": "0°",
+                                    "value": "0"
+                                },
+                                {
+                                    "label": "90°",
+                                    "value": "90"
+                                },
+                                {
+                                    "label": "180°",
+                                    "value": "180"
+                                },
+                                {
+                                    "label": "270°",
+                                    "value": "270"
+                                },
+                                {
+                                    "label": "Mirror ↔",
+                                    "value": "hflip"
+                                },
+                                {
+                                    "label": "Mirror ↕",
+                                    "value": "vflip"
+                                }
+                            ]
                         }
                     ]
                 },
                 "_keyframesHelp": {
                     "type": "staticText",
                     "text": "Key frames only: use it when snapshots of an H.265 camera come out grey. Sound: mp4 clips get the sound of the camera (AAC), when the camera sends it in its RTSP stream; GIFs and snapshots stay silent.",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "_orientationHelp": {
+                    "type": "staticText",
+                    "text": "↻: turns the picture of a camera that is mounted upside down or on its side (clockwise), or mirrors it. Snapshots, GIFs and re-encoded clips are turned; a copied mp4 (MP4 encoding: copy) only gets a mark that players and Telegram apply when they show the video.",
                     "newLine": true,
                     "xs": 12,
                     "sm": 12,
@@ -850,6 +893,18 @@
                     "lg": 6,
                     "xl": 6
                 },
+                "remoteMonthFolders": {
+                    "type": "checkbox",
+                    "label": "Month folders on the server (camera/yyyy-mm)",
+                    "help": "Keeps all files on the server: the days below are off",
+                    "newLine": true,
+                    "disabled": "!data.remoteEnabled",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 8,
+                    "lg": 6,
+                    "xl": 6
+                },
                 "remoteHostKey": {
                     "type": "text",
                     "label": "Fingerprint of the server (SHA256:…)",
@@ -868,7 +923,7 @@
                     "min": 0,
                     "max": 3650,
                     "newLine": true,
-                    "disabled": "!data.remoteEnabled",
+                    "disabled": "!data.remoteEnabled || data.remoteMonthFolders",
                     "xs": 12,
                     "sm": 6,
                     "md": 4,
@@ -905,6 +960,17 @@
                     "lg": 6,
                     "xl": 6
                 },
+                "monthFolders": {
+                    "type": "checkbox",
+                    "label": "Sort into month folders (camera/yyyy-mm)",
+                    "help": "Keeps all files: the limits below are off, delete old folders yourself",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 8,
+                    "lg": 6,
+                    "xl": 6
+                },
                 "keepFiles": {
                     "type": "number",
                     "label": "Files kept per camera and kind (0 = no limit)",
@@ -915,7 +981,8 @@
                     "sm": 6,
                     "md": 4,
                     "lg": 3,
-                    "xl": 3
+                    "xl": 3,
+                    "disabled": "data.monthFolders"
                 },
                 "maxAgeDays": {
                     "type": "number",
@@ -926,7 +993,8 @@
                     "sm": 6,
                     "md": 4,
                     "lg": 3,
-                    "xl": 3
+                    "xl": 3,
+                    "disabled": "data.monthFolders"
                 },
                 "copyToFiles": {
                     "type": "checkbox",

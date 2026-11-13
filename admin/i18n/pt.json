@@ -98,5 +98,17 @@
     "Criterion": "Critério",
     "Profiles": "Perfis",
     "Hold (s)": "Duração (s)",
-    "State: each camera gets the state cameras.<camera>.ai.<criterion>, true for the hold time after pi-agent saw the criterion in a snapshot of a trigger, then false again (like a motion sensor). Scripts, Blockly or the Scenes adapter can react to it, e.g. switch on the light only for a person. A criterion with State is checked at every trigger, also without profiles. The answer comes some seconds after the trigger.": "Estado: cada câmera recebe o estado cameras.<camera>.ai.<criterion>, que fica true durante o tempo definido depois de o pi-agent ver o critério num instantâneo de um gatilho, e depois volta a false (como um sensor de movimento). Scripts, Blockly ou o adaptador Scenes podem reagir a ele, por exemplo acender a luz só para uma pessoa. Um critério com estado é verificado em cada gatilho, também sem perfis. A resposta chega alguns segundos depois do gatilho."
+    "State: each camera gets the state cameras.<camera>.ai.<criterion>, true for the hold time after pi-agent saw the criterion in a snapshot of a trigger, then false again (like a motion sensor). Scripts, Blockly or the Scenes adapter can react to it, e.g. switch on the light only for a person. A criterion with State is checked at every trigger, also without profiles. The answer comes some seconds after the trigger.": "Estado: cada câmera recebe o estado cameras.<camera>.ai.<criterion>, que fica true durante o tempo definido depois de o pi-agent ver o critério num instantâneo de um gatilho, e depois volta a false (como um sensor de movimento). Scripts, Blockly ou o adaptador Scenes podem reagir a ele, por exemplo acender a luz só para uma pessoa. Um critério com estado é verificado em cada gatilho, também sem perfis. A resposta chega alguns segundos depois do gatilho.",
+    "↻": "↻",
+    "0°": "0°",
+    "90°": "90°",
+    "180°": "180°",
+    "270°": "270°",
+    "Mirror ↔": "Espelhar ↔",
+    "Mirror ↕": "Espelhar ↕",
+    "↻: turns the picture of a camera that is mounted upside down or on its side (clockwise), or mirrors it. Snapshots, GIFs and re-encoded clips are turned; a copied mp4 (MP4 encoding: copy) only gets a mark that players and Telegram apply when they show the video.": "↻: roda a imagem de uma câmera montada de cabeça para baixo ou de lado (no sentido horário) ou espelha-a. Instantâneos, GIFs e clipes recodificados são rodados; um mp4 copiado (codificação MP4: copiar) recebe apenas uma marca que os leitores e o Telegram aplicam ao mostrar o vídeo.",
+    "Sort into month folders (camera/yyyy-mm)": "Organizar em pastas por mês (câmera/aaaa-mm)",
+    "Keeps all files: the limits below are off, delete old folders yourself": "Mantém todos os ficheiros: os limites abaixo ficam desligados, apague as pastas antigas você mesmo",
+    "Month folders on the server (camera/yyyy-mm)": "Pastas por mês no servidor (câmera/aaaa-mm)",
+    "Keeps all files on the server: the days below are off": "Mantém todos os ficheiros no servidor: os dias abaixo ficam desligados"
 }

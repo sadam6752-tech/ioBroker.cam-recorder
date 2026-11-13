@@ -85,10 +85,12 @@ describe('timelapse with real ffmpeg', function () {
     /**
      * @param {string} out - Media folder
      * @param {(r: any) => void} onVideo - Video callback
+     * @param {any} [onProgress] - Progress callback
+     * @param {Record<string, any>} [native] - Further settings
      * @returns {Timelapse} Timelapse of a camera reading the test file
      */
-    function makeTimelapse(out, onVideo, onProgress = undefined) {
-        const settings = normalizeSettings({ videoWidth: 160, maxAgeDays: 7 });
+    function makeTimelapse(out, onVideo, onProgress = undefined, native = {}) {
+        const settings = normalizeSettings({ videoWidth: 160, maxAgeDays: 7, ...native });
         const camera = normalizeCameras([{ name: 'Door', url: source }]).cameras[0];
         const recorder = new Recorder({
             runner: new FfmpegRunner({ ffmpegPath, maxParallel: 2, timers }),
@@ -141,6 +143,21 @@ describe('timelapse with real ffmpeg', function () {
         }
         const second = await timelapse.build();
         assert.equal(path.basename(second?.file || ''), 'door_timelapse_2026-10-18-2.mp4');
+    });
+
+    it('puts the video into the month folder of its first frame with month folders', async () => {
+        const out = fs.mkdtempSync(path.join(dir, 'out-'));
+        const timelapse = makeTimelapse(out, () => undefined, undefined, { monthFolders: true });
+        fs.mkdirSync(timelapse.dir, { recursive: true });
+        for (let i = 0; i < 2; i++) {
+            await timelapse.recorder.grabFrame(
+                timelapse.camera,
+                path.join(timelapse.dir, `2026-10-31_23-5${i}-00.jpg`),
+                0,
+            );
+        }
+        const video = await timelapse.build();
+        assert.equal(video?.file, path.join(out, 'door', '2026-10', 'door_timelapse_2026-10-31.mp4'));
     });
 
     it('takes a frame with takeFrame and builds a missed video at the start', async () => {

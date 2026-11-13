@@ -43,6 +43,13 @@ start. Special characters in passwords are fine, the adapter encodes them for ff
 _Transport_ is TCP by default; it works reliably also from Docker containers. _Key frames only_ helps when snapshots
 of an H.265 camera come out grey.
 
+_↻_ turns the picture of a camera that is mounted upside down or on its side and cannot turn it itself: 90°, 180° or
+270° clockwise, or mirrored (↔ left and right, ↕ top and bottom). Snapshots, GIFs, re-encoded clips, timelapse videos
+and the pictures for the AI check are turned for real; widths count for the turned picture. A copied mp4 (_Copy the
+camera stream_) cannot be turned without re-encoding: it gets a mark (display matrix) that Telegram, browsers, VLC and
+most players apply when they show the video. With an ffmpeg of the system older than 6.0, which cannot write that mark,
+the clips of a turned camera are re-encoded instead (the bundled ffmpeg is new enough).
+
 _Sound_ takes the sound of the camera into the mp4 clips, also into those from the pre-recording, so they play with
 sound in Telegram and elsewhere. The camera must send the sound in its RTSP stream; many cameras have it off by default
 or only in one of their streams (look for audio in the video or stream settings of the camera). Cameras send G.711 or
@@ -308,6 +315,9 @@ How it behaves:
   `info.lastRemoteCopy` holds the time of the last good copy.
 - _Days kept on the server_ deletes older files of this adapter on the server (0 = keep everything); other files in
   the folders are never touched.
+- _Month folders on the server_ sorts the files into `<folder>/<camera>/<yyyy-mm>/`, named by the date in the file
+  name. It is meant for keeping everything: _Days kept on the server_ is then off and nothing is deleted on the
+  server.
 - The password is stored encrypted. The files are not encrypted on the server, only the transfer is.
 
 ### Storage
@@ -316,6 +326,10 @@ Files are written to `iobroker-data/cam-recorder.<instance>/media/` (or the fold
 `<camera>_<YYYY-MM-DD_HH-MM-SS>.<mp4|gif|jpg>`. Old files are deleted per camera and kind: the newest _n_ files are
 kept (default 20) and nothing older than the maximum age (default 7 days). Other files in the folder are never
 touched.
+
+_Sort into month folders_ puts each file into `<folder>/<camera>/<yyyy-mm>/` (local time), timelapse videos too.
+Whoever sorts into month folders keeps the files: the number of files and the maximum age are then off (greyed out),
+and old folders are deleted by hand or by a job of your own. Files written before stay where they are.
 
 The newest file of each camera and kind is also copied into the ioBroker file storage
 (`cam-recorder.0.storage/<camera>.mp4`, `.gif`, `.jpg`), where it can be opened in the admin tab _Files_ or through a
@@ -430,6 +444,13 @@ adapter.
     ### **WORK IN PROGRESS**
 -->
 
+### 0.7.0 (2026-11-13)
+
+- (sadam6752-tech) Cameras: the new column _↻_ turns the picture by 90°, 180° or 270° or mirrors it, for cameras that
+  are mounted upside down or on their side; a copied mp4 gets a rotation mark instead
+- (sadam6752-tech) Storage and NAS: files can be sorted into month folders `<camera>/<yyyy-mm>/`; then all files are
+  kept and the limits of the tab are off
+
 ### 0.6.3 (2026-11-13)
 
 - (sadam6752-tech) AI check: a criterion with the new column _State_ gives each camera the state
@@ -455,13 +476,6 @@ adapter.
   the picture meets gets an extra message with what was seen. The files go out as before; the new state
   `description` keeps the newest description
 - (sadam6752-tech) The adapter answers the message `help` with a description of its commands for AI agents
-
-### 0.5.2 (2026-11-11)
-
-- (sadam6752-tech) Sound: a new column _Sound_ in the camera table takes the sound of the camera into mp4 clips
-  (as AAC, also from the pre-recording and with a copied picture); GIFs and snapshots stay silent
-- (sadam6752-tech) Device Manager: a camera that is off showed as online. The adapter now checks every camera on the
-  network at the start and every minute (state `reachable`), and the card shows that
 
 Older changes are in [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 

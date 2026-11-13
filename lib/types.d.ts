@@ -20,7 +20,12 @@ export interface Camera {
     audio?: boolean;
     /** Seconds kept before an event (pre-recording), 0 = off */
     prebuffer: number;
+    /** Turning or mirroring of the picture; missing = '0' */
+    orientation?: Orientation;
 }
+
+/** Clockwise rotation in degrees, or a mirror image (h = left↔right, v = top↔bottom) */
+export type Orientation = '0' | '90' | '180' | '270' | 'hflip' | 'vflip';
 
 /** A trigger row of the settings after normalization */
 export interface Trigger {
@@ -108,6 +113,8 @@ export interface RemoteSettings {
     password: string;
     /** Base folder on the server, a folder per camera below it */
     directory: string;
+    /** A folder per month (`yyyy-mm`) below the camera folder; then nothing is deleted on the server */
+    monthFolders: boolean;
     /** Fingerprint of the server, empty = not verified */
     hostKey: string;
     /** Days a file is kept on the server, 0 = keep all */
@@ -140,6 +147,10 @@ export interface Settings {
     keepFiles: number;
     /** Days a file is kept, 0 = no limit */
     maxAgeDays: number;
+    /** Files go to `<folder>/<camera>/<yyyy-mm>/`; then nothing is deleted (keepFiles and maxAgeDays are 0) */
+    monthFolders: boolean;
+    /** ffmpeg knows `-display_rotation` (6.0+); false = a copied mp4 of a turned camera is re-encoded */
+    displayMatrix: boolean;
     /** Copy the newest result into the ioBroker file storage */
     copyToFiles: boolean;
     /** Main switch of the pre-recording, off by default */
@@ -174,6 +185,8 @@ export interface ClipOptions {
     fps: number;
     /** mp4 only: take the sound of the camera along (AAC); missing = no sound */
     audio?: boolean;
+    /** Turning or mirroring of the camera; missing = '0' */
+    orientation?: Orientation;
 }
 
 /** Options of a record request (sendTo, trigger) */
