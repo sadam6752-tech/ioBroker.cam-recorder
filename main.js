@@ -34,12 +34,14 @@ const {
     needsMigration,
     migrateNotify,
     profileProblems,
+    silentTriggerHint,
 } = require('./lib/profiles');
 const { Timelapse } = require('./lib/timelapse');
 const {
     INSTRUCTIONS,
     needsAgent,
-    conditionsOf,
+    eventConditions,
+    matchedStates,
     buildQuestion,
     parseVerdict,
     matchesOf,
@@ -47,6 +49,7 @@ const {
 } = require('./lib/agent-check');
 const { HELP } = require('./lib/help');
 const { CameraDeviceManagement } = require('./lib/device-manager');
+const { Pulses } = require('./lib/pulse');
 const {
     copyFileToRemote,
     remoteSettingsProblems,
@@ -159,6 +162,11 @@ class CamRecorder extends utils.Adapter {
 
         // one card per camera in the Device Manager; it answers the messages starting with "dm:"
         this.deviceManagement = new CameraDeviceManagement(this);
+        /** states of the tab AI check that are true for a while after a match */
+        this.pulses = new Pulses({
+            timers: { setTimeout: (cb, ms) => this.setTimeout(cb, ms), clearTimeout: h => this.clearTimeout(h) },
+            set: (id, value) => void this.setState(id, value, true),
+        });
 
         this.on('ready', this.onReady.bind(this));
         this.on('stateChange', this.onStateChange.bind(this));
@@ -182,8 +190,13 @@ class CamRecorder extends utils.Adapter {
             this.cameras = cams.cameras;
             const trig = normalizeTriggers(this.config.triggers, this.cameras);
             this._checkProfiles();
+            const feedsStates = !!this.settings.agentInstance && this.settings.agentChecks.some(c => c.state);
             for (const trigger of trig.triggers) {
                 this._checkNames(`Trigger ${trigger.stateId}`, trigger.profiles);
+                const hint = silentTriggerHint(trigger, feedsStates);
+                if (hint) {
+                    this.log.info(hint);
+                }
             }
             for (const problem of [...cams.problems, ...trig.problems, ...profileProblems(this.config.profiles)]) {
                 this.log.warn(problem);
@@ -577,6 +590,7 @@ class CamRecorder extends utils.Adapter {
             }
             await this.setState(`cameras.${camera.id}.status`, 'idle', true);
             await this.setState(`cameras.${camera.id}.prebuffer`, 'off', true);
+            await this._createAiStates(camera);
         }
         // online or offline on the cards: a TCP connection to the camera, at once and every minute
         await this._checkReachable();
@@ -588,6 +602,49 @@ class CamRecorder extends utils.Adapter {
                 common: { name: NAMES.storage, type: 'meta.folder' },
                 native: {},
             });
+        }
+    }
+
+    /**
+     * The states of the tab AI check of one camera, `cameras.<camera>.ai.<criterion>`: one per row with State, false
+     * at the start; states of rows that are gone or have State off are removed.
+     *
+     * @param {Camera} camera - Camera
+     */
+    async _createAiStates(camera) {
+        const channel = `cameras.${camera.id}.ai`;
+        const checks = this.settings.agentChecks.filter(c => c.state);
+        const wanted = new Set(checks.map(c => `${this.namespace}.${channel}.${c.id}`));
+        const existing = await this.getObjectViewAsync('system', 'state', {
+            startkey: `${this.namespace}.${channel}.`,
+            endkey: `${this.namespace}.${channel}.\u9999`,
+        });
+        for (const row of existing.rows) {
+            if (!wanted.has(row.id)) {
+                await this.delForeignObjectAsync(row.id);
+                this.log.info(`Removed the state ${row.id} of a criterion that is gone (tab AI check)`);
+            }
+        }
+        if (!checks.length) {
+            await this.delObjectAsync(channel).catch(() => undefined);
+            return;
+        }
+        await this.extendObjectAsync(channel, { type: 'channel', common: { name: NAMES.ai }, native: {} });
+        for (const check of checks) {
+            await this.extendObjectAsync(`${channel}.${check.id}`, {
+                type: 'state',
+                common: {
+                    name: check.criterion,
+                    desc: `true for ${check.hold} s after pi-agent saw this in a snapshot of a trigger`,
+                    type: 'boolean',
+                    role: 'indicator',
+                    read: true,
+                    write: false,
+                    def: false,
+                },
+                native: { criterion: check.criterion, hold: check.hold },
+            });
+            await this.setState(`${channel}.${check.id}`, false, true);
         }
     }
 
@@ -727,14 +784,15 @@ class CamRecorder extends utils.Adapter {
      *
      * @param {Camera} camera - Camera
      * @param {NotifyProfile[]} profiles - Profiles of the event
-     * @returns {Promise<Verdict | null> | null} The verdict, null when no profile has criteria
+     * @param {boolean} [trigger] - The event is a trigger: the criteria with a state are asked too, also without a profile
+     * @returns {Promise<Verdict | null> | null} The verdict, null when there is nothing to ask
      */
-    _checkPicture(camera, profiles) {
+    _checkPicture(camera, profiles, trigger = false) {
         const agent = this.settings.agentInstance;
-        if (!agent || !profiles.some(needsAgent)) {
+        const conditions = eventConditions(profiles, this.settings.agentChecks, trigger);
+        if (!agent || !conditions.length) {
             return null;
         }
-        const conditions = conditionsOf(profiles);
         const check = async () => {
             const began = Date.now();
             try {
@@ -776,6 +834,9 @@ class CamRecorder extends utils.Adapter {
                     this.log.warn(`Camera "${camera.name}": ${agent}: ${verdict.error}, no match for it`);
                 }
                 await this.setState(`cameras.${camera.id}.description`, verdict.description, true);
+                for (const check of trigger ? matchedStates(this.settings.agentChecks, verdict) : []) {
+                    this.pulses.fire(`cameras.${camera.id}.ai.${check.id}`, check.hold * 1000);
+                }
                 return verdict;
             } catch (err) {
                 this.log.warn(
@@ -831,6 +892,12 @@ class CamRecorder extends utils.Adapter {
                 `Profiles ${needing.join(', ')} have criteria, but no pi-agent instance is chosen (tab AI check): no snapshot is checked`,
             );
         }
+        const withState = this.settings.agentChecks.filter(c => c.state).map(c => `"${c.criterion}"`);
+        if (withState.length && !this.settings.agentInstance) {
+            this.log.warn(
+                `Criteria ${withState.join(', ')} have a state, but no pi-agent instance is chosen (tab AI check): the states stay false`,
+            );
+        }
         for (const check of this.settings.agentChecks) {
             this._checkNames(`AI check "${check.criterion}"`, check.profiles);
         }
@@ -879,7 +946,7 @@ class CamRecorder extends utils.Adapter {
         const { chosen } = pickProfiles(trigger.profiles, this.settings.profiles);
         const fileProfiles = chosen.filter(p => p.attach !== 'none').map(p => p.name);
         // one check of the AI agent for the whole event; the files do not wait for it
-        const verdict = this._checkPicture(camera, chosen);
+        const verdict = this._checkPicture(camera, chosen, true);
         /** @type {Promise<unknown>[]} */
         const jobs = chosen
             .filter(p => p.attach === 'none')
@@ -1055,6 +1122,7 @@ class CamRecorder extends utils.Adapter {
                 this.clearInterval(this.reachTimer);
                 this.reachTimer = undefined;
             }
+            this.pulses.stop();
             this.runner?.stopAll();
             for (const buffer of this.prebuffers.values()) {
                 void buffer.stop();

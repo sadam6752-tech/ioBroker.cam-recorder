@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "cam-recorder",
-        "version": "0.6.2",
+        "version": "0.6.3",
         "news": {
+            "0.6.3": {
+                "en": "AI check: a criterion with State gives each camera a state that is true for some seconds after a match, for scripts and scenes. The log names triggers whose result goes nowhere",
+                "de": "KI-Prüfung: Ein Kriterium mit Datenpunkt gibt jeder Kamera einen Datenpunkt, der nach einem Treffer einige Sekunden true ist, für Skripte und Szenen. Das Log nennt Auslöser, deren Ergebnis nirgends hingeht",
+                "ru": "ИИ-проверка: критерий с состоянием даёт каждой камере состояние, которое после совпадения на несколько секунд становится true, для скриптов и сцен. Лог называет триггеры, результат которых никуда не уходит",
+                "pt": "Verificação por IA: um critério com estado dá a cada câmera um estado que fica true alguns segundos após uma correspondência, para scripts e cenas. O log indica gatilhos cujo resultado não vai a lado nenhum",
+                "nl": "AI-controle: een criterium met status geeft elke camera een datapunt dat na een treffer enkele seconden true is, voor scripts en scènes. Het log noemt triggers waarvan het resultaat nergens heen gaat",
+                "fr": "Vérification par IA : un critère avec état donne à chaque caméra un état qui reste true quelques secondes après une correspondance, pour les scripts et les scènes. Le journal nomme les déclencheurs dont le résultat ne va nulle part",
+                "it": "Controllo IA: un criterio con stato dà a ogni telecamera uno stato che resta true per alcuni secondi dopo una corrispondenza, per script e scene. Il log indica gli attivatori il cui risultato non va da nessuna parte",
+                "es": "Comprobación por IA: un criterio con estado da a cada cámara un estado que queda en true unos segundos tras una coincidencia, para scripts y escenas. El log indica los disparadores cuyo resultado no va a ninguna parte",
+                "pl": "Kontrola AI: kryterium ze stanem daje każdej kamerze stan, który po trafieniu przez kilka sekund ma wartość true, dla skryptów i scen. Log wskazuje wyzwalacze, których wynik nigdzie nie trafia",
+                "uk": "ШІ-перевірка: критерій зі станом дає кожній камері стан, який після збігу на кілька секунд стає true, для скриптів і сцен. Лог називає тригери, результат яких нікуди не йде",
+                "zh-cn": "AI 检查：带状态的条件会为每台摄像机提供一个状态，匹配后在几秒内为 true，供脚本和场景使用。日志会列出结果无处可去的触发器"
+            },
             "0.6.2": {
                 "en": "Pre-recording: the warning of a stopped buffer tells how long the stream ran and the last warnings of ffmpeg, to find why a camera stops sending",
                 "de": "Voraufnahme: Die Warnung eines gestoppten Puffers nennt, wie lange der Stream lief, und die letzten Warnungen von ffmpeg, um zu finden, warum eine Kamera nicht mehr sendet",
@@ -80,19 +93,6 @@
                 "pl": "Nowa karta Wysyłanie z profilami powiadomień, wybieranymi dla wyzwalacza i filmu poklatkowego w kolumnie Wiadomość; ustawienia z 0.4.x jednorazowo stają się profilami. Menedżer urządzeń: karta dla każdej kamery ze stanem, ostatnim nagraniem, obrazem i akcjami Nagraj teraz i Zdjęcie",
                 "uk": "Нова вкладка «Надсилання» з профілями сповіщень, які вибираються для тригера й таймлапсу у стовпці «Повідомлення»; налаштування 0.4.x один раз стають профілями. Менеджер пристроїв: картка на камеру зі статусом, останнім записом, знімком і діями «Записати зараз» і «Знімок»",
                 "zh-cn": "新增“发送”选项卡，提供通知配置文件，可在触发器和延时摄影的“消息”列中选择；0.4.x 的设置会一次性转换为配置文件。设备管理器：每台摄像机一张卡片，显示状态、最近录制、画面，并提供“立即录制”和“快照”操作"
-            },
-            "0.4.5": {
-                "en": "Trigger table easier to read: columns in a new order with fitting widths, shorter headers (When, Only if)",
-                "de": "Auslöser-Tabelle übersichtlicher: Spalten in neuer Reihenfolge mit passenden Breiten, kürzere Überschriften (Wann, Nur wenn, Nachricht)",
-                "ru": "Таблица триггеров нагляднее: столбцы в новом порядке и подходящей ширины, короче заголовки (Когда, Только если)",
-                "pt": "Tabela de gatilhos mais legível: colunas em nova ordem com larguras adequadas, cabeçalhos mais curtos (Quando, Só se)",
-                "nl": "Triggertabel overzichtelijker: kolommen in een nieuwe volgorde met passende breedtes, kortere koppen (Wanneer, Alleen als)",
-                "fr": "Tableau des déclencheurs plus lisible : colonnes dans un nouvel ordre avec des largeurs adaptées, en-têtes plus courts (Quand, Seulement si)",
-                "it": "Tabella degli attivatori più leggibile: colonne in un nuovo ordine con larghezze adatte, intestazioni più brevi (Quando, Solo se)",
-                "es": "Tabla de disparadores más clara: columnas en un nuevo orden con anchos adecuados, encabezados más cortos (Cuándo, Solo si)",
-                "pl": "Tabela wyzwalaczy czytelniejsza: kolumny w nowej kolejności o dopasowanej szerokości, krótsze nagłówki (Kiedy, Tylko gdy)",
-                "uk": "Таблиця тригерів наочніша: стовпці в новому порядку й відповідної ширини, коротші заголовки (Коли, Лише якщо)",
-                "zh-cn": "触发器表格更清晰：列按新顺序排列并采用合适的宽度，表头更短（何时、仅当）"
             }
         },
         "titleLang": {

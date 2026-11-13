@@ -70,8 +70,14 @@ export interface NotifyProfile extends NotifyTarget {
 export interface AgentCheck {
     /** What the snapshot must show, in the user's words (e.g. "a person") */
     criterion: string;
-    /** Names of the profiles that get the message when it is met */
+    /** Names of the profiles that get the message when it is met, may be empty when `state` is on */
     profiles: string[];
+    /** Each camera gets the state `cameras.<camera>.ai.<id>`, true for `hold` seconds after a match */
+    state: boolean;
+    /** Seconds the state stays true after the last match */
+    hold: number;
+    /** Last part of the state id, from the criterion (`eine Person` → `eine_person`), unique among the rows */
+    id: string;
 }
 
 /** Timelapse of one camera */

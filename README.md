@@ -123,7 +123,8 @@ the clip also contains the seconds **before** the event.
 ### Send
 
 A **profile** says where a result goes and what is sent. Triggers and timelapses choose profiles by name in their
-column _Message_ (pick one from the list, or type several names separated by commas; empty or `—` = no message),
+column _Message_ (pick one from the list, or type several names separated by commas; empty or `—` = no message; the start names such
+triggers in the log, unless they feed the states of the AI check),
 scripts with `profiles: 'Name'`. The list of the column shows the profiles of the saved settings, so save once after
 adding a profile.
 
@@ -247,6 +248,32 @@ trigger. A profile whose criteria the picture meets gets one more message throug
   this question; later questions see a text of it. One check costs one request with one picture, and the daily token
   limit of pi-agent counts it.
 - Scripts get the same check for `record` and `snapshot` with `profiles`. Timelapse videos are not checked.
+
+**States for scripts and scenes.** A row with _State_ gives each camera the state
+`cam-recorder.0.cameras.<camera>.ai.<criterion>` (e.g. `…cameras.doorbird.ai.a_person`), so other adapters can act on
+what the camera saw, without any message:
+
+| Active | Criterion | Profiles | State | Hold (s) |
+| ------ | --------- | -------- | ----- | -------- |
+| ✓      | a person  |          | ✓     | 120      |
+
+- The state turns `true` when pi-agent sees the criterion in the snapshot of a trigger and back to `false` after
+  _Hold_ seconds (5–3600, default 60), like a motion sensor; a further match keeps it `true` and starts the time anew.
+  At the start of the adapter all of them are `false`.
+- A criterion with _State_ is checked at every trigger of every camera, also when the trigger has no profile. Scripts
+  that ask for `record` or `snapshot` do not change the states.
+- The id comes from the criterion: letters, digits and `_`; when nothing is left (e.g. Cyrillic text) it is
+  `criterion_<row>`. Renaming a criterion makes a new state; the old one is removed at the next start.
+- The answer comes some seconds after the trigger (snapshot plus model). For a light that must be on the moment someone
+  walks up, a motion sensor is faster; the state is for decisions like "a person, not a cat".
+
+Example with the javascript adapter:
+
+```js
+on({ id: 'cam-recorder.0.cameras.doorbird.ai.a_person', val: true }, () => {
+    setState('hue.0.Entrance.on', true);
+});
+```
 
 ### Timelapse
 
@@ -403,6 +430,14 @@ adapter.
     ### **WORK IN PROGRESS**
 -->
 
+### 0.6.3 (2026-11-13)
+
+- (sadam6752-tech) AI check: a criterion with the new column _State_ gives each camera the state
+  `cameras.<camera>.ai.<criterion>`, true for _Hold_ seconds after a match, for scripts, Blockly and scenes; such a
+  criterion is checked at every trigger, also without profiles
+- (sadam6752-tech) The log names each trigger at the start whose result goes nowhere (no profile in its column
+  _Message_ and no state of the AI check): its files are saved but not sent
+
 ### 0.6.2 (2026-11-12)
 
 - (sadam6752-tech) Pre-recording: the warning of a stopped buffer tells how long the stream ran (or that no data came at
@@ -427,10 +462,6 @@ adapter.
   (as AAC, also from the pre-recording and with a copied picture); GIFs and snapshots stay silent
 - (sadam6752-tech) Device Manager: a camera that is off showed as online. The adapter now checks every camera on the
   network at the start and every minute (state `reachable`), and the card shows that
-
-### 0.5.1 (2026-11-11)
-
-- (sadam6752-tech) The Device Manager also as tab _Devices_ in the instance settings, after _Cameras_
 
 Older changes are in [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 

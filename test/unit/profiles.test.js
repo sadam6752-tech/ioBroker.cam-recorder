@@ -4,6 +4,7 @@ const assert = require('node:assert/strict');
 const {
     normalizeProfiles,
     profileProblems,
+    silentTriggerHint,
     pickProfiles,
     planNotify,
     profileMessage,
@@ -54,6 +55,26 @@ const legacy = () => ({
 });
 
 describe('notification profiles', () => {
+    it('names a trigger without profile at the start, a trigger with one not', () => {
+        const { cameras } = normalizeCameras([{ name: 'Door', url: 'rtsp://h/1' }]);
+        const { triggers } = normalizeTriggers(
+            [
+                { stateId: 'doorbird.0.Doorbell.102.trigger', camera: 'Door', profiles: '' },
+                { stateId: 'a.0.b', camera: 'Door', profiles: 'Telegram' },
+                { stateId: 'a.0.c', camera: 'Door', profiles: '—' },
+            ],
+            cameras,
+        );
+        assert.equal(
+            silentTriggerHint(triggers[0]),
+            'Trigger doorbird.0.Doorbell.102.trigger: no profile in the column Message, its files are saved but not sent (tab Triggers)',
+        );
+        assert.equal(silentTriggerHint(triggers[1]), '');
+        assert.match(silentTriggerHint(triggers[2]), /^Trigger a\.0\.c: no profile/);
+        // a trigger that only feeds the states of the AI check is meant that way
+        assert.equal(silentTriggerHint(triggers[0], true), '');
+    });
+
     it('keeps active profiles with name and instance, the first of equal names wins', () => {
         const rows = [
             { enabled: true, name: ' Alex ', instance: 'telegram.0', recipient: ' Alex ', attach: 'clip', text: 'x' },

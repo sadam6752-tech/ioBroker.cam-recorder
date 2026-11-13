@@ -96,5 +96,7 @@
     "Optional, with ioBroker.pi-agent and a model that understands pictures: when a trigger fires, the files go out as before, and pi-agent looks at a snapshot. When the picture meets a criterion, the profiles of its row get an extra message, e.g. \"🔍 Door: a person — A man with a parcel at the door\". One row per criterion in your own words (e.g. \"a person\" or \"an animal in the garden\"). Without a match, or when pi-agent does not answer in time, there is no extra message; nothing else is lost.": "可选，需要 ioBroker.pi-agent 和能理解图片的模型：触发器触发时，文件照常发送，同时 pi-agent 查看一张快照。如果画面符合某条标准，该行的配置文件会额外收到一条消息，例如“🔍 大门：一个人 — 门口有一名拿着包裹的男子”。每条标准一行，用自己的话描述（例如“一个人”或“花园里有动物”）。没有匹配或 pi-agent 未及时回答时，不会有额外消息；其他内容不会丢失。",
     "Wait for the answer of pi-agent (s)": "等待 pi-agent 的回答（秒）",
     "Criterion": "标准",
-    "Profiles": "配置文件"
+    "Profiles": "配置文件",
+    "Hold (s)": "保持（秒）",
+    "State: each camera gets the state cameras.<camera>.ai.<criterion>, true for the hold time after pi-agent saw the criterion in a snapshot of a trigger, then false again (like a motion sensor). Scripts, Blockly or the Scenes adapter can react to it, e.g. switch on the light only for a person. A criterion with State is checked at every trigger, also without profiles. The answer comes some seconds after the trigger.": "状态：每台摄像机都会有状态 cameras.<camera>.ai.<criterion>，当 pi-agent 在触发器的快照中识别出该条件后，它会在保持时间内为 true，之后再变回 false（类似移动传感器）。脚本、Blockly 或场景适配器可以对其作出反应，例如只在有人时开灯。带状态的条件会在每次触发时检查，即使没有配置文件。答复会在触发后几秒钟到达。"
 }

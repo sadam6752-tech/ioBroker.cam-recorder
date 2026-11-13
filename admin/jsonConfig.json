@@ -652,19 +652,45 @@
                             "type": "text",
                             "attr": "criterion",
                             "title": "Criterion",
-                            "width": "50%",
+                            "width": "38%",
                             "default": ""
                         },
                         {
                             "type": "autocompleteSendTo",
                             "attr": "profiles",
                             "title": "Profiles",
-                            "width": "43%",
+                            "width": "33%",
                             "command": "listProfiles",
                             "freeSolo": true,
                             "default": ""
+                        },
+                        {
+                            "type": "checkbox",
+                            "attr": "state",
+                            "title": "State",
+                            "width": "9%",
+                            "default": false
+                        },
+                        {
+                            "type": "number",
+                            "attr": "hold",
+                            "title": "Hold (s)",
+                            "width": "13%",
+                            "min": 5,
+                            "max": 3600,
+                            "default": 60
                         }
                     ]
+                },
+                "_statesHelp": {
+                    "type": "staticText",
+                    "text": "State: each camera gets the state cameras.<camera>.ai.<criterion>, true for the hold time after pi-agent saw the criterion in a snapshot of a trigger, then false again (like a motion sensor). Scripts, Blockly or the Scenes adapter can react to it, e.g. switch on the light only for a person. A criterion with State is checked at every trigger, also without profiles. The answer comes some seconds after the trigger.",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
                 }
             }
         },

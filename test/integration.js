@@ -78,6 +78,10 @@ tests.integration(path.join(__dirname, '..'), {
                             },
                         ],
                         timelapses: [{ enabled: true, camera: 'Café Door', interval: 60, at: '23:55', fps: 10 }],
+                        agentChecks: [
+                            { enabled: true, criterion: 'a person', profiles: '', state: true, hold: 30 },
+                            { enabled: true, criterion: 'a car', profiles: '', state: false },
+                        ],
                         remoteEnabled: true,
                         remoteHost: '127.0.0.1',
                         remotePort: sftp.port,
@@ -165,6 +169,22 @@ tests.integration(path.join(__dirname, '..'), {
 
                 const unknown = await send('record', { camera: 'Cellar' });
                 assert.match(unknown.error, /Unknown camera/);
+            });
+
+            it('creates the states of the AI check per camera, false at the start', async function () {
+                this.timeout(30_000);
+                for (const camera of ['cafe_door', 'garden']) {
+                    const id = `cam-recorder.0.cameras.${camera}.ai.a_person`;
+                    const obj = await harness.objects.getObjectAsync(id);
+                    assert.equal(obj?.common?.type, 'boolean', id);
+                    assert.equal(obj?.common?.name, 'a person');
+                    assert.equal((await harness.states.getStateAsync(id))?.val, false);
+                    // a criterion without State gets none
+                    assert.equal(
+                        await harness.objects.getObjectAsync(`cam-recorder.0.cameras.${camera}.ai.a_car`),
+                        null,
+                    );
+                }
             });
 
             it('answers the Device Manager through js-controller with one card per camera', async function () {

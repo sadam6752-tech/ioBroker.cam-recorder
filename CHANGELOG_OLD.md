@@ -1,5 +1,9 @@
 # Older changes
 
+### 0.5.1 (2026-11-11)
+
+- (sadam6752-tech) The Device Manager also as tab _Devices_ in the instance settings, after _Cameras_
+
 ### 0.5.0 (2026-11-11)
 
 - (sadam6752-tech) New tab _Send_ with notification profiles (instance, recipient, attachment, text, template); the
