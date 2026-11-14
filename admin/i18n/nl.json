@@ -110,5 +110,7 @@
     "Sort into month folders (camera/yyyy-mm)": "Sorteren in maandmappen (camera/jjjj-mm)",
     "Keeps all files: the limits below are off, delete old folders yourself": "Bewaart alle bestanden: de grenzen hieronder zijn uit, oude mappen zelf verwijderen",
     "Month folders on the server (camera/yyyy-mm)": "Maandmappen op de server (camera/jjjj-mm)",
-    "Keeps all files on the server: the days below are off": "Bewaart alle bestanden op de server: de dagen hieronder zijn uit"
+    "Keeps all files on the server: the days below are off": "Bewaart alle bestanden op de server: de dagen hieronder zijn uit",
+    "Live (s)": "Live (s)",
+    "Live (s): every so many seconds the newest key frame of the pre-recording becomes the picture cam-recorder.0.storage/<camera>_live.jpg, for an image widget of vis (through a web instance). No second connection to the camera and almost no CPU; the picture is at most one key frame interval old. Only for cameras with pre-recording (greyed out otherwise), 0 = off.": "Live (s): elke zoveel seconden wordt het nieuwste sleutelbeeld van de vooropname de afbeelding cam-recorder.0.storage/<camera>_live.jpg, voor een afbeeldingswidget in vis (via een web-instantie). Geen tweede verbinding met de camera en bijna geen CPU; het beeld is hoogstens één sleutelbeeldinterval oud. Alleen voor camera's met vooropname (anders grijs), 0 = uit."
 }

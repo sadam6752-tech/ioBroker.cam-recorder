@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "cam-recorder",
-        "version": "0.7.0",
+        "version": "0.7.1",
         "news": {
+            "0.7.1": {
+                "en": "Cameras: new column Live (s) writes a live picture from the pre-recording into the file storage every few seconds, for an image widget of vis",
+                "de": "Kameras: neue Spalte Live (s) schreibt alle paar Sekunden ein Live-Bild aus der Voraufnahme in die Dateiablage, für ein Bild-Widget in vis",
+                "ru": "Камеры: новый столбец Live (с) каждые несколько секунд записывает живую картинку из предзаписи в файловое хранилище для виджета изображения в vis",
+                "pt": "Câmeras: nova coluna Ao vivo (s) grava a cada poucos segundos uma imagem ao vivo da pré-gravação no armazenamento de ficheiros, para um widget de imagem do vis",
+                "nl": "Camera's: nieuwe kolom Live (s) schrijft elke paar seconden een livebeeld uit de vooropname naar de bestandsopslag, voor een afbeeldingswidget in vis",
+                "fr": "Caméras : nouvelle colonne Direct (s), écrit toutes les quelques secondes une image en direct du préenregistrement dans le stockage de fichiers, pour un widget image de vis",
+                "it": "Telecamere: nuova colonna Live (s) che scrive ogni pochi secondi un'immagine dal vivo della pre-registrazione nell'archivio file, per un widget immagine di vis",
+                "es": "Cámaras: nueva columna En vivo (s) que escribe cada pocos segundos una imagen en vivo de la pregrabación en el almacenamiento de archivos, para un widget de imagen de vis",
+                "pl": "Kamery: nowa kolumna Na żywo (s) co kilka sekund zapisuje obraz na żywo z nagrywania wstępnego do magazynu plików, dla widżetu obrazu w vis",
+                "uk": "Камери: новий стовпець Наживо (с) кожні кілька секунд записує живе зображення з попереднього запису у файлове сховище для віджета зображення у vis",
+                "zh-cn": "摄像机：新列 实时（秒）每隔几秒将预录中的实时图片写入文件存储，供 vis 的图片组件使用"
+            },
             "0.7.0": {
                 "en": "Cameras: turn the picture by 90°, 180°, 270° or mirror it (column ↻). Storage and NAS: optional month folders camera/yyyy-mm, which keep all files",
                 "de": "Kameras: Bild um 90°, 180°, 270° drehen oder spiegeln (Spalte ↻). Speicherung und NAS: optionale Monatsordner Kamera/jjjj-mm, die alle Dateien behalten",
@@ -80,19 +93,6 @@
                 "pl": "Dźwięk: nowa kolumna Dźwięk w tabeli kamer nagrywa dźwięk kamery w klipach mp4. Device Manager: wyłączona kamera nie jest już pokazywana jako online, każda kamera jest sprawdzana w sieci co minutę",
                 "uk": "Звук: нова колонка «Звук» у таблиці камер записує звук камери в кліпи mp4. Device Manager: вимкнена камера більше не показується як онлайн, кожна камера перевіряється в мережі щохвилини",
                 "zh-cn": "声音：摄像头表格中新增“声音”列，将摄像头的声音录入 mp4 片段。设备管理器：关闭的摄像头不再显示为在线，每台摄像头每分钟在网络上检查一次"
-            },
-            "0.5.1": {
-                "en": "The Device Manager also as tab Devices in the instance settings",
-                "de": "Der Device Manager auch als Reiter Geräte in den Instanzeinstellungen",
-                "ru": "Device Manager также доступен как вкладка «Устройства» в настройках экземпляра",
-                "pt": "O Device Manager também como separador Dispositivos nas definições da instância",
-                "nl": "De Device Manager ook als tabblad Apparaten in de instantie-instellingen",
-                "fr": "Le Device Manager aussi comme onglet Appareils dans les paramètres de l'instance",
-                "it": "Il Device Manager anche come scheda Dispositivi nelle impostazioni dell'istanza",
-                "es": "El Device Manager también como pestaña Dispositivos en la configuración de la instancia",
-                "pl": "Device Manager także jako zakładka Urządzenia w ustawieniach instancji",
-                "uk": "Device Manager також доступний як вкладка «Пристрої» в налаштуваннях екземпляра",
-                "zh-cn": "设备管理器也作为实例设置中的“设备”选项卡提供"
             }
         },
         "titleLang": {

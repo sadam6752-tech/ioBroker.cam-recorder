@@ -110,5 +110,7 @@
     "Sort into month folders (camera/yyyy-mm)": "Organizar em pastas por mês (câmera/aaaa-mm)",
     "Keeps all files: the limits below are off, delete old folders yourself": "Mantém todos os ficheiros: os limites abaixo ficam desligados, apague as pastas antigas você mesmo",
     "Month folders on the server (camera/yyyy-mm)": "Pastas por mês no servidor (câmera/aaaa-mm)",
-    "Keeps all files on the server: the days below are off": "Mantém todos os ficheiros no servidor: os dias abaixo ficam desligados"
+    "Keeps all files on the server: the days below are off": "Mantém todos os ficheiros no servidor: os dias abaixo ficam desligados",
+    "Live (s)": "Ao vivo (s)",
+    "Live (s): every so many seconds the newest key frame of the pre-recording becomes the picture cam-recorder.0.storage/<camera>_live.jpg, for an image widget of vis (through a web instance). No second connection to the camera and almost no CPU; the picture is at most one key frame interval old. Only for cameras with pre-recording (greyed out otherwise), 0 = off.": "Ao vivo (s): a cada tantos segundos o quadro-chave mais recente da pré-gravação torna-se a imagem cam-recorder.0.storage/<camera>_live.jpg, para um widget de imagem do vis (através de uma instância web). Sem segunda ligação à câmera e quase sem CPU; a imagem tem no máximo o intervalo de um quadro-chave. Só para câmeras com pré-gravação (caso contrário fica desativado), 0 = desligado."
 }

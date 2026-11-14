@@ -115,6 +115,11 @@ the clip also contains the seconds **before** the event.
 - **Snapshots** come from the buffer while it runs: the newest picture on disk, at most about a second old, without a
   second connection to the camera — instant, and it shows the moment of the event. `sendTo` with `live: true` asks the
   camera instead.
+- **Live picture.** The column _Live (s)_ of the tab _Cameras_ (greyed out without pre-recording) turns the newest key
+  frame of the buffer into `cam-recorder.0.storage/<camera>_live.jpg` every so many seconds, for an image widget of
+  vis with the same refresh interval (through a web instance, e.g. `http://<host>:8082/cam-recorder.0.storage/door_live.jpg`).
+  Only key frames are decoded, so it costs almost no CPU and no second connection; the picture is at most one key
+  frame interval old. For real live video use go2rtc; cam-recorder can then take its RTSP stream as camera URL.
 - **When something fails** (camera offline, stream stalled for 20 s), the process is restarted after 5 s, 10 s, 30 s,
   60 s, then every 5 minutes, with a warning in the log. While the buffer is not running, clips are recorded from the
   event on as without pre-recording, with a warning in the log. After a start of the adapter the buffer needs about
@@ -444,6 +449,11 @@ adapter.
     ### **WORK IN PROGRESS**
 -->
 
+### 0.7.1 (2026-11-14)
+
+- (sadam6752-tech) Cameras: the new column _Live (s)_ writes a live picture from the pre-recording into the file
+  storage every few seconds, for vis
+
 ### 0.7.0 (2026-11-13)
 
 - (sadam6752-tech) Cameras: the new column _↻_ turns the picture by 90°, 180° or 270° or mirrors it, for cameras that
@@ -468,14 +478,6 @@ adapter.
 
 - (sadam6752-tech) AI check: the question to pi-agent names the date and time of the snapshot instead of
   "just now", so the chat of pi-agent shows when each picture came
-
-### 0.6.0 (2026-11-12)
-
-- (sadam6752-tech) AI check: on the new tab _AI check_ criteria in your own words ("a person", "an animal in the
-  garden") name profiles; with ioBroker.pi-agent the snapshot of an event is checked, and a profile whose criterion
-  the picture meets gets an extra message with what was seen. The files go out as before; the new state
-  `description` keeps the newest description
-- (sadam6752-tech) The adapter answers the message `help` with a description of its commands for AI agents
 
 Older changes are in [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 

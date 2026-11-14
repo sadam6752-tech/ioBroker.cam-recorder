@@ -110,5 +110,7 @@
     "Sort into month folders (camera/yyyy-mm)": "Сортировать по папкам месяцев (камера/гггг-мм)",
     "Keeps all files: the limits below are off, delete old folders yourself": "Хранит все файлы: ограничения ниже отключены, старые папки удаляйте сами",
     "Month folders on the server (camera/yyyy-mm)": "Папки месяцев на сервере (камера/гггг-мм)",
-    "Keeps all files on the server: the days below are off": "Хранит все файлы на сервере: дни ниже отключены"
+    "Keeps all files on the server: the days below are off": "Хранит все файлы на сервере: дни ниже отключены",
+    "Live (s)": "Live (с)",
+    "Live (s): every so many seconds the newest key frame of the pre-recording becomes the picture cam-recorder.0.storage/<camera>_live.jpg, for an image widget of vis (through a web instance). No second connection to the camera and almost no CPU; the picture is at most one key frame interval old. Only for cameras with pre-recording (greyed out otherwise), 0 = off.": "Live (с): каждые столько секунд новейший ключевой кадр предзаписи становится картинкой cam-recorder.0.storage/<camera>_live.jpg для виджета изображения в vis (через экземпляр web). Без второго подключения к камере и почти без нагрузки на CPU; картинка старше не более чем на интервал ключевых кадров. Только для камер с предзаписью (иначе поле серое), 0 = выкл."
 }

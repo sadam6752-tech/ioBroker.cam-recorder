@@ -22,6 +22,8 @@ export interface Camera {
     prebuffer: number;
     /** Turning or mirroring of the picture; missing = '0' */
     orientation?: Orientation;
+    /** Seconds between two live pictures from the pre-recording, 0 = off; missing = off */
+    live?: number;
 }
 
 /** Clockwise rotation in degrees, or a mirror image (h = left↔right, v = top↔bottom) */

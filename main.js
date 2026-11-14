@@ -22,6 +22,7 @@ const { Recorder } = require('./lib/recorder');
 const { Prebuffer } = require('./lib/prebuffer');
 const { removePartials } = require('./lib/storage');
 const { supportsDisplayMatrix } = require('./lib/orientation');
+const { LivePicture } = require('./lib/live');
 const { CHECK_INTERVAL_MS, probeTarget, isReachable } = require('./lib/reachability');
 const { triggerDecision, formatCaption } = require('./lib/triggers');
 const { maskSecrets } = require('./lib/mask');
@@ -153,6 +154,10 @@ class CamRecorder extends utils.Adapter {
         this.remoteQueue = Promise.resolve();
         this.settings = normalizeSettings({});
         this.storageId = '';
+        /** @type {LivePicture[]} */
+        this.livePictures = [];
+        /** @type {FfmpegRunner | null} */
+        this.liveRunner = null;
         this.dateFormat = 'DD.MM.YYYY';
         this.systemLanguage = 'en';
         /** @type {(value?: unknown) => void} */
@@ -260,6 +265,7 @@ class CamRecorder extends utils.Adapter {
                 onWarning: message => this.log.warn(message),
             });
             await this._startPrebuffers(ffmpegPath);
+            this._startLivePictures(ffmpegPath);
             await this._startTimelapses(outputDir);
             if (this.settings.remote.enabled) {
                 for (const problem of remoteSettingsProblems(this.settings.remote)) {
@@ -428,6 +434,40 @@ class CamRecorder extends utils.Adapter {
             } catch (err) {
                 this.log.warn(`Pre-recording of camera "${camera.name}" could not start: ${err.message}`);
             }
+        }
+    }
+
+    /**
+     * Starts the live pictures of the cameras with a running pre-recording (column Live of the tab Cameras). They have
+     * a runner of their own, so they never wait for or delay a recording. A camera without pre-recording has the
+     * column greyed out in the admin; a value from before is ignored with a hint.
+     *
+     * @param {string} ffmpegPath - Path of ffmpeg
+     */
+    _startLivePictures(ffmpegPath) {
+        for (const camera of this.cameras.filter(c => c.live)) {
+            const buffer = this.prebuffers.get(camera.id);
+            if (!buffer || !this.storageId) {
+                this.log.info(`Camera "${camera.name}": the live picture needs the pre-recording, it is off`);
+                continue;
+            }
+            this.liveRunner ??= new FfmpegRunner({ ffmpegPath, maxParallel: 1, timers: this._ownTimers() });
+            const live = new LivePicture({
+                camera,
+                buffer,
+                runner: this.liveRunner,
+                seconds: Number(camera.live),
+                width: this.settings.snapshotWidth,
+                timers: this._ownTimers(),
+                write: data => this.writeFileAsync(this.storageId, `${camera.id}_live.jpg`, data),
+                onError: message => this.log.debug(message),
+                passthrough: this.settings.displayMatrix,
+            });
+            this.livePictures.push(live);
+            live.start();
+            this.log.info(
+                `Live picture of camera "${camera.name}" every ${camera.live} s: ${this.storageId}/${camera.id}_live.jpg`,
+            );
         }
     }
 
@@ -603,7 +643,8 @@ class CamRecorder extends utils.Adapter {
         // online or offline on the cards: a TCP connection to the camera, at once and every minute
         await this._checkReachable();
         this.reachTimer = this.setInterval(() => void this._checkReachable(), CHECK_INTERVAL_MS);
-        if (this.settings.copyToFiles) {
+        const live = this.settings.prebufferEnabled && this.cameras.some(c => c.live && c.prebuffer > 0);
+        if (this.settings.copyToFiles || live) {
             this.storageId = `${this.namespace}.storage`;
             await this.setForeignObjectNotExistsAsync(this.storageId, {
                 type: 'meta',
@@ -724,7 +765,7 @@ class CamRecorder extends utils.Adapter {
      * @param {RecordResult} result - Finished file
      */
     async _copyToFiles(camera, result) {
-        if (!this.storageId || result.size > MAX_COPY_BYTES) {
+        if (!this.storageId || !this.settings.copyToFiles || result.size > MAX_COPY_BYTES) {
             return;
         }
         try {
@@ -1131,6 +1172,12 @@ class CamRecorder extends utils.Adapter {
                 this.reachTimer = undefined;
             }
             this.pulses.stop();
+            for (const live of this.livePictures) {
+                live.stop();
+            }
+            this.livePictures = [];
+            this.liveRunner?.stopAll();
+            this.liveRunner = null;
             this.runner?.stopAll();
             for (const buffer of this.prebuffers.values()) {
                 void buffer.stop();

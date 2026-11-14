@@ -110,5 +110,7 @@
     "Sort into month folders (camera/yyyy-mm)": "Ordina in cartelle mensili (telecamera/aaaa-mm)",
     "Keeps all files: the limits below are off, delete old folders yourself": "Conserva tutti i file: i limiti sotto sono disattivati, elimina tu le cartelle vecchie",
     "Month folders on the server (camera/yyyy-mm)": "Cartelle mensili sul server (telecamera/aaaa-mm)",
-    "Keeps all files on the server: the days below are off": "Conserva tutti i file sul server: i giorni sotto sono disattivati"
+    "Keeps all files on the server: the days below are off": "Conserva tutti i file sul server: i giorni sotto sono disattivati",
+    "Live (s)": "Live (s)",
+    "Live (s): every so many seconds the newest key frame of the pre-recording becomes the picture cam-recorder.0.storage/<camera>_live.jpg, for an image widget of vis (through a web instance). No second connection to the camera and almost no CPU; the picture is at most one key frame interval old. Only for cameras with pre-recording (greyed out otherwise), 0 = off.": "Live (s): ogni tanti secondi il fotogramma chiave più recente della pre-registrazione diventa l'immagine cam-recorder.0.storage/<camera>_live.jpg, per un widget immagine di vis (tramite un'istanza web). Nessuna seconda connessione alla telecamera e quasi nessuna CPU; l'immagine ha al massimo l'età di un intervallo tra fotogrammi chiave. Solo per telecamere con pre-registrazione (altrimenti disattivato), 0 = spento."
 }

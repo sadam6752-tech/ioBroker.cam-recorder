@@ -110,5 +110,7 @@
     "Sort into month folders (camera/yyyy-mm)": "In Monatsordner sortieren (Kamera/jjjj-mm)",
     "Keeps all files: the limits below are off, delete old folders yourself": "Behält alle Dateien: die Grenzen darunter sind aus, alte Ordner selbst löschen",
     "Month folders on the server (camera/yyyy-mm)": "Monatsordner auf dem Server (Kamera/jjjj-mm)",
-    "Keeps all files on the server: the days below are off": "Behält alle Dateien auf dem Server: die Tage darunter sind aus"
+    "Keeps all files on the server: the days below are off": "Behält alle Dateien auf dem Server: die Tage darunter sind aus",
+    "Live (s)": "Live (s)",
+    "Live (s): every so many seconds the newest key frame of the pre-recording becomes the picture cam-recorder.0.storage/<camera>_live.jpg, for an image widget of vis (through a web instance). No second connection to the camera and almost no CPU; the picture is at most one key frame interval old. Only for cameras with pre-recording (greyed out otherwise), 0 = off.": "Live (s): alle so viele Sekunden wird das neueste Schlüsselbild der Voraufnahme zum Bild cam-recorder.0.storage/<camera>_live.jpg, für ein Bild-Widget in vis (über eine web-Instanz). Keine zweite Verbindung zur Kamera und kaum CPU; das Bild ist höchstens einen Schlüsselbild-Abstand alt. Nur für Kameras mit Voraufnahme (sonst ausgegraut), 0 = aus."
 }

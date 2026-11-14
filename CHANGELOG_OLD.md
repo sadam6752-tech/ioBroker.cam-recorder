@@ -1,5 +1,13 @@
 # Older changes
 
+### 0.6.0 (2026-11-12)
+
+- (sadam6752-tech) AI check: on the new tab _AI check_ criteria in your own words ("a person", "an animal in the
+  garden") name profiles; with ioBroker.pi-agent the snapshot of an event is checked, and a profile whose criterion
+  the picture meets gets an extra message with what was seen. The files go out as before; the new state
+  `description` keeps the newest description
+- (sadam6752-tech) The adapter answers the message `help` with a description of its commands for AI agents
+
 ### 0.5.2 (2026-11-11)
 
 - (sadam6752-tech) Sound: a new column _Sound_ in the camera table takes the sound of the camera into mp4 clips

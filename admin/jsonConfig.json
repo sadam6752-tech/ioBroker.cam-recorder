@@ -42,21 +42,21 @@
                             "type": "text",
                             "attr": "url",
                             "title": "RTSP URL",
-                            "width": "22%",
+                            "width": "18%",
                             "default": "rtsp://"
                         },
                         {
                             "type": "text",
                             "attr": "username",
                             "title": "User",
-                            "width": "11%",
+                            "width": "10%",
                             "default": ""
                         },
                         {
                             "type": "password",
                             "attr": "password",
                             "title": "Password",
-                            "width": "11%",
+                            "width": "10%",
                             "default": ""
                         },
                         {
@@ -132,6 +132,16 @@
                                     "value": "vflip"
                                 }
                             ]
+                        },
+                        {
+                            "type": "number",
+                            "attr": "live",
+                            "title": "Live (s)",
+                            "width": "6%",
+                            "min": 0,
+                            "max": 60,
+                            "default": 0,
+                            "disabled": "!data.prebuffer || !globalData.prebufferEnabled"
                         }
                     ]
                 },
@@ -148,6 +158,16 @@
                 "_orientationHelp": {
                     "type": "staticText",
                     "text": "↻: turns the picture of a camera that is mounted upside down or on its side (clockwise), or mirrors it. Snapshots, GIFs and re-encoded clips are turned; a copied mp4 (MP4 encoding: copy) only gets a mark that players and Telegram apply when they show the video.",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "_liveHelp": {
+                    "type": "staticText",
+                    "text": "Live (s): every so many seconds the newest key frame of the pre-recording becomes the picture cam-recorder.0.storage/<camera>_live.jpg, for an image widget of vis (through a web instance). No second connection to the camera and almost no CPU; the picture is at most one key frame interval old. Only for cameras with pre-recording (greyed out otherwise), 0 = off.",
                     "newLine": true,
                     "xs": 12,
                     "sm": 12,

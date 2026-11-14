@@ -110,5 +110,7 @@
     "Sort into month folders (camera/yyyy-mm)": "按月份文件夹整理（摄像机/yyyy-mm）",
     "Keeps all files: the limits below are off, delete old folders yourself": "保留所有文件：下方的限制会关闭，请自行删除旧文件夹",
     "Month folders on the server (camera/yyyy-mm)": "服务器上的月份文件夹（摄像机/yyyy-mm）",
-    "Keeps all files on the server: the days below are off": "在服务器上保留所有文件：下方的天数会关闭"
+    "Keeps all files on the server: the days below are off": "在服务器上保留所有文件：下方的天数会关闭",
+    "Live (s)": "实时（秒）",
+    "Live (s): every so many seconds the newest key frame of the pre-recording becomes the picture cam-recorder.0.storage/<camera>_live.jpg, for an image widget of vis (through a web instance). No second connection to the camera and almost no CPU; the picture is at most one key frame interval old. Only for cameras with pre-recording (greyed out otherwise), 0 = off.": "实时（秒）：每隔这么多秒，预录中最新的关键帧会成为图片 cam-recorder.0.storage/<camera>_live.jpg，可通过 web 实例用于 vis 的图片组件。无需再次连接摄像机，几乎不占 CPU；图片最多落后一个关键帧间隔。仅适用于开启预录的摄像机（否则为灰色），0 = 关闭。"
 }
