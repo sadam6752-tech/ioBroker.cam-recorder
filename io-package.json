@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "cam-recorder",
-        "version": "0.8.2",
+        "version": "0.8.3",
         "news": {
+            "0.8.3": {
+                "en": "AI check: a daily report, written by pi-agent from what its checks saw since the last one and sent through chosen profiles; state report.send and command report",
+                "de": "KI-Prüfung: ein täglicher Bericht, den pi-agent aus dem schreibt, was seine Prüfungen seit dem letzten Bericht gesehen haben, verschickt über gewählte Profile; Zustand report.send und Befehl report",
+                "ru": "Проверка ИИ: ежедневный отчёт, который pi-agent пишет по тому, что увидели его проверки с прошлого отчёта, и который отправляется через выбранные профили; состояние report.send и команда report",
+                "pt": "Verificação IA: um relatório diário, escrito pelo pi-agent a partir do que as suas verificações viram desde o último, enviado pelos perfis escolhidos; estado report.send e comando report",
+                "nl": "AI-controle: een dagelijks verslag, door pi-agent geschreven uit wat zijn controles sinds het vorige zagen, verstuurd via gekozen profielen; status report.send en opdracht report",
+                "fr": "Contrôle IA : un rapport quotidien, écrit par pi-agent à partir de ce que ses contrôles ont vu depuis le dernier, envoyé par les profils choisis ; état report.send et commande report",
+                "it": "Controllo IA: un rapporto giornaliero, scritto da pi-agent da ciò che i suoi controlli hanno visto dall'ultimo, inviato tramite i profili scelti; stato report.send e comando report",
+                "es": "Comprobación IA: un informe diario, escrito por pi-agent a partir de lo que sus comprobaciones vieron desde el último, enviado por los perfiles elegidos; estado report.send y comando report",
+                "pl": "Sprawdzanie AI: codzienny raport pisany przez pi-agent na podstawie tego, co jego sprawdzenia zobaczyły od ostatniego, wysyłany przez wybrane profile; stan report.send i polecenie report",
+                "uk": "Перевірка ШІ: щоденний звіт, який pi-agent пише з того, що побачили його перевірки від минулого звіту, і який надсилається через вибрані профілі; стан report.send і команда report",
+                "zh-cn": "AI 检查：每日报告，由 pi-agent 根据自上次报告以来检查所见内容撰写，并通过所选配置文件发送；状态 report.send 和命令 report"
+            },
             "0.8.2": {
                 "en": "AI check: the new column AI of the tab Send lets a profile with criteria get the files only on a match, or wait for the check and get one message with the description; {description} and {matches} in the text",
                 "de": "KI-Prüfung: die neue Spalte KI im Reiter Senden lässt ein Profil mit Kriterien die Dateien nur bei einem Treffer erhalten oder auf die Prüfung warten und eine Nachricht mit der Beschreibung erhalten; {description} und {matches} im Text",
@@ -80,19 +93,6 @@
                 "pl": "Kontrola AI: kryterium ze stanem daje każdej kamerze stan, który po trafieniu przez kilka sekund ma wartość true, dla skryptów i scen. Log wskazuje wyzwalacze, których wynik nigdzie nie trafia",
                 "uk": "ШІ-перевірка: критерій зі станом дає кожній камері стан, який після збігу на кілька секунд стає true, для скриптів і сцен. Лог називає тригери, результат яких нікуди не йде",
                 "zh-cn": "AI 检查：带状态的条件会为每台摄像机提供一个状态，匹配后在几秒内为 true，供脚本和场景使用。日志会列出结果无处可去的触发器"
-            },
-            "0.6.2": {
-                "en": "Pre-recording: the warning of a stopped buffer tells how long the stream ran and the last warnings of ffmpeg, to find why a camera stops sending",
-                "de": "Voraufnahme: Die Warnung eines gestoppten Puffers nennt, wie lange der Stream lief, und die letzten Warnungen von ffmpeg, um zu finden, warum eine Kamera nicht mehr sendet",
-                "ru": "Предзапись: предупреждение об остановке буфера сообщает, сколько шёл поток, и последние предупреждения ffmpeg, чтобы найти, почему камера перестаёт передавать",
-                "pt": "Pré-gravação: o aviso de um buffer parado indica quanto tempo o stream correu e os últimos avisos do ffmpeg, para descobrir por que uma câmera deixa de enviar",
-                "nl": "Vooropname: de waarschuwing van een gestopte buffer vermeldt hoe lang de stream liep en de laatste waarschuwingen van ffmpeg, om te vinden waarom een camera stopt met zenden",
-                "fr": "Pré-enregistrement : l'avertissement d'un tampon arrêté indique combien de temps le flux a duré et les derniers avertissements de ffmpeg, pour trouver pourquoi une caméra cesse d'émettre",
-                "it": "Pre-registrazione: l'avviso di un buffer fermo indica per quanto è durato lo stream e gli ultimi avvisi di ffmpeg, per capire perché una telecamera smette di trasmettere",
-                "es": "Pregrabación: el aviso de un búfer detenido indica cuánto duró el stream y los últimos avisos de ffmpeg, para saber por qué una cámara deja de enviar",
-                "pl": "Nagrywanie wstępne: ostrzeżenie o zatrzymanym buforze podaje, jak długo działał strumień, i ostatnie ostrzeżenia ffmpeg, aby ustalić, dlaczego kamera przestaje nadawać",
-                "uk": "Попередній запис: попередження про зупинку буфера повідомляє, скільки тривав потік, і останні попередження ffmpeg, щоб знайти, чому камера перестає передавати",
-                "zh-cn": "预录：缓冲停止时的警告会说明流运行了多长时间以及 ffmpeg 的最后几条警告，便于查明摄像机为何停止发送"
             }
         },
         "titleLang": {
@@ -176,6 +176,11 @@
         "agentInstance": "",
         "agentTimeout": 30,
         "agentChecks": [],
+        "reportEnabled": false,
+        "reportTime": "21:00",
+        "reportProfiles": "",
+        "reportCameras": "",
+        "reportInstructions": "",
         "outputDir": "",
         "monthFolders": false,
         "keepFiles": 20,

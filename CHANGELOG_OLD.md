@@ -1,5 +1,12 @@
 # Older changes
 
+### 0.7.0 (2026-11-13)
+
+- (sadam6752-tech) Cameras: the new column _↻_ turns the picture by 90°, 180° or 270° or mirrors it, for cameras that
+  are mounted upside down or on their side; a copied mp4 gets a rotation mark instead
+- (sadam6752-tech) Storage and NAS: files can be sorted into month folders `<camera>/<yyyy-mm>/`; then all files are
+  kept and the limits of the tab are off
+
 ### 0.6.3 (2026-11-13)
 
 - (sadam6752-tech) AI check: a criterion with the new column _State_ gives each camera the state

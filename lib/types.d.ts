@@ -129,6 +129,22 @@ export interface RemoteSettings {
     keepDays: number;
 }
 
+/** Daily report of the AI checks (tab AI check) */
+export interface ReportSettings {
+    /** Collect the checks and send the report */
+    enabled: boolean;
+    /** Minute of the day to send it, 0–1439 */
+    at: number;
+    /** The time as set, HH:MM */
+    time: string;
+    /** Names of the profiles that get it */
+    profiles: string[];
+    /** Names or ids of the cameras in it, empty = all */
+    cameras: string[];
+    /** Extra wishes for pi-agent, e.g. "no animals" */
+    instructions: string;
+}
+
 /** Adapter settings with limits applied */
 export interface Settings {
     /** Default clip length in seconds */
@@ -175,6 +191,8 @@ export interface Settings {
     agentTimeout: number;
     /** Active rows of the tab AI check */
     agentChecks: AgentCheck[];
+    /** Report of the AI checks (tab AI check) */
+    report: ReportSettings;
     /** Copy to an SFTP server */
     remote: RemoteSettings;
 }

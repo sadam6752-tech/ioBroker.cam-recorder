@@ -301,6 +301,33 @@ on({ id: 'cam-recorder.0.cameras.doorbird.ai.a_person', val: true }, () => {
 });
 ```
 
+#### Report
+
+Once a day pi-agent sums up what its checks saw since the last report, e.g.
+
+> 📋 Report 15.11.2026
+> Front door: 10:12 the postman, 14:40 a courier with a parcel, 18:05 two people rang (visitors).
+> Yard: a car in the drive at 07:30 and 17:45, otherwise only cats.
+
+| Setting                | Meaning                                                                  |
+| ---------------------- | ------------------------------------------------------------------------ |
+| Send a daily report    | Main switch: collect the checks and send the report                      |
+| Time (HH:MM)           | When it goes out, default `21:00`                                        |
+| Profiles of the report | Profiles of the tab _Send_ (comma separated); empty = only `report.text` |
+| Cameras                | Cameras in the report (comma separated), empty = all                     |
+| Wishes for pi-agent    | Optional, e.g. "only people and vehicles, no animals"                    |
+
+- Every AI check of a snapshot with a description adds a line (time, camera, description, criteria seen) to
+  `report.json` in the data folder of the instance, which survives a restart. Only pictures that pi-agent checks
+  count, so a criterion needs a profile or a _State_. No picture is kept for the report.
+- At the set time pi-agent gets the lines as text (no pictures, conversation `cam-recorder-report`) and writes the
+  report in the system language. The message is only this text, not the text, template attachment or file of the
+  profile. When pi-agent does not answer, the plain list goes out instead; without lines nothing is sent.
+- A sent report starts the next one: the lines up to then are removed.
+- `report.send` sends it at once, `report.text` keeps the last one, `report.lastTime` tells when it went out. Scripts
+  and agents can ask with `sendTo('cam-recorder.0', 'report', { send: false })`: the answer `{ text }` is the report
+  so far, nothing is sent or removed.
+
 ### Timelapse
 
 One row per camera: a picture every _Interval_ minutes, and once a day at _Video at_ (HH:MM, default 23:55) the
@@ -445,6 +472,8 @@ Per camera below `cam-recorder.0.cameras.<camera>`:
 | `timelapseFrames`    | Pictures waiting for the next timelapse video   |
 | `timelapseNextVideo` | Time of the next timelapse video                |
 
+Below `cam-recorder.0.report` (see _Report_): `send` (button), `text` (the last report), `lastTime`.
+
 `info.connection` is true when ffmpeg was found and works, `info.ffmpegVersion` shows its version.
 `info.lastRemoteCopy` and `info.remoteError` report the copy to the SFTP server.
 
@@ -469,6 +498,7 @@ on({ id: 'doorbird.0.Doorbell.1.trigger', change: 'any' }, () => {
 | `record`       | `{ camera, duration?, pre?, format?: 'mp4' \| 'gif', width?, fps?, profiles? }` | `{ file, size, format, duration, pre, extended, fromBuffer, realDuration, camera, time }` or `{ error }` |
 | `snapshot`     | `{ camera, width?, live?, profiles? }` or just the camera name                  | as above, `format: 'jpg'`                                                                                |
 | `timelapse`    | `{ camera }` or just the camera name                                            | the video as above, or `{ error }` when fewer than two pictures wait                                     |
+| `report`       | `{ send?: boolean }`, `send: false` only builds the text                        | `{ text }` (empty without checked events), or `{ error }` when the report is off                         |
 | `listCameras`  | –                                                                               | `[{ value, label }]`                                                                                     |
 | `listProfiles` | –                                                                               | `[{ value, label }]`                                                                                     |
 | `help`         | –                                                                               | `{ help }`: the commands, states and rules as text for an AI agent                                       |
@@ -506,6 +536,11 @@ adapter.
     ### **WORK IN PROGRESS**
 -->
 
+### 0.8.3 (2026-11-15)
+
+- (sadam6752-tech) AI check: a daily report (_Report_), written by pi-agent from what its checks saw since the last
+  one, sent through chosen profiles; state `report.send` and command `report`
+
 ### 0.8.2 (2026-11-15)
 
 - (sadam6752-tech) AI check: the new column _AI_ of the tab _Send_ lets a profile with criteria get the files only on a
@@ -529,13 +564,6 @@ adapter.
 
 - (sadam6752-tech) Cameras: the new column _Live (s)_ writes a live picture from the pre-recording into the file
   storage every few seconds, for vis
-
-### 0.7.0 (2026-11-13)
-
-- (sadam6752-tech) Cameras: the new column _↻_ turns the picture by 90°, 180° or 270° or mirrors it, for cameras that
-  are mounted upside down or on their side; a copied mp4 gets a rotation mark instead
-- (sadam6752-tech) Storage and NAS: files can be sorted into month folders `<camera>/<yyyy-mm>/`; then all files are
-  kept and the limits of the tab are off
 
 Older changes are in [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 

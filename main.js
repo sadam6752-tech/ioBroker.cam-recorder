@@ -30,6 +30,18 @@ const { NAMES } = require('./lib/names');
 const { conditionMet, opSymbol } = require('./lib/conditions');
 const { KNOWN, parseNames, buildMessage } = require('./lib/notify');
 const {
+    REPORT_INSTRUCTIONS,
+    normalizeReport,
+    reportDue,
+    addEntry,
+    parseJournal,
+    reportEntries,
+    plainReport,
+    reportQuestion,
+    reportTitle,
+    reportText,
+} = require('./lib/report');
+const {
     pickProfiles,
     aiModeOf,
     planNotify,
@@ -42,6 +54,7 @@ const {
 const { Timelapse } = require('./lib/timelapse');
 const {
     INSTRUCTIONS,
+    LANGUAGES,
     needsAgent,
     eventConditions,
     matchedStates,
@@ -138,6 +151,17 @@ const SCHEDULE_STATES = [
     { id: 'next', common: { type: 'number', role: 'date', read: true, write: false, def: 0 } },
 ];
 
+/**
+ * States of the channel `report`; names in lib/names.js as `report_<id>`.
+ *
+ * @type {Array<{id: string, common: Partial<ioBroker.StateCommon>}>}
+ */
+const REPORT_STATES = [
+    { id: 'send', common: { type: 'boolean', role: 'button', read: false, write: true, def: false } },
+    { id: 'text', common: { type: 'string', role: 'text', read: true, write: false, def: '' } },
+    { id: 'lastTime', common: { type: 'number', role: 'value.time', read: true, write: false, def: 0 } },
+];
+
 /** @type {Array<{id: string, common: Partial<ioBroker.StateCommon>}>} */
 const CAMERA_STATES = [
     { id: 'record', common: { type: 'boolean', role: 'button', read: false, write: true, def: false } },
@@ -218,6 +242,10 @@ class CamRecorder extends utils.Adapter {
         this.livePictures = [];
         /** @type {FfmpegRunner | null} */
         this.liveRunner = null;
+        /** @type {import('./lib/report').ReportEntry[]} lines of the report since the last one */
+        this.journal = [];
+        this.journalFile = '';
+        this.reportRunning = false;
         this.dateFormat = 'DD.MM.YYYY';
         this.systemLanguage = 'en';
         /** @type {(value?: unknown) => void} */
@@ -275,6 +303,7 @@ class CamRecorder extends utils.Adapter {
 
             await this._createObjects();
             await this._readDateFormat();
+            await this._loadJournal();
 
             const outputDir = String(this.config.outputDir || '').trim()
                 ? path.resolve(String(this.config.outputDir).trim())
@@ -337,6 +366,7 @@ class CamRecorder extends utils.Adapter {
             await this.subscribeStatesAsync('cameras.*.snapshot');
             await this.subscribeStatesAsync('cameras.*.timelapse');
             await this.subscribeStatesAsync('cameras.*.schedule.*');
+            await this.subscribeStatesAsync('report.send');
             this._scheduleTick();
             for (const stateId of this.triggers.keys()) {
                 await this.subscribeForeignStatesAsync(stateId);
@@ -708,6 +738,14 @@ class CamRecorder extends utils.Adapter {
         // online or offline on the cards: a TCP connection to the camera, at once and every minute
         await this._checkReachable();
         this.reachTimer = this.setInterval(() => void this._checkReachable(), CHECK_INTERVAL_MS);
+        await this.extendObjectAsync('report', { type: 'channel', common: { name: NAMES.report }, native: {} });
+        for (const state of REPORT_STATES) {
+            await this.extendObjectAsync(`report.${state.id}`, {
+                type: 'state',
+                common: { name: NAMES[`report_${state.id}`], ...state.common },
+                native: {},
+            });
+        }
         const live = this.settings.prebufferEnabled && this.cameras.some(c => c.live && c.prebuffer > 0);
         if (this.settings.copyToFiles || live) {
             this.storageId = `${this.namespace}.storage`;
@@ -823,6 +861,9 @@ class CamRecorder extends utils.Adapter {
                 if (entry && runsAt(entry.schedule, entry.cron, now)) {
                     void this._runSchedule(camera, entry.schedule);
                 }
+            }
+            if (reportDue(this.settings.report, now)) {
+                void this._makeReport().catch(err => this.log.warn(`Report: ${err.message}`));
             }
             this._scheduleTick();
         }, wait);
@@ -1095,6 +1136,9 @@ class CamRecorder extends utils.Adapter {
                     this.log.warn(`Camera "${camera.name}": ${agent}: ${verdict.error}, no match for it`);
                 }
                 await this.setState(`cameras.${camera.id}.description`, verdict.description, true);
+                if (verdict.description) {
+                    await this._remember(camera, verdict, snapshot.time);
+                }
                 for (const check of trigger ? matchedStates(this.settings.agentChecks, verdict) : []) {
                     this.pulses.fire(`cameras.${camera.id}.ai.${check.id}`, check.hold * 1000);
                 }
@@ -1107,6 +1151,149 @@ class CamRecorder extends utils.Adapter {
             }
         };
         return check();
+    }
+
+    /** Reads the lines of the report that were not sent yet (they survive a restart) and names problems of it. */
+    async _loadJournal() {
+        const report = this.settings.report;
+        for (const problem of normalizeReport(this.config).problems) {
+            this.log.warn(problem);
+        }
+        this.journalFile = path.join(utils.getAbsoluteInstanceDataDir(this), 'report.json');
+        try {
+            this.journal = parseJournal(JSON.parse(await fs.readFile(this.journalFile, 'utf8')));
+        } catch {
+            this.journal = [];
+        }
+        if (!report.enabled) {
+            return;
+        }
+        if (!this.settings.agentInstance) {
+            this.log.warn('Report: no pi-agent instance is chosen (tab AI check), so there is nothing to report');
+        } else if (!this.settings.profiles.some(needsAgent) && !this.settings.agentChecks.some(c => c.state)) {
+            this.log.warn('Report: no criterion has a profile or a state (tab AI check), so no picture is checked');
+        }
+        this._checkNames('Report', report.profiles);
+        const to = report.profiles.length ? ` to ${report.profiles.join(', ')}` : ', no profile (only report.text)';
+        this.log.info(`Report daily at ${report.time}${to}, ${this.journal.length} event(s) waiting`);
+    }
+
+    /**
+     * Keeps what the AI check saw for the report.
+     *
+     * @param {Camera} camera - Camera
+     * @param {Verdict} verdict - Verdict of the check
+     * @param {number} time - Time of the picture
+     */
+    async _remember(camera, verdict, time) {
+        if (!this.settings.report.enabled || !this.journalFile) {
+            return;
+        }
+        const matches = [...verdict.matches].filter(([, yes]) => yes).map(([criterion]) => criterion);
+        this.journal = addEntry(this.journal, {
+            time,
+            camera: camera.name,
+            cameraId: camera.id,
+            description: verdict.description,
+            matches,
+        });
+        await this._saveJournal();
+    }
+
+    /** Writes the journal of the report, through a temporary file. */
+    async _saveJournal() {
+        try {
+            await fs.mkdir(path.dirname(this.journalFile), { recursive: true });
+            await fs.writeFile(`${this.journalFile}.part`, JSON.stringify(this.journal));
+            await fs.rename(`${this.journalFile}.part`, this.journalFile);
+        } catch (err) {
+            this.log.warn(`Report: could not save the events: ${err.message}`);
+        }
+    }
+
+    /**
+     * The report of the checks since the last report: pi-agent writes it, without an answer the plain lines are used.
+     * It goes into `report.text` and, with `send`, through the profiles of the report; a sent report starts the next.
+     *
+     * @param {{send?: boolean}} [options] - `send: false` only builds the text (a question of a script or agent)
+     * @returns {Promise<string>} The text, empty when there was nothing to report
+     */
+    async _makeReport({ send = true } = {}) {
+        const report = this.settings.report;
+        if (this.reportRunning) {
+            throw new Error('a report is being written');
+        }
+        this.reportRunning = true;
+        try {
+            const now = new Date();
+            const entries = reportEntries(this.journal, report);
+            if (!entries.length) {
+                this.log.info('Report: no checked event since the last report, nothing to send');
+                return '';
+            }
+            let body = '';
+            const agent = this.settings.agentInstance;
+            if (agent) {
+                try {
+                    const language =
+                        LANGUAGES[/** @type {keyof typeof LANGUAGES} */ (this.systemLanguage)] || 'English';
+                    const answer = /** @type {{answer?: unknown, error?: unknown} | undefined} */ (
+                        await this.sendToAsync(
+                            agent,
+                            'ask',
+                            {
+                                text: reportQuestion(entries, language, report.instructions, now, this.dateFormat),
+                                conversation: 'cam-recorder-report',
+                                instructions: REPORT_INSTRUCTIONS,
+                            },
+                            { timeout: Math.max(60, this.settings.agentTimeout) * 1000 },
+                        )
+                    );
+                    if (answer?.error) {
+                        throw new Error(String(answer.error));
+                    }
+                    body = typeof answer?.answer === 'string' ? answer.answer.trim() : '';
+                } catch (err) {
+                    this.log.warn(`Report: ${agent} did not write it (${err.message}), the plain list is used`);
+                }
+            }
+            const title = reportTitle(this.systemLanguage, now, this.dateFormat);
+            const text = reportText(title, body || plainReport(entries, now, this.dateFormat));
+            await this.setState('report.text', text, true);
+            if (!send) {
+                return text;
+            }
+            const { chosen } = pickProfiles(report.profiles, this.settings.profiles);
+            await Promise.all(chosen.map(profile => this._sendText(profile, text, 'the report')));
+            this.journal = this.journal.filter(e => e.time > now.getTime());
+            await this._saveJournal();
+            await this.setState('report.lastTime', now.getTime(), true);
+            this.log.info(
+                `Report of ${entries.length} event(s) written${chosen.length ? '' : ', no profile to send it'}`,
+            );
+            return text;
+        } finally {
+            this.reportRunning = false;
+        }
+    }
+
+    /**
+     * Sends a text through a profile, without the text and the file of the profile (the report).
+     *
+     * @param {NotifyProfile} profile - Profile
+     * @param {string} text - Text
+     * @param {string} what - For the log
+     */
+    async _sendText(profile, text, what) {
+        try {
+            const { command, message } = buildMessage(profile, null, text, '');
+            await this.sendToAsync(profile.instance, command, message, { timeout: 60_000 });
+            this.log.info(`Sent ${what} through profile "${profile.name}" to ${profile.instance}`);
+        } catch (err) {
+            this.log.warn(
+                `Could not send ${what} through profile "${profile.name}" to ${profile.instance}: ${err.message}`,
+            );
+        }
     }
 
     /**
@@ -1376,6 +1563,15 @@ class CamRecorder extends utils.Adapter {
                 }
             }
         }
+        if (state && !state.ack && state.val && id === `${this.namespace}.report.send`) {
+            void this.setState(id, false, true);
+            if (!this.settings.report.enabled) {
+                this.log.warn('Report: switched off in the settings (tab AI check)');
+                return;
+            }
+            void this._makeReport().catch(err => this.log.warn(`Report: ${err.message}`));
+            return;
+        }
         if (!state || state.ack || !id.startsWith(`${this.namespace}.cameras.`)) {
             return;
         }
@@ -1443,6 +1639,15 @@ class CamRecorder extends utils.Adapter {
                         ? ` Fingerprint of the server (enter it to trust only this server): ${result.fingerprint}`
                         : '';
                 reply(result.ok ? { result: `OK: ${result.message}.${hint}` } : { error: result.message });
+                return;
+            }
+            if (obj.command === 'report') {
+                if (!this.settings.report.enabled) {
+                    reply({ error: 'the report is switched off (tab AI check)' });
+                    return;
+                }
+                const send = !(obj.message && typeof obj.message === 'object' && obj.message.send === false);
+                reply({ text: await this._makeReport({ send }) });
                 return;
             }
             if (obj.command === 'timelapse') {

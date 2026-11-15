@@ -117,5 +117,13 @@
     "At once, extra message on a match": "立即发送，匹配时附加消息",
     "Only on an AI match": "仅在 AI 匹配时",
     "Wait for AI, with description": "等待 AI，附带描述",
-    "AI (only for a profile with criteria on the tab AI check): 'At once' sends the files at once and an extra message when pi-agent sees a criterion. 'Only on an AI match' saves every file but sends it only when a criterion is seen, with the description. 'Wait for AI' waits for pi-agent and sends one message with the description (without it when pi-agent does not answer in time). The text may place {description} and {matches}, otherwise the description goes below it. Tip: a second profile for the same recipient with 'Only on an AI match' next to a profile without AI.": "AI（仅适用于在 AI 检查选项卡中设置了条件的配置文件）：“立即发送”会立即发送文件，并在 pi-agent 识别到条件时附加一条消息。“仅在 AI 匹配时”会保存每个文件，但只在识别到条件时发送，并附带描述。“等待 AI”会等待 pi-agent，然后发送一条带描述的消息（若 pi-agent 未及时答复则不带描述）。文本中可以使用 {description} 和 {matches}，否则描述会放在下方。提示：为同一收件人再建一个“仅在 AI 匹配时”的配置文件，与不带 AI 的配置文件并用。"
+    "AI (only for a profile with criteria on the tab AI check): 'At once' sends the files at once and an extra message when pi-agent sees a criterion. 'Only on an AI match' saves every file but sends it only when a criterion is seen, with the description. 'Wait for AI' waits for pi-agent and sends one message with the description (without it when pi-agent does not answer in time). The text may place {description} and {matches}, otherwise the description goes below it. Tip: a second profile for the same recipient with 'Only on an AI match' next to a profile without AI.": "AI（仅适用于在 AI 检查选项卡中设置了条件的配置文件）：“立即发送”会立即发送文件，并在 pi-agent 识别到条件时附加一条消息。“仅在 AI 匹配时”会保存每个文件，但只在识别到条件时发送，并附带描述。“等待 AI”会等待 pi-agent，然后发送一条带描述的消息（若 pi-agent 未及时答复则不带描述）。文本中可以使用 {description} 和 {matches}，否则描述会放在下方。提示：为同一收件人再建一个“仅在 AI 匹配时”的配置文件，与不带 AI 的配置文件并用。",
+    "Report": "报告",
+    "Report: every AI check of a snapshot is noted (time, camera, what pi-agent saw). At the set time pi-agent writes a short text of the events since the last report, which goes out through the chosen profiles (only this text, not the text or file of the profile). Without an answer of pi-agent the plain list goes out; without checked events nothing is sent. Only pictures that pi-agent checks count: a criterion needs a profile or a state. The state report.send sends the report at once, report.text keeps the last one.": "报告：每次对快照的 AI 检查都会被记录（时间、摄像机、pi-agent 看到的内容）。在设定的时间，pi-agent 会把自上次报告以来的事件写成一段简短文字，通过所选的配置文件发送（只发送这段文字，不使用配置文件的文本或文件）。若 pi-agent 未答复，则发送简单列表；没有检查过的事件时不发送任何内容。只统计 pi-agent 检查过的图片：条件需要有配置文件或状态。状态 report.send 会立即发送报告，report.text 保存最近一次报告。",
+    "Send a daily report": "每天发送报告",
+    "Time (HH:MM)": "时间 (HH:MM)",
+    "Profiles of the report": "报告的配置文件",
+    "Cameras (empty = all)": "摄像机（留空 = 全部）",
+    "Wishes for pi-agent (optional)": "对 pi-agent 的要求（可选）",
+    "e.g. only people and vehicles, no animals": "例如：只关注人和车辆，不包括动物"
 }

@@ -82,6 +82,8 @@ tests.integration(path.join(__dirname, '..'), {
                             { enabled: true, criterion: 'a person', profiles: '', state: true, hold: 30 },
                             { enabled: true, criterion: 'a car', profiles: '', state: false },
                         ],
+                        reportEnabled: true,
+                        reportTime: '21:00',
                         remoteEnabled: true,
                         remoteHost: '127.0.0.1',
                         remotePort: sftp.port,
@@ -185,6 +187,17 @@ tests.integration(path.join(__dirname, '..'), {
                         null,
                     );
                 }
+            });
+
+            it('creates the states of the report and answers the command report', async function () {
+                this.timeout(30_000);
+                for (const id of ['send', 'text', 'lastTime']) {
+                    const obj = await harness.objects.getObjectAsync(`cam-recorder.0.report.${id}`);
+                    assert.ok(obj, id);
+                }
+                // nothing was checked (no pi-agent): an empty report, nothing sent
+                const answer = await send('report', { send: false });
+                assert.deepEqual(answer, { text: '' });
             });
 
             it('runs the schedule of a camera that a script writes, and confirms the values', async function () {
