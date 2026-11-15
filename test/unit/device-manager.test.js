@@ -183,7 +183,18 @@ describe('Device Manager', () => {
         const adapter = fakeAdapter();
         const dm = new CameraDeviceManagement(adapter);
         const card = await dm.getDeviceInfo('door');
-        const context = fakeContext(data => ({ ...data, enabled: true, interval: 15, from: '22:00', to: '06:00' }));
+        adapter.settings.agentInstance = 'pi-agent.0';
+        const context = fakeContext(data => ({
+            ...data,
+            enabled: true,
+            interval: 15,
+            from: '22:00',
+            to: '06:00',
+            aiOnly: true,
+            onlyIfState: ' 0_userdata.0.away ',
+            onlyIfOp: 'eq',
+            onlyIfValue: 'true',
+        }));
         const answer = await action(card, 'interval')('door', context);
         const [, schema, options] = context.log[0];
         assert.deepEqual(Object.keys(schema.items), [
@@ -193,8 +204,14 @@ describe('Device Manager', () => {
             'to',
             'action',
             'profiles',
+            'aiOnly',
+            'onlyIfState',
+            'onlyIfOp',
+            'onlyIfValue',
             '_shared',
         ]);
+        assert.equal(schema.items.aiOnly.disabled, 'false');
+        assert.equal(options.data.onlyIfOp, 'eq');
         assert.equal(options.data.interval, 30);
         assert.deepEqual(options.data.profiles, ['Alex', 'Gone']);
         // a profile that is gone stays choosable, so saving does not drop it silently
@@ -204,7 +221,18 @@ describe('Device Manager', () => {
         );
         assert.deepEqual(adapter.schedules[0], [
             'door',
-            { enabled: true, action: 'snapshot', profiles: 'Alex, Gone', interval: 15, from: '22:00', to: '06:00' },
+            {
+                enabled: true,
+                aiOnly: true,
+                onlyIfState: '0_userdata.0.away',
+                onlyIfOp: 'eq',
+                onlyIfValue: 'true',
+                action: 'snapshot',
+                profiles: 'Alex, Gone',
+                interval: 15,
+                from: '22:00',
+                to: '06:00',
+            },
         ]);
         assert.match(context.log[1][1].de, /^Zeitplan gespeichert: 11\.11\.2026 10:05:07$/);
         const lines = Object.values(answer.update.customInfo.schema.items).map(item => item.text);
@@ -215,12 +243,30 @@ describe('Device Manager', () => {
         const adapter = fakeAdapter();
         const dm = new CameraDeviceManagement(adapter);
         const card = await dm.getDeviceInfo('garden');
-        const context = fakeContext(data => ({ ...data, cron: 'bad', action: 'both', profiles: ['Family'] }));
+        // without pi-agent the switch is greyed out and a value from a script is not taken over
+        const context = fakeContext(data => ({
+            ...data,
+            cron: 'bad',
+            action: 'both',
+            profiles: ['Family'],
+            aiOnly: true,
+        }));
         await action(card, 'plan')('garden', context);
         assert.equal(context.log[0][1].items.cron.type, 'cron');
+        assert.equal(context.log[0][1].items.aiOnly.disabled, 'true');
+        assert.deepEqual(context.log[0][1].items.aiOnly.help, DM_TEXTS.aiOnlyNoAgent);
         assert.deepEqual(adapter.schedules[0], [
             'garden',
-            { enabled: false, action: 'both', profiles: 'Family', cron: 'bad' },
+            {
+                enabled: false,
+                aiOnly: false,
+                onlyIfState: '',
+                onlyIfOp: 'eq',
+                onlyIfValue: '',
+                action: 'both',
+                profiles: 'Family',
+                cron: 'bad',
+            },
         ]);
         assert.match(context.log[1][1].en, /^Saved, but: cron "bad"/);
 

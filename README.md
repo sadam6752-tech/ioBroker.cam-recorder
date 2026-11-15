@@ -379,19 +379,31 @@ On the tab _Devices_ each camera card has two buttons:
 - **Schedule**: fixed times as a cron pattern with the cron dialog of the admin, e.g. `0 7,19 * * *` for 7:00 and
   19:00 or `*/15 * * * 1-5` for every 15 minutes on weekdays.
 
-Both forms share _Active_, the action (snapshot, clip or both) and the profiles to send to. Each run works like a
-trigger: the files are saved and sent, and the AI check runs for profiles with criteria. The card shows the next run.
+Both forms share _Active_, the action (snapshot, clip or both), the profiles to send to and two conditions. Each run
+works like a trigger: the files are saved and sent, and the AI check runs for profiles with criteria. The card shows the
+next run.
 
-| State      | Example          | Meaning                                         |
-| ---------- | ---------------- | ----------------------------------------------- |
-| `enabled`  | `true`           | main switch                                     |
-| `interval` | `30`             | every N minutes, 0 = off                        |
-| `from`     | `22:00`          | the interval only from … (both empty = all day) |
-| `to`       | `06:00`          | … until                                         |
-| `cron`     | `0 7,19 * * *`   | fixed times, empty = off                        |
-| `action`   | `snapshot`       | `snapshot`, `record` or `both`                  |
-| `profiles` | `Alex, Telegram` | send profiles, empty = only saved               |
-| `next`     | (read only)      | time of the next run, 0 = none                  |
+- **Send only on an AI match** (needs pi-agent on the tab _AI check_): the files are always saved, but sent only to the
+  profiles whose criterion pi-agent sees in the snapshot, together with the match message. A snapshot of the yard every
+  5 minutes at night then arrives only when there is "a person", not 96 times empty. Unlike a trigger, where a failed
+  recognition must never cost the doorbell message, a schedule without this switch sends every run.
+- **Only if**: a state and a condition, as in the trigger table, e.g. `0_userdata.0.away` `=` `true`. A run whose
+  condition does not hold is skipped quietly (debug log).
+
+| State         | Example             | Meaning                                         |
+| ------------- | ------------------- | ----------------------------------------------- |
+| `enabled`     | `true`              | main switch                                     |
+| `interval`    | `30`                | every N minutes, 0 = off                        |
+| `from`        | `22:00`             | the interval only from … (both empty = all day) |
+| `to`          | `06:00`             | … until                                         |
+| `cron`        | `0 7,19 * * *`      | fixed times, empty = off                        |
+| `action`      | `snapshot`          | `snapshot`, `record` or `both`                  |
+| `profiles`    | `Alex, Telegram`    | send profiles, empty = only saved               |
+| `aiOnly`      | `true`              | send only to profiles with an AI match          |
+| `onlyIfState` | `0_userdata.0.away` | run only while this state meets the condition   |
+| `onlyIfOp`    | `eq`                | `eq`, `ne`, `gt`, `lt`                          |
+| `onlyIfValue` | `true`              | value of the condition                          |
+| `next`        | (read only)         | time of the next run, 0 = none                  |
 
 A wrong value (a cron pattern with a typo, a time like `25:00`) is reported in the log and on the card, and that part
 does not run.
@@ -480,6 +492,11 @@ adapter.
     ### **WORK IN PROGRESS**
 -->
 
+### 0.8.1 (2026-11-15)
+
+- (sadam6752-tech) Schedule: _Send only on an AI match_ sends a scheduled snapshot or clip only to the profiles whose
+  criterion pi-agent sees, and _Only if_ runs it only while a state meets a condition (e.g. nobody at home)
+
 ### 0.8.0 (2026-11-15)
 
 - (sadam6752-tech) Schedule: the buttons _Interval_ and _Schedule_ on the camera cards take snapshots or clips every
@@ -507,11 +524,6 @@ adapter.
   criterion is checked at every trigger, also without profiles
 - (sadam6752-tech) The log names each trigger at the start whose result goes nowhere (no profile in its column
   _Message_ and no state of the AI check): its files are saved but not sent
-
-### 0.6.2 (2026-11-12)
-
-- (sadam6752-tech) Pre-recording: the warning of a stopped buffer tells how long the stream ran (or that no data came at
-  all) and the last warnings of ffmpeg, repeated ones counted, to find why a camera stops sending
 
 Older changes are in [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 

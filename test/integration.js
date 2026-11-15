@@ -195,6 +195,9 @@ tests.integration(path.join(__dirname, '..'), {
                 assert.equal((await harness.states.getStateAsync(`${base}.next`))?.val, 0);
                 const before =
                     (await harness.states.getStateAsync('cam-recorder.0.cameras.garden.lastSnapshotTime'))?.val || 0;
+                // a condition that holds: 0_userdata.0.away is false in this suite
+                await harness.states.setStateAsync(`${base}.onlyIfState`, { val: '0_userdata.0.away', ack: false });
+                await harness.states.setStateAsync(`${base}.onlyIfValue`, { val: 'false', ack: false });
                 await harness.states.setStateAsync(`${base}.cron`, { val: '* * * * *', ack: false });
                 await harness.states.setStateAsync(`${base}.enabled`, { val: true, ack: false });
                 let next = 0;

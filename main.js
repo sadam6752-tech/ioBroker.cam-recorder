@@ -47,6 +47,7 @@ const {
     buildQuestion,
     parseVerdict,
     matchesOf,
+    receiversOnMatch,
     matchText,
 } = require('./lib/agent-check');
 const { HELP } = require('./lib/help');
@@ -118,6 +119,20 @@ const SCHEDULE_STATES = [
         },
     },
     { id: 'profiles', common: { type: 'string', role: 'text', read: true, write: true, def: '' } },
+    { id: 'aiOnly', common: { type: 'boolean', role: 'switch.enable', read: true, write: true, def: false } },
+    { id: 'onlyIfState', common: { type: 'string', role: 'text', read: true, write: true, def: '' } },
+    {
+        id: 'onlyIfOp',
+        common: {
+            type: 'string',
+            role: 'text',
+            read: true,
+            write: true,
+            def: 'eq',
+            states: { eq: '=', ne: '≠', gt: '>', lt: '<' },
+        },
+    },
+    { id: 'onlyIfValue', common: { type: 'string', role: 'text', read: true, write: true, def: '' } },
     { id: 'next', common: { type: 'number', role: 'date', read: true, write: false, def: 0 } },
 ];
 
@@ -744,9 +759,22 @@ class CamRecorder extends utils.Adapter {
         for (const problem of checked.problems) {
             this.log.warn(`Schedule of camera "${camera.name}": ${problem}`);
         }
-        const { unknown } = pickProfiles(parseNames(checked.schedule.profiles), this.settings.profiles);
+        const { chosen, unknown } = pickProfiles(parseNames(checked.schedule.profiles), this.settings.profiles);
         if (unknown.length) {
             this.log.warn(`Schedule of camera "${camera.name}": unknown profile(s) ${unknown.join(', ')} (tab Send)`);
+        }
+        const aiProblems = [];
+        if (checked.schedule.aiOnly && checked.schedule.enabled) {
+            if (!this.settings.agentInstance) {
+                aiProblems.push('"only on an AI match" needs a pi-agent instance (tab AI check), nothing is sent');
+            } else if (!chosen.some(p => p.conditions.length)) {
+                aiProblems.push(
+                    '"only on an AI match": none of its profiles has a criterion (tab AI check), nothing is sent',
+                );
+            }
+        }
+        for (const problem of aiProblems) {
+            this.log.warn(`Schedule of camera "${camera.name}": ${problem}`);
         }
         const next = nextRun(checked.schedule, checked.cron);
         await this.setState(`${channel}.next`, next, true);
@@ -759,7 +787,7 @@ class CamRecorder extends utils.Adapter {
                 }`,
             );
         }
-        return [...checked.problems, ...unknown.map(name => `unknown profile ${name}`)];
+        return [...checked.problems, ...unknown.map(name => `unknown profile ${name}`), ...aiProblems];
     }
 
     /**
@@ -815,10 +843,18 @@ class CamRecorder extends utils.Adapter {
             condition: 'truthy',
             cooldown: 0,
             profiles: parseNames(schedule.profiles),
-            onlyIf: null,
+            onlyIf: schedule.onlyIfState
+                ? { stateId: schedule.onlyIfState, op: schedule.onlyIfOp, value: schedule.onlyIfValue }
+                : null,
         };
         try {
-            await this._fire(trigger);
+            if (!(await this._conditionHolds(trigger, true))) {
+                // not an error: e.g. "only while away"; the next run asks again
+            } else if (schedule.aiOnly) {
+                await this._fireOnMatch(trigger);
+            } else {
+                await this._fire(trigger, true);
+            }
         } catch (err) {
             this.log.warn(`Schedule of camera "${camera.name}": ${err.message}`);
         }
@@ -1141,20 +1177,79 @@ class CamRecorder extends utils.Adapter {
     }
 
     /**
+     * The condition "Only if" of a trigger or a schedule.
+     *
+     * @param {Trigger} trigger - Trigger, or the stand-in trigger of a schedule
+     * @param {boolean} [quiet] - Log a skip only at debug level (a schedule may skip every few minutes)
+     * @returns {Promise<boolean>} True when there is no condition or it holds
+     */
+    async _conditionHolds(trigger, quiet = false) {
+        if (!trigger.onlyIf) {
+            return true;
+        }
+        const { stateId, op, value } = trigger.onlyIf;
+        const current = await this.getForeignStateAsync(stateId).catch(() => null);
+        if (conditionMet(op, value, current?.val)) {
+            return true;
+        }
+        const line = `Trigger ${trigger.stateId}: skipped, ${stateId} is ${JSON.stringify(current?.val ?? null)} (needs ${opSymbol(op)} ${value})`;
+        if (quiet) {
+            this.log.debug(line);
+        } else {
+            this.log.info(line);
+        }
+        return false;
+    }
+
+    /**
+     * A run of a schedule with "only on an AI match": the files are saved as always, but sent only to the profiles
+     * whose criteria the AI agent finds in the snapshot, together with the match message. No agent answer = nothing
+     * sent; a schedule would otherwise send the same empty picture every few minutes.
+     *
+     * @param {Trigger} trigger - Stand-in trigger of the schedule
+     */
+    async _fireOnMatch(trigger) {
+        const { camera } = trigger;
+        const { chosen } = pickProfiles(trigger.profiles, this.settings.profiles);
+        this.log.debug(
+            `Trigger ${trigger.stateId}: ${trigger.action} on camera "${camera.name}", sent only on a match`,
+        );
+        const verdict = this._checkPicture(camera, chosen, true);
+        /** @type {Promise<RecordResult>[]} */
+        const files = [];
+        if (trigger.action !== 'record') {
+            files.push(this._take(camera, 'snapshot', {}, []));
+        }
+        if (trigger.action !== 'snapshot') {
+            files.push(this._take(camera, 'record', {}, []));
+        }
+        const [checked, ...taken] = await Promise.allSettled([verdict ?? Promise.resolve(null), ...files]);
+        const result = checked.status === 'fulfilled' ? checked.value : null;
+        const { matched, fileNames, textOnly } = receiversOnMatch(chosen, result);
+        if (!matched.length) {
+            this.log.debug(`Trigger ${trigger.stateId}: no AI match, nothing sent`);
+            return;
+        }
+        /** @type {Promise<unknown>[]} */
+        const jobs = textOnly.map(p => this._sendProfile(p, null, camera.name, new Date()));
+        for (const file of taken) {
+            if (file.status === 'fulfilled') {
+                jobs.push(this._notify(file.value, fileNames));
+            }
+        }
+        jobs.push(this._sendMatches(camera, matched, Promise.resolve(result)));
+        await Promise.allSettled(jobs);
+    }
+
+    /**
      * @param {Trigger} trigger - Trigger that fired
+     * @param {boolean} [checked] - The condition "Only if" was checked already
      * @returns {Promise<boolean>} False when the condition of the trigger was not met
      */
-    async _fire(trigger) {
+    async _fire(trigger, checked = false) {
         const { camera } = trigger;
-        if (trigger.onlyIf) {
-            const { stateId, op, value } = trigger.onlyIf;
-            const current = await this.getForeignStateAsync(stateId).catch(() => null);
-            if (!conditionMet(op, value, current?.val)) {
-                this.log.info(
-                    `Trigger ${trigger.stateId}: skipped, ${stateId} is ${JSON.stringify(current?.val ?? null)} (needs ${opSymbol(op)} ${value})`,
-                );
-                return false;
-            }
+        if (!checked && !(await this._conditionHolds(trigger))) {
+            return false;
         }
         this.log.info(`Trigger ${trigger.stateId}: ${trigger.action} on camera "${camera.name}"`);
         /** @type {RecordRequest} */

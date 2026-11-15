@@ -1,5 +1,10 @@
 # Older changes
 
+### 0.6.2 (2026-11-12)
+
+- (sadam6752-tech) Pre-recording: the warning of a stopped buffer tells how long the stream ran (or that no data came at
+  all) and the last warnings of ffmpeg, repeated ones counted, to find why a camera stops sending
+
 ### 0.6.1 (2026-11-12)
 
 - (sadam6752-tech) AI check: the question to pi-agent names the date and time of the snapshot instead of

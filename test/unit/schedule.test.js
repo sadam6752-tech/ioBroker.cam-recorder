@@ -3,6 +3,7 @@
 const assert = require('node:assert/strict');
 const { parseCron, cronMatches, parseTime, normalizeSchedule, runsAt, nextRun } = require('../../lib/schedule');
 const { HELP } = require('../../lib/help');
+const { parseVerdict, receiversOnMatch } = require('../../lib/agent-check');
 const { NAMES } = require('../../lib/names');
 
 /**
@@ -111,6 +112,10 @@ describe('schedule', () => {
             to: '06:00',
             action: 'snapshot',
             profiles: 'Alex, Family',
+            aiOnly: false,
+            onlyIfState: '',
+            onlyIfOp: 'eq',
+            onlyIfValue: '',
         });
         assert.deepEqual(problems, [
             'action "video" must be snapshot, record or both',
@@ -122,9 +127,59 @@ describe('schedule', () => {
         assert.deepEqual(normalizeSchedule({ interval: 2000 }).problems, ['interval "2000" must be 0 to 1440 minutes']);
     });
 
+    it('reads the conditions of a schedule', () => {
+        const { schedule, problems } = normalizeSchedule({
+            aiOnly: 'true',
+            onlyIfState: ' 0_userdata.0.away ',
+            onlyIfOp: 'gte',
+            onlyIfValue: ' 1 ',
+        });
+        assert.deepEqual(
+            [schedule.aiOnly, schedule.onlyIfState, schedule.onlyIfOp, schedule.onlyIfValue],
+            [true, '0_userdata.0.away', 'eq', '1'],
+        );
+        assert.deepEqual(problems, ['onlyIfOp "gte" must be eq, ne, gt or lt']);
+        assert.equal(normalizeSchedule({}).schedule.aiOnly, false);
+    });
+
+    it('sends a run with "only on an AI match" only to the profiles whose criterion was seen', () => {
+        /** @type {any[]} */
+        const profiles = [
+            { name: 'Alex', attach: 'all', conditions: ['a person'] },
+            { name: 'Text', attach: 'none', conditions: ['a person'] },
+            { name: 'Cars', attach: 'snapshot', conditions: ['a car'] },
+            { name: 'All', attach: 'all', conditions: [] },
+        ];
+        const verdict = parseVerdict('{"description": "A man", "matches": [true, false]}', ['a person', 'a car']);
+        const { matched, fileNames, textOnly } = receiversOnMatch(profiles, verdict);
+        assert.deepEqual(
+            matched.map(p => p.name),
+            ['Alex', 'Text'],
+        );
+        assert.deepEqual(fileNames, ['Alex']);
+        assert.deepEqual(
+            textOnly.map(p => p.name),
+            ['Text'],
+        );
+        // no answer of the agent: nobody, the run stays quiet
+        assert.deepEqual(receiversOnMatch(profiles, null).matched, []);
+    });
+
     it('is described for agents and named in all languages', () => {
         assert.match(HELP, /schedule\.\), write the states/);
-        for (const key of ['schedule', 'schedule_enabled', 'schedule_interval', 'schedule_cron', 'schedule_next']) {
+        assert.match(HELP, /aiOnly \(true = /);
+        assert.match(HELP, /onlyIfState, onlyIfOp/);
+        for (const key of [
+            'schedule',
+            'schedule_enabled',
+            'schedule_interval',
+            'schedule_cron',
+            'schedule_next',
+            'schedule_aiOnly',
+            'schedule_onlyIfState',
+            'schedule_onlyIfOp',
+            'schedule_onlyIfValue',
+        ]) {
             assert.equal(Object.keys(NAMES[key]).length, 11, key);
         }
     });
