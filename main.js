@@ -92,7 +92,16 @@ const SCHEDULE_STATES = [
     { id: 'enabled', common: { type: 'boolean', role: 'switch.enable', read: true, write: true, def: false } },
     {
         id: 'interval',
-        common: { type: 'number', role: 'level.timer', unit: 'min', min: 0, max: 1440, read: true, write: true, def: 0 },
+        common: {
+            type: 'number',
+            role: 'level.timer',
+            unit: 'min',
+            min: 0,
+            max: 1440,
+            read: true,
+            write: true,
+            def: 0,
+        },
     },
     { id: 'from', common: { type: 'string', role: 'text', read: true, write: true, def: '' } },
     { id: 'to', common: { type: 'string', role: 'text', read: true, write: true, def: '' } },
