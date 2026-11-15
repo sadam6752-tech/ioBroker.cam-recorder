@@ -1,5 +1,13 @@
 # Older changes
 
+### 0.6.3 (2026-11-13)
+
+- (sadam6752-tech) AI check: a criterion with the new column _State_ gives each camera the state
+  `cameras.<camera>.ai.<criterion>`, true for _Hold_ seconds after a match, for scripts, Blockly and scenes; such a
+  criterion is checked at every trigger, also without profiles
+- (sadam6752-tech) The log names each trigger at the start whose result goes nowhere (no profile in its column
+  _Message_ and no state of the AI check): its files are saved but not sent
+
 ### 0.6.2 (2026-11-12)
 
 - (sadam6752-tech) Pre-recording: the warning of a stopped buffer tells how long the stream ran (or that no data came at

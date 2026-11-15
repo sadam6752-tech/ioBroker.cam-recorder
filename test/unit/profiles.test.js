@@ -8,10 +8,12 @@ const {
     pickProfiles,
     planNotify,
     profileMessage,
+    aiModeOf,
     needsMigration,
     migrateNotify,
 } = require('../../lib/profiles');
 const { normalizeSettings, normalizeTriggers, normalizeCameras, normalizeTimelapses } = require('../../lib/config');
+const { parseVerdict, receiversAfterCheck } = require('../../lib/agent-check');
 
 /** @type {import('../../lib/types').RecordResult} */
 const clip = {
@@ -93,8 +95,18 @@ describe('notification profiles', () => {
                 text: 'x',
                 template: '',
                 conditions: [],
+                ai: 'parallel',
             },
-            { name: 'Mail', instance: 'email.0', recipient: '', attach: 'all', text: '', template: '', conditions: [] },
+            {
+                name: 'Mail',
+                instance: 'email.0',
+                recipient: '',
+                attach: 'all',
+                text: '',
+                template: '',
+                conditions: [],
+                ai: 'parallel',
+            },
         ]);
         assert.equal(profileProblems(rows).length, 3);
         assert.deepEqual(normalizeSettings({ profiles: rows }).profiles, normalizeProfiles(rows));
@@ -148,6 +160,75 @@ describe('notification profiles', () => {
             command: 'send',
             message: { text: 'Someone at the Door' },
         });
+    });
+});
+
+describe('AI mode of a profile', () => {
+    const settings = normalizeSettings({
+        profiles: [
+            { name: 'Now', instance: 'telegram.0', ai: 'match' },
+            { name: 'Match', instance: 'telegram.0', ai: 'match', text: '{camera} {time}' },
+            { name: 'Wait', instance: 'telegram.0', ai: 'describe', text: '🔍 {camera}: {description} ({matches})' },
+            { name: 'Odd', instance: 'telegram.0', ai: 'sometimes' },
+        ],
+        agentChecks: [
+            { enabled: true, criterion: 'a person', profiles: 'Match, Wait, Odd' },
+            { enabled: true, criterion: 'a car', profiles: 'Wait' },
+        ],
+    });
+    const [now, match, wait, odd] = settings.profiles;
+
+    it('reads the column AI; without criteria a profile always sends at once', () => {
+        assert.deepEqual(
+            settings.profiles.map(p => [p.ai, aiModeOf(p)]),
+            [
+                ['match', 'parallel'],
+                ['match', 'match'],
+                ['describe', 'describe'],
+                ['parallel', 'parallel'],
+            ],
+        );
+        assert.equal(odd.ai, 'parallel');
+        assert.equal(now.conditions.length, 0);
+    });
+
+    it('sends to "describe" always and to "match" only on a match, with what was found', () => {
+        const verdict = parseVerdict('{"description": "A man", "matches": [true, false]}', ['a person', 'a car']);
+        assert.deepEqual(
+            receiversAfterCheck([match, wait], verdict).map(r => [r.profile.name, r.matches]),
+            [
+                ['Match', ['a person']],
+                ['Wait', ['a person']],
+            ],
+        );
+        const car = parseVerdict('{"description": "A car", "matches": [false, true]}', ['a person', 'a car']);
+        assert.deepEqual(
+            receiversAfterCheck([match, wait], car).map(r => r.profile.name),
+            ['Wait'],
+        );
+        // no answer: "describe" still gets the file, without description
+        assert.deepEqual(
+            receiversAfterCheck([match, wait], null).map(r => [r.profile.name, r.matches]),
+            [['Wait', []]],
+        );
+    });
+
+    it('puts the description into the caption: below the text, or where the text places it', () => {
+        const time = new Date(clip.time);
+        const extra = { description: 'A man with a parcel.', matches: 'a person' };
+        assert.equal(
+            /** @type {any} */ (profileMessage(match, clip, 'Door', time, '', extra).message).caption,
+            'Door 09:00:00\n🔍 a person — A man with a parcel.',
+        );
+        assert.equal(
+            /** @type {any} */ (profileMessage(wait, clip, 'Door', time, '', extra).message).caption,
+            '🔍 Door: A man with a parcel. (a person)',
+        );
+        // without an answer the placeholders stay empty and nothing is added
+        assert.equal(
+            /** @type {any} */ (profileMessage(match, clip, 'Door', time, '', {}).message).caption,
+            'Door 09:00:00',
+        );
     });
 });
 

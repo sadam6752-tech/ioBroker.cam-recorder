@@ -140,14 +140,15 @@ triggers in the log, unless they feed the states of the AI check),
 scripts with `profiles: 'Name'`. The list of the column shows the profiles of the saved settings, so save once after
 adding a profile.
 
-| Column     | Meaning                                                                                                  |
-| ---------- | -------------------------------------------------------------------------------------------------------- |
-| Name       | Unique name of the profile                                                                               |
-| Instance   | Messaging instance, e.g. `telegram.0`, `max.0`, `email.0` (see the table below)                          |
-| Recipient  | Optional, in the form the adapter expects; empty = the default of that adapter                           |
-| Attachment | _Everything_ (snapshots, clips, timelapse videos), _Snapshot only_, _Clip only_, or _Text only_          |
-| Text       | Caption: `{camera}`, `{date}` and `{time}` are replaced, the date in the format of the system settings   |
-| Template   | Optional JSON message for adapters without a built-in format, or to replace the built-in one (see below) |
+| Column     | Meaning                                                                                                                              |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Name       | Unique name of the profile                                                                                                           |
+| Instance   | Messaging instance, e.g. `telegram.0`, `max.0`, `email.0` (see the table below)                                                      |
+| Recipient  | Optional, in the form the adapter expects; empty = the default of that adapter                                                       |
+| Attachment | _Everything_ (snapshots, clips, timelapse videos), _Snapshot only_, _Clip only_, or _Text only_                                      |
+| AI         | Only for a profile with criteria on the tab _AI check_: how it uses the check (see [AI check](#ai-check))                            |
+| Text       | Caption: `{camera}`, `{date}`, `{time}`, `{description}` and `{matches}` are replaced, the date in the format of the system settings |
+| Template   | Optional JSON message for adapters without a built-in format, or to replace the built-in one (see below)                             |
 
 _Text only_ sends the text at once when the trigger fires, before the recording is finished, without a file — for
 example a quick "Someone is at the door" while the clip with the file goes through a second profile. For a timelapse
@@ -260,6 +261,19 @@ trigger. A profile whose criteria the picture meets gets one more message throug
   this question; later questions see a text of it. One check costs one request with one picture, and the daily token
   limit of pi-agent counts it.
 - Scripts get the same check for `record` and `snapshot` with `profiles`. Timelapse videos are not checked.
+
+**How a profile uses the check** — column _AI_ of the tab _Send_, for a profile with criteria:
+
+| AI                              | What the profile gets                                                                                           |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| _At once, extra message_        | the files at once, and the extra message above on a match (default, as described above)                         |
+| _Only on an AI match_           | every file is saved, but sent only when pi-agent sees one of its criteria, with the description in the caption  |
+| _Wait for AI, with description_ | one message after the check, the description in the caption; without an answer in time the file goes without it |
+
+The description goes below the text of the profile, unless the text places `{description}` (what pi-agent saw) and
+`{matches}` (the criteria met) itself, e.g. `🔍 {camera} {time}: {description}`. So one trigger can send the doorbell at
+once to everybody and, through a second profile for the same recipient set to _Only on an AI match_, only the events
+with a person to somebody else — a motion sensor in the garden with mostly cats and shadows is the typical case.
 
 **States for scripts and scenes.** A row with _State_ gives each camera the state
 `cam-recorder.0.cameras.<camera>.ai.<criterion>` (e.g. `…cameras.doorbird.ai.a_person`), so other adapters can act on
@@ -492,6 +506,12 @@ adapter.
     ### **WORK IN PROGRESS**
 -->
 
+### 0.8.2 (2026-11-15)
+
+- (sadam6752-tech) AI check: the new column _AI_ of the tab _Send_ lets a profile with criteria get the files only on a
+  match or wait for the check and get one message with the description; `{description}` and `{matches}` in the text.
+  The default keeps the files at once plus the extra message
+
 ### 0.8.1 (2026-11-15)
 
 - (sadam6752-tech) Schedule: _Send only on an AI match_ sends a scheduled snapshot or clip only to the profiles whose
@@ -516,14 +536,6 @@ adapter.
   are mounted upside down or on their side; a copied mp4 gets a rotation mark instead
 - (sadam6752-tech) Storage and NAS: files can be sorted into month folders `<camera>/<yyyy-mm>/`; then all files are
   kept and the limits of the tab are off
-
-### 0.6.3 (2026-11-13)
-
-- (sadam6752-tech) AI check: a criterion with the new column _State_ gives each camera the state
-  `cameras.<camera>.ai.<criterion>`, true for _Hold_ seconds after a match, for scripts, Blockly and scenes; such a
-  criterion is checked at every trigger, also without profiles
-- (sadam6752-tech) The log names each trigger at the start whose result goes nowhere (no profile in its column
-  _Message_ and no state of the AI check): its files are saved but not sent
 
 Older changes are in [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 

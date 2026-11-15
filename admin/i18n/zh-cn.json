@@ -112,5 +112,10 @@
     "Month folders on the server (camera/yyyy-mm)": "服务器上的月份文件夹（摄像机/yyyy-mm）",
     "Keeps all files on the server: the days below are off": "在服务器上保留所有文件：下方的天数会关闭",
     "Live (s)": "实时（秒）",
-    "Live (s): every so many seconds the newest key frame of the pre-recording becomes the picture cam-recorder.0.storage/<camera>_live.jpg, for an image widget of vis (through a web instance). No second connection to the camera and almost no CPU; the picture is at most one key frame interval old. Only for cameras with pre-recording (greyed out otherwise), 0 = off.": "实时（秒）：每隔这么多秒，预录中最新的关键帧会成为图片 cam-recorder.0.storage/<camera>_live.jpg，可通过 web 实例用于 vis 的图片组件。无需再次连接摄像机，几乎不占 CPU；图片最多落后一个关键帧间隔。仅适用于开启预录的摄像机（否则为灰色），0 = 关闭。"
+    "Live (s): every so many seconds the newest key frame of the pre-recording becomes the picture cam-recorder.0.storage/<camera>_live.jpg, for an image widget of vis (through a web instance). No second connection to the camera and almost no CPU; the picture is at most one key frame interval old. Only for cameras with pre-recording (greyed out otherwise), 0 = off.": "实时（秒）：每隔这么多秒，预录中最新的关键帧会成为图片 cam-recorder.0.storage/<camera>_live.jpg，可通过 web 实例用于 vis 的图片组件。无需再次连接摄像机，几乎不占 CPU；图片最多落后一个关键帧间隔。仅适用于开启预录的摄像机（否则为灰色），0 = 关闭。",
+    "AI": "AI",
+    "At once, extra message on a match": "立即发送，匹配时附加消息",
+    "Only on an AI match": "仅在 AI 匹配时",
+    "Wait for AI, with description": "等待 AI，附带描述",
+    "AI (only for a profile with criteria on the tab AI check): 'At once' sends the files at once and an extra message when pi-agent sees a criterion. 'Only on an AI match' saves every file but sends it only when a criterion is seen, with the description. 'Wait for AI' waits for pi-agent and sends one message with the description (without it when pi-agent does not answer in time). The text may place {description} and {matches}, otherwise the description goes below it. Tip: a second profile for the same recipient with 'Only on an AI match' next to a profile without AI.": "AI（仅适用于在 AI 检查选项卡中设置了条件的配置文件）：“立即发送”会立即发送文件，并在 pi-agent 识别到条件时附加一条消息。“仅在 AI 匹配时”会保存每个文件，但只在识别到条件时发送，并附带描述。“等待 AI”会等待 pi-agent，然后发送一条带描述的消息（若 pi-agent 未及时答复则不带描述）。文本中可以使用 {description} 和 {matches}，否则描述会放在下方。提示：为同一收件人再建一个“仅在 AI 匹配时”的配置文件，与不带 AI 的配置文件并用。"
 }

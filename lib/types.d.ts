@@ -71,6 +71,12 @@ export interface NotifyProfile extends NotifyTarget {
     text: string;
     /** Criteria of the tab AI check that name this profile: it is sent when the snapshot meets one; empty = always */
     conditions: string[];
+    /**
+     * How the profile uses the AI check, only when it has criteria: `parallel` = files at once and an extra message on a
+     * match, `match` = files only on a match with the description, `describe` = waits for the check, one message with
+     * the description (without it when the agent does not answer)
+     */
+    ai: 'parallel' | 'match' | 'describe';
 }
 
 /** A row of the tab AI check */

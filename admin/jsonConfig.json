@@ -565,6 +565,16 @@
                     "lg": 12,
                     "xl": 12
                 },
+                "_aiModeHelp": {
+                    "type": "staticText",
+                    "text": "AI (only for a profile with criteria on the tab AI check): 'At once' sends the files at once and an extra message when pi-agent sees a criterion. 'Only on an AI match' saves every file but sends it only when a criterion is seen, with the description. 'Wait for AI' waits for pi-agent and sends one message with the description (without it when pi-agent does not answer in time). The text may place {description} and {matches}, otherwise the description goes below it. Tip: a second profile for the same recipient with 'Only on an AI match' next to a profile without AI.",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
                 "profiles": {
                     "type": "table",
                     "newLine": true,
@@ -641,17 +651,38 @@
                             ]
                         },
                         {
+                            "type": "select",
+                            "attr": "ai",
+                            "title": "AI",
+                            "width": "9%",
+                            "default": "parallel",
+                            "options": [
+                                {
+                                    "label": "At once, extra message on a match",
+                                    "value": "parallel"
+                                },
+                                {
+                                    "label": "Only on an AI match",
+                                    "value": "match"
+                                },
+                                {
+                                    "label": "Wait for AI, with description",
+                                    "value": "describe"
+                                }
+                            ]
+                        },
+                        {
                             "type": "text",
                             "attr": "text",
                             "title": "Text",
-                            "width": "18%",
+                            "width": "15%",
                             "default": "{camera} {date} {time}"
                         },
                         {
                             "type": "text",
                             "attr": "template",
                             "title": "Template (JSON, optional)",
-                            "width": "26%",
+                            "width": "20%",
                             "default": ""
                         }
                     ]

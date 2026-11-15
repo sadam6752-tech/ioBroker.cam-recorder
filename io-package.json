@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "cam-recorder",
-        "version": "0.8.1",
+        "version": "0.8.2",
         "news": {
+            "0.8.2": {
+                "en": "AI check: the new column AI of the tab Send lets a profile with criteria get the files only on a match, or wait for the check and get one message with the description; {description} and {matches} in the text",
+                "de": "KI-Prüfung: die neue Spalte KI im Reiter Senden lässt ein Profil mit Kriterien die Dateien nur bei einem Treffer erhalten oder auf die Prüfung warten und eine Nachricht mit der Beschreibung erhalten; {description} und {matches} im Text",
+                "ru": "Проверка ИИ: новый столбец «ИИ» на вкладке «Отправка» позволяет профилю с критериями получать файлы только при совпадении или ждать проверки и получать одно сообщение с описанием; {description} и {matches} в тексте",
+                "pt": "Verificação IA: a nova coluna IA da aba Envio permite a um perfil com critérios receber os ficheiros só com correspondência, ou esperar pela verificação e receber uma mensagem com a descrição; {description} e {matches} no texto",
+                "nl": "AI-controle: de nieuwe kolom AI van het tabblad Versturen laat een profiel met criteria de bestanden alleen bij een treffer krijgen, of op de controle wachten en één bericht met de beschrijving krijgen; {description} en {matches} in de tekst",
+                "fr": "Contrôle IA : la nouvelle colonne IA de l'onglet Envoi permet à un profil avec critères de recevoir les fichiers seulement si un critère est trouvé, ou d'attendre le contrôle et de recevoir un message avec la description ; {description} et {matches} dans le texte",
+                "it": "Controllo IA: la nuova colonna IA della scheda Invio permette a un profilo con criteri di ricevere i file solo con un riscontro, o di attendere il controllo e ricevere un messaggio con la descrizione; {description} e {matches} nel testo",
+                "es": "Comprobación IA: la nueva columna IA de la pestaña Envío permite a un perfil con criterios recibir los archivos solo si hay coincidencia, o esperar la comprobación y recibir un mensaje con la descripción; {description} y {matches} en el texto",
+                "pl": "Sprawdzanie AI: nowa kolumna AI na karcie Wysyłanie pozwala profilowi z kryteriami otrzymywać pliki tylko przy trafieniu albo czekać na sprawdzenie i dostać jedną wiadomość z opisem; {description} i {matches} w tekście",
+                "uk": "Перевірка ШІ: новий стовпець «ШІ» на вкладці «Надсилання» дозволяє профілю з критеріями отримувати файли лише при збігу або чекати перевірки й отримувати одне повідомлення з описом; {description} і {matches} у тексті",
+                "zh-cn": "AI 检查：发送选项卡中的新列 AI 让带条件的配置文件只在匹配时接收文件，或等待检查后接收一条带描述的消息；文本中可用 {description} 和 {matches}"
+            },
             "0.8.1": {
                 "en": "Schedule: Send only on an AI match sends a scheduled picture only to profiles whose criterion pi-agent sees; Only if runs it only while a state meets a condition",
                 "de": "Zeitplan: Nur bei KI-Treffer senden schickt ein geplantes Bild nur an Profile, deren Kriterium pi-agent erkennt; Nur wenn führt ihn nur aus, solange ein Datenpunkt eine Bedingung erfüllt",
@@ -80,19 +93,6 @@
                 "pl": "Nagrywanie wstępne: ostrzeżenie o zatrzymanym buforze podaje, jak długo działał strumień, i ostatnie ostrzeżenia ffmpeg, aby ustalić, dlaczego kamera przestaje nadawać",
                 "uk": "Попередній запис: попередження про зупинку буфера повідомляє, скільки тривав потік, і останні попередження ffmpeg, щоб знайти, чому камера перестає передавати",
                 "zh-cn": "预录：缓冲停止时的警告会说明流运行了多长时间以及 ffmpeg 的最后几条警告，便于查明摄像机为何停止发送"
-            },
-            "0.6.1": {
-                "en": "AI check: the question to pi-agent names date and time of the snapshot, so its chat shows when each picture came",
-                "de": "KI-Prüfung: Die Frage an pi-agent nennt Datum und Uhrzeit des Schnappschusses, so zeigt dessen Chat, wann jedes Bild kam",
-                "ru": "ИИ-проверка: вопрос к pi-agent содержит дату и время снимка, поэтому в его чате видно, когда пришло каждое изображение",
-                "pt": "Verificação por IA: a pergunta ao pi-agent indica a data e a hora do instantâneo, assim o chat mostra quando chegou cada imagem",
-                "nl": "AI-controle: de vraag aan pi-agent noemt datum en tijd van de momentopname, zodat de chat toont wanneer elk beeld kwam",
-                "fr": "Vérification par IA : la question à pi-agent indique la date et l'heure de la photo, ainsi son chat montre quand chaque image est arrivée",
-                "it": "Controllo IA: la domanda a pi-agent indica data e ora dell'istantanea, così la chat mostra quando è arrivata ogni immagine",
-                "es": "Comprobación por IA: la pregunta a pi-agent indica la fecha y la hora de la instantánea, así su chat muestra cuándo llegó cada imagen",
-                "pl": "Kontrola AI: pytanie do pi-agent podaje datę i godzinę zdjęcia, więc czat pokazuje, kiedy przyszedł każdy obraz",
-                "uk": "ШІ-перевірка: запитання до pi-agent містить дату й час знімка, тож у його чаті видно, коли надійшло кожне зображення",
-                "zh-cn": "AI 检查：发给 pi-agent 的问题包含快照的日期和时间，因此其聊天中可以看到每张图片的到达时间"
             }
         },
         "titleLang": {

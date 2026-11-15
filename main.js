@@ -31,6 +31,7 @@ const { conditionMet, opSymbol } = require('./lib/conditions');
 const { KNOWN, parseNames, buildMessage } = require('./lib/notify');
 const {
     pickProfiles,
+    aiModeOf,
     planNotify,
     profileMessage,
     needsMigration,
@@ -48,6 +49,7 @@ const {
     parseVerdict,
     matchesOf,
     receiversOnMatch,
+    receiversAfterCheck,
     matchText,
 } = require('./lib/agent-check');
 const { HELP } = require('./lib/help');
@@ -1112,11 +1114,12 @@ class CamRecorder extends utils.Adapter {
      * @param {RecordResult | null} result - Finished file, null for a text without file
      * @param {string} camera - Camera name
      * @param {Date} time - Time of the event
+     * @param {{description?: string, matches?: string}} [extra] - What the AI check found, for the caption
      */
-    async _sendProfile(profile, result, camera, time) {
+    async _sendProfile(profile, result, camera, time, extra = {}) {
         const what = result ? path.basename(result.file) : `the text of "${camera}"`;
         try {
-            const { command, message } = profileMessage(profile, result, camera, time, this.dateFormat);
+            const { command, message } = profileMessage(profile, result, camera, time, this.dateFormat, extra);
             await this.sendToAsync(profile.instance, command, message, { timeout: 60_000 });
             this.log.info(
                 `Sent ${what} through profile "${profile.name}" to ${profile.instance}${profile.recipient ? ` (${profile.recipient})` : ''}`,
@@ -1260,24 +1263,87 @@ class CamRecorder extends utils.Adapter {
         if (trigger.format) {
             request.format = trigger.format;
         }
-        // profiles "Text only" send their text at once, the others get the files when they are ready
         const { chosen } = pickProfiles(trigger.profiles, this.settings.profiles);
-        const fileProfiles = chosen.filter(p => p.attach !== 'none').map(p => p.name);
-        // one check of the AI agent for the whole event; the files do not wait for it
+        // one check of the AI agent for the whole event
         const verdict = this._checkPicture(camera, chosen, true);
-        /** @type {Promise<unknown>[]} */
-        const jobs = chosen
-            .filter(p => p.attach === 'none')
-            .map(p => this._sendProfile(p, null, camera.name, new Date()));
+        /** @type {{kind: 'snapshot' | 'record', request: RecordRequest}[]} */
+        const takes = [];
         if (trigger.action !== 'record') {
-            jobs.push(this._take(camera, 'snapshot', {}, fileProfiles));
+            takes.push({ kind: 'snapshot', request: {} });
         }
         if (trigger.action !== 'snapshot') {
-            jobs.push(this._take(camera, 'record', request, fileProfiles));
+            takes.push({ kind: 'record', request });
         }
-        jobs.push(this._sendMatches(camera, chosen, verdict));
-        await Promise.allSettled(jobs);
+        await this._deliver(camera, takes, chosen, verdict);
         return true;
+    }
+
+    /**
+     * Takes the files of an event and sends them through the chosen profiles, each in its mode of the column AI (tab
+     * Send): "parallel" and profiles without criteria get the files at once and an extra message on a match; "match"
+     * gets them only when the check finds one of its criteria, "describe" after the check with the description in the
+     * caption. Profiles "Text only" send their text instead of the files, at the same moment.
+     *
+     * @param {Camera} camera - Camera
+     * @param {{kind: 'snapshot' | 'record', request: RecordRequest}[]} takes - What to take
+     * @param {NotifyProfile[]} chosen - Profiles of the event
+     * @param {Promise<Verdict | null> | null} verdict - Check of the AI agent, null = none
+     * @returns {Promise<PromiseSettledResult<RecordResult>[]>} The outcome of each take, in order
+     */
+    async _deliver(camera, takes, chosen, verdict) {
+        const later = chosen.filter(p => aiModeOf(p) !== 'parallel');
+        const now = chosen.filter(p => !later.includes(p));
+        const time = new Date();
+        /** @type {Promise<unknown>[]} */
+        const jobs = now.filter(p => p.attach === 'none').map(p => this._sendProfile(p, null, camera.name, time));
+        const fileNames = now.filter(p => p.attach !== 'none').map(p => p.name);
+        const files = takes.map(t => this._take(camera, t.kind, t.request, fileNames));
+        const laterFiles = later.filter(p => p.attach !== 'none');
+        for (const file of files) {
+            if (laterFiles.length) {
+                jobs.push(file.then(result => this._sendAfterCheck(camera, result, laterFiles, verdict, time)));
+            }
+        }
+        const laterText = later.filter(p => p.attach === 'none');
+        if (laterText.length) {
+            jobs.push(this._sendAfterCheck(camera, null, laterText, verdict, time));
+        }
+        jobs.push(this._sendMatches(camera, now, verdict));
+        const results = await Promise.allSettled(files);
+        await Promise.allSettled(jobs);
+        return results;
+    }
+
+    /**
+     * Sends a file (or the text) to the profiles that waited for the AI check, with what was found in the caption.
+     *
+     * @param {Camera} camera - Camera
+     * @param {RecordResult | null} result - Finished file, null = the text of profiles "Text only"
+     * @param {NotifyProfile[]} profiles - Profiles in mode "match" or "describe"
+     * @param {Promise<Verdict | null> | null} verdict - Check of the AI agent
+     * @param {Date} time - Time of the event
+     */
+    async _sendAfterCheck(camera, result, profiles, verdict, time) {
+        const checked = verdict ? await verdict : null;
+        const receivers = receiversAfterCheck(profiles, checked);
+        const skipped = profiles.filter(p => !receivers.some(r => r.profile === p)).map(p => p.name);
+        if (skipped.length) {
+            this.log.debug(`Camera "${camera.name}": no AI match for profile(s) ${skipped.join(', ')}, not sent`);
+        }
+        const description = checked?.description ?? '';
+        await Promise.all(
+            receivers.map(({ profile, matches }) => {
+                const extra = { description, matches: matches.join(', ') };
+                if (!result) {
+                    return this._sendProfile(profile, null, camera.name, time, extra);
+                }
+                return Promise.all(
+                    planNotify([profile.name], [profile], result).map(send =>
+                        this._sendProfile(send.profile, send.result, result.camera, new Date(result.time), extra),
+                    ),
+                );
+            }),
+        );
     }
 
     /**
@@ -1409,10 +1475,11 @@ class CamRecorder extends utils.Adapter {
             const names = this._scriptProfiles(message);
             const { chosen } = pickProfiles(names, this.settings.profiles);
             const verdict = this._checkPicture(camera, chosen);
-            const [result] = await Promise.all([
-                this._take(camera, obj.command, message, names),
-                this._sendMatches(camera, chosen, verdict),
-            ]);
+            const [outcome] = await this._deliver(camera, [{ kind: obj.command, request: message }], chosen, verdict);
+            if (outcome.status === 'rejected') {
+                throw outcome.reason;
+            }
+            const result = outcome.value;
             const checked = verdict ? await verdict : null;
             reply(checked ? { ...result, description: checked.description } : result);
         } catch (err) {
