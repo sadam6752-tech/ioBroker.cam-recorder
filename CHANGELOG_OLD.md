@@ -1,5 +1,10 @@
 # Older changes
 
+### 0.6.1 (2026-11-12)
+
+- (sadam6752-tech) AI check: the question to pi-agent names the date and time of the snapshot instead of
+  "just now", so the chat of pi-agent shows when each picture came
+
 ### 0.6.0 (2026-11-12)
 
 - (sadam6752-tech) AI check: on the new tab _AI check_ criteria in your own words ("a person", "an animal in the

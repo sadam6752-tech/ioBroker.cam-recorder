@@ -187,6 +187,33 @@ tests.integration(path.join(__dirname, '..'), {
                 }
             });
 
+            it('runs the schedule of a camera that a script writes, and confirms the values', async function () {
+                this.timeout(120_000);
+                const base = 'cam-recorder.0.cameras.garden.schedule';
+                assert.equal((await harness.objects.getObjectAsync(`${base}.cron`))?.common?.write, true);
+                assert.equal((await harness.states.getStateAsync(`${base}.enabled`))?.val, false);
+                assert.equal((await harness.states.getStateAsync(`${base}.next`))?.val, 0);
+                const before =
+                    (await harness.states.getStateAsync('cam-recorder.0.cameras.garden.lastSnapshotTime'))?.val || 0;
+                await harness.states.setStateAsync(`${base}.cron`, { val: '* * * * *', ack: false });
+                await harness.states.setStateAsync(`${base}.enabled`, { val: true, ack: false });
+                let next = 0;
+                for (let i = 0; i < 20 && !next; i++) {
+                    await new Promise(r => setTimeout(r, 250));
+                    next = Number((await harness.states.getStateAsync(`${base}.next`))?.val) || 0;
+                }
+                assert.ok(next > Date.now() && next <= Date.now() + 61_000, `next ${next}`);
+                assert.equal((await harness.states.getStateAsync(`${base}.enabled`))?.ack, true);
+                // the run at the next full minute takes a snapshot
+                let last = before;
+                for (let i = 0; i < 90 && last === before; i++) {
+                    await new Promise(r => setTimeout(r, 1000));
+                    last = (await harness.states.getStateAsync('cam-recorder.0.cameras.garden.lastSnapshotTime'))?.val;
+                }
+                assert.notEqual(last, before, 'the schedule took no snapshot');
+                await harness.states.setStateAsync(`${base}.enabled`, { val: false, ack: false });
+            });
+
             it('answers the Device Manager through js-controller with one card per camera', async function () {
                 this.timeout(30_000);
                 const info = await send('dm:instanceInfo', {});
@@ -203,7 +230,7 @@ tests.integration(path.join(__dirname, '..'), {
                 assert.equal(loaded.total, 2);
                 assert.deepEqual(
                     loaded.add[0].actions.map(a => a.id),
-                    ['record', 'snapshot'],
+                    ['record', 'interval', 'snapshot', 'plan'],
                 );
                 // the own commands still work next to it
                 const cameras = await send('listCameras', {});

@@ -25,8 +25,10 @@ function fakeAdapter({ fail = false, storageId = `${NS}.storage` } = {}) {
         { name: 'Door', url: 'rtsp://h/1', prebuffer: 3 },
         { name: 'Garden', url: 'rtsp://h/2' },
     ]);
-    /** @type {Record<string, number>} */
+    /** @type {Record<string, any>} */
     const states = {
+        'cameras.door.schedule.interval': 30,
+        'cameras.door.schedule.profiles': 'Alex, Gone',
         'cameras.door.lastVideoTime': new Date(2026, 10, 10, 18, 30, 0).getTime(),
         'cameras.door.lastSnapshotTime': SNAP_TIME,
     };
@@ -38,7 +40,18 @@ function fakeAdapter({ fail = false, storageId = `${NS}.storage` } = {}) {
     return {
         namespace: NS,
         cameras,
-        settings: { prebufferEnabled: true },
+        settings: { prebufferEnabled: true, profiles: [{ name: 'Alex' }, { name: 'Family' }] },
+        states,
+        /** @type {any[]} */
+        schedules: [],
+        async _setSchedule(/** @type {any} */ camera, /** @type {Record<string, unknown>} */ values) {
+            this.schedules.push([camera.id, values]);
+            for (const [key, value] of Object.entries(values)) {
+                states[`cameras.${camera.id}.schedule.${key}`] = value;
+            }
+            states[`cameras.${camera.id}.schedule.next`] = values.cron === 'bad' ? 0 : SNAP_TIME + 3_600_000;
+            return values.cron === 'bad' ? ['cron "bad": a cron pattern needs five fields'] : [];
+        },
         storageId,
         dateFormat: 'DD.MM.YYYY',
         ready: Promise.resolve(),
@@ -90,12 +103,17 @@ async function load(adapter) {
 }
 
 /**
+ * @param {any} [form] - Answer of a form: data, a function of the shown data, or undefined = cancelled
  * @returns {any} A stand-in for the dialogs of the Device Manager
  */
-function fakeContext() {
+function fakeContext(form = undefined) {
     const log = [];
     return {
         log,
+        async showForm(/** @type {any} */ schema, /** @type {any} */ options) {
+            log.push(['form', schema, options]);
+            return typeof form === 'function' ? form(options.data) : form;
+        },
         async showMessage(/** @type {any} */ text) {
             log.push(['message', text]);
         },
@@ -110,6 +128,13 @@ function fakeContext() {
         },
     };
 }
+
+/**
+ * @param {any} card - Card
+ * @param {string} id - Action id
+ * @returns {(...args: any[]) => Promise<any>} Handler of the action
+ */
+const action = (card, id) => card.actions.find(a => a.id === id).handler;
 
 describe('Device Manager', () => {
     it('shows one card per configured camera with status, last times and the last snapshot', async () => {
@@ -146,10 +171,62 @@ describe('Device Manager', () => {
         assert.deepEqual(
             door.actions.map(a => [a.id, a.title.de]),
             [
-                ['record', 'Aufnahme jetzt'],
+                ['record', 'Videoaufnahme'],
+                ['interval', 'Intervall'],
                 ['snapshot', 'Schnappschuss'],
+                ['plan', 'Zeitplan'],
             ],
         );
+    });
+
+    it('edits the interval in a form with the current values and shows the next run', async () => {
+        const adapter = fakeAdapter();
+        const dm = new CameraDeviceManagement(adapter);
+        const card = await dm.getDeviceInfo('door');
+        const context = fakeContext(data => ({ ...data, enabled: true, interval: 15, from: '22:00', to: '06:00' }));
+        const answer = await action(card, 'interval')('door', context);
+        const [, schema, options] = context.log[0];
+        assert.deepEqual(Object.keys(schema.items), [
+            'enabled',
+            'interval',
+            'from',
+            'to',
+            'action',
+            'profiles',
+            '_shared',
+        ]);
+        assert.equal(options.data.interval, 30);
+        assert.deepEqual(options.data.profiles, ['Alex', 'Gone']);
+        // a profile that is gone stays choosable, so saving does not drop it silently
+        assert.deepEqual(
+            schema.items.profiles.options.map(o => o.value),
+            ['Alex', 'Family', 'Gone'],
+        );
+        assert.deepEqual(adapter.schedules[0], [
+            'door',
+            { enabled: true, action: 'snapshot', profiles: 'Alex, Gone', interval: 15, from: '22:00', to: '06:00' },
+        ]);
+        assert.match(context.log[1][1].de, /^Zeitplan gespeichert: 11\.11\.2026 10:05:07$/);
+        const lines = Object.values(answer.update.customInfo.schema.items).map(item => item.text);
+        assert.equal(lines[lines.length - 1].de, 'Zeitplan: nächste 11.11.2026 10:05:07');
+    });
+
+    it('edits the plan with the cron dialog and reports a wrong pattern; cancel changes nothing', async () => {
+        const adapter = fakeAdapter();
+        const dm = new CameraDeviceManagement(adapter);
+        const card = await dm.getDeviceInfo('garden');
+        const context = fakeContext(data => ({ ...data, cron: 'bad', action: 'both', profiles: ['Family'] }));
+        await action(card, 'plan')('garden', context);
+        assert.equal(context.log[0][1].items.cron.type, 'cron');
+        assert.deepEqual(adapter.schedules[0], [
+            'garden',
+            { enabled: false, action: 'both', profiles: 'Family', cron: 'bad' },
+        ]);
+        assert.match(context.log[1][1].en, /^Saved, but: cron "bad"/);
+
+        const cancelled = fakeContext(undefined);
+        assert.deepEqual(await action(card, 'plan')('garden', cancelled), { refresh: 'none' });
+        assert.equal(adapter.schedules.length, 1);
     });
 
     it('shows no picture when the copy into the file storage is off', async () => {
@@ -161,7 +238,7 @@ describe('Device Manager', () => {
         const adapter = fakeAdapter();
         const [door] = await load(adapter);
         const context = fakeContext();
-        const answer = await door.actions[0].handler('door', context);
+        const answer = await action(door, 'record')('door', context);
         assert.deepEqual(adapter.taken, [{ camera: 'door', kind: 'record', request: {}, notify: [] }]);
         assert.equal(context.log[0][0], 'progress');
         assert.equal(context.log[0][1], DM_TEXTS.recording);
@@ -176,7 +253,7 @@ describe('Device Manager', () => {
         const adapter = fakeAdapter();
         const [door] = await load(adapter);
         const context = fakeContext();
-        const answer = await door.actions[1].handler('door', context);
+        const answer = await action(door, 'snapshot')('door', context);
         assert.deepEqual(adapter.taken, [{ camera: 'door', kind: 'snapshot', request: {}, notify: [] }]);
         assert.equal(context.log[2][1].en, 'Saved: door_2026-11-11_09-05-07.jpg');
         assert.equal(answer.update.icon, `files/${NS}.storage/door.jpg?t=${SNAP_TIME + 1000}`);
@@ -185,7 +262,7 @@ describe('Device Manager', () => {
     it('shows the error of a failed recording and closes the progress', async () => {
         const [door] = await load(fakeAdapter({ fail: true }));
         const context = fakeContext();
-        await door.actions[0].handler('door', context);
+        await action(door, 'record')('door', context);
         assert.deepEqual(context.log[1], ['close']);
         assert.equal(context.log[2][1].de, 'Fehlgeschlagen: camera "Door" is not reachable');
     });
@@ -194,7 +271,7 @@ describe('Device Manager', () => {
         const adapter = fakeAdapter();
         const [door] = await load(adapter);
         const context = fakeContext();
-        const answer = await door.actions[0].handler('gone', context);
+        const answer = await action(door, 'record')('gone', context);
         assert.deepEqual(adapter.taken, []);
         assert.match(context.log[0][1].en, /unknown camera "gone"/);
         assert.deepEqual(answer, { refresh: 'devices' });

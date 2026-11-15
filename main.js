@@ -52,6 +52,7 @@ const {
 const { HELP } = require('./lib/help');
 const { CameraDeviceManagement } = require('./lib/device-manager');
 const { Pulses } = require('./lib/pulse');
+const { SCHEDULE_DEFAULTS, normalizeSchedule, runsAt, nextRun } = require('./lib/schedule');
 const {
     copyFileToRemote,
     remoteSettingsProblems,
@@ -81,6 +82,35 @@ const MAX_COPY_BYTES = 25 * 1024 * 1024;
  * @typedef {import('./lib/types').NotifyProfile} NotifyProfile
  * @typedef {import('./lib/agent-check').Verdict} Verdict
  */
+
+/**
+ * States of the channel `cameras.<camera>.schedule`; names in lib/names.js as `schedule_<id>`.
+ *
+ * @type {Array<{id: string, common: Partial<ioBroker.StateCommon>}>}
+ */
+const SCHEDULE_STATES = [
+    { id: 'enabled', common: { type: 'boolean', role: 'switch.enable', read: true, write: true, def: false } },
+    {
+        id: 'interval',
+        common: { type: 'number', role: 'level.timer', unit: 'min', min: 0, max: 1440, read: true, write: true, def: 0 },
+    },
+    { id: 'from', common: { type: 'string', role: 'text', read: true, write: true, def: '' } },
+    { id: 'to', common: { type: 'string', role: 'text', read: true, write: true, def: '' } },
+    { id: 'cron', common: { type: 'string', role: 'text', read: true, write: true, def: '' } },
+    {
+        id: 'action',
+        common: {
+            type: 'string',
+            role: 'text',
+            read: true,
+            write: true,
+            def: 'snapshot',
+            states: { snapshot: 'snapshot', record: 'record', both: 'both' },
+        },
+    },
+    { id: 'profiles', common: { type: 'string', role: 'text', read: true, write: true, def: '' } },
+    { id: 'next', common: { type: 'number', role: 'date', read: true, write: false, def: 0 } },
+];
 
 /** @type {Array<{id: string, common: Partial<ioBroker.StateCommon>}>} */
 const CAMERA_STATES = [
@@ -154,6 +184,10 @@ class CamRecorder extends utils.Adapter {
         this.remoteQueue = Promise.resolve();
         this.settings = normalizeSettings({});
         this.storageId = '';
+        /** @type {Map<string, ReturnType<typeof normalizeSchedule>>} schedules of the cameras by id */
+        this.schedules = new Map();
+        /** @type {ioBroker.Timeout | undefined} */
+        this.scheduleTimer = undefined;
         /** @type {LivePicture[]} */
         this.livePictures = [];
         /** @type {FfmpegRunner | null} */
@@ -276,6 +310,8 @@ class CamRecorder extends utils.Adapter {
             await this.subscribeStatesAsync('cameras.*.record');
             await this.subscribeStatesAsync('cameras.*.snapshot');
             await this.subscribeStatesAsync('cameras.*.timelapse');
+            await this.subscribeStatesAsync('cameras.*.schedule.*');
+            this._scheduleTick();
             for (const stateId of this.triggers.keys()) {
                 await this.subscribeForeignStatesAsync(stateId);
             }
@@ -618,7 +654,9 @@ class CamRecorder extends utils.Adapter {
             endkey: `${this.namespace}.cameras.\u9999`,
         });
         for (const row of existing.rows) {
-            if (!wanted.has(row.id)) {
+            // only the channels of the cameras themselves; their channels ai and schedule stay
+            const camera = row.id.slice(`${this.namespace}.cameras.`.length);
+            if (!camera.includes('.') && !wanted.has(row.id)) {
                 await this.delForeignObjectAsync(row.id, { recursive: true });
                 this.log.info(`Removed the objects of the deleted camera ${row.id}`);
             }
@@ -639,6 +677,7 @@ class CamRecorder extends utils.Adapter {
             await this.setState(`cameras.${camera.id}.status`, 'idle', true);
             await this.setState(`cameras.${camera.id}.prebuffer`, 'off', true);
             await this._createAiStates(camera);
+            await this._createScheduleStates(camera);
         }
         // online or offline on the cards: a TCP connection to the camera, at once and every minute
         await this._checkReachable();
@@ -651,6 +690,132 @@ class CamRecorder extends utils.Adapter {
                 common: { name: NAMES.storage, type: 'meta.folder' },
                 native: {},
             });
+        }
+    }
+
+    /**
+     * The schedule of a camera, `cameras.<camera>.schedule.*`: written by the card of the Device Manager, scripts,
+     * scenes and AI agents, kept over restarts (and in backups). Only created when missing, so the values stay.
+     *
+     * @param {Camera} camera - Camera
+     */
+    async _createScheduleStates(camera) {
+        const channel = `cameras.${camera.id}.schedule`;
+        await this.extendObjectAsync(channel, { type: 'channel', common: { name: NAMES.schedule }, native: {} });
+        for (const state of SCHEDULE_STATES) {
+            await this.extendObjectAsync(`${channel}.${state.id}`, {
+                type: 'state',
+                common: { name: NAMES[`schedule_${state.id}`], ...state.common },
+                native: {},
+            });
+            const current = await this.getStateAsync(`${channel}.${state.id}`);
+            if (!current || current.val === null || current.val === undefined) {
+                await this.setState(`${channel}.${state.id}`, state.common.def, true);
+            }
+        }
+        await this._loadSchedule(camera, false);
+    }
+
+    /**
+     * Reads the schedule states of a camera, checks them, writes `next` and keeps the schedule for the minute timer.
+     *
+     * @param {Camera} camera - Camera
+     * @param {boolean} [report] - Log the result (after a change)
+     * @returns {Promise<string[]>} Problems of the values, empty when all are fine
+     */
+    async _loadSchedule(camera, report = true) {
+        const channel = `cameras.${camera.id}.schedule`;
+        /** @type {Record<string, unknown>} */
+        const raw = {};
+        for (const key of Object.keys(SCHEDULE_DEFAULTS)) {
+            raw[key] = (await this.getStateAsync(`${channel}.${key}`).catch(() => null))?.val;
+        }
+        const checked = normalizeSchedule(raw);
+        this.schedules.set(camera.id, checked);
+        for (const problem of checked.problems) {
+            this.log.warn(`Schedule of camera "${camera.name}": ${problem}`);
+        }
+        const { unknown } = pickProfiles(parseNames(checked.schedule.profiles), this.settings.profiles);
+        if (unknown.length) {
+            this.log.warn(`Schedule of camera "${camera.name}": unknown profile(s) ${unknown.join(', ')} (tab Send)`);
+        }
+        const next = nextRun(checked.schedule, checked.cron);
+        await this.setState(`${channel}.next`, next, true);
+        if (report) {
+            this.log.info(
+                `Schedule of camera "${camera.name}": ${
+                    next
+                        ? `next ${checked.schedule.action} at ${formatCaption('{date} {time}', '', new Date(next), this.dateFormat)}`
+                        : 'off'
+                }`,
+            );
+        }
+        return [...checked.problems, ...unknown.map(name => `unknown profile ${name}`)];
+    }
+
+    /**
+     * Writes the schedule of a camera (card of the Device Manager) and applies it.
+     *
+     * @param {Camera} camera - Camera
+     * @param {Record<string, unknown>} values - New values of the schedule states
+     * @returns {Promise<string[]>} Problems of the values
+     */
+    async _setSchedule(camera, values) {
+        for (const key of Object.keys(SCHEDULE_DEFAULTS)) {
+            if (values[key] !== undefined) {
+                await this.setState(
+                    `cameras.${camera.id}.schedule.${key}`,
+                    /** @type {ioBroker.StateValue} */ (values[key]),
+                    true,
+                );
+            }
+        }
+        return this._loadSchedule(camera);
+    }
+
+    /** Wakes at every full minute and runs the schedules of the cameras that are due. */
+    _scheduleTick() {
+        const wait = 60_000 - (Date.now() % 60_000) + 200;
+        this.scheduleTimer = this.setTimeout(() => {
+            this.scheduleTimer = undefined;
+            const now = new Date();
+            for (const camera of this.cameras) {
+                const entry = this.schedules.get(camera.id);
+                if (entry && runsAt(entry.schedule, entry.cron, now)) {
+                    void this._runSchedule(camera, entry.schedule);
+                }
+            }
+            this._scheduleTick();
+        }, wait);
+    }
+
+    /**
+     * One run of a schedule: the same path as a trigger (profiles, AI check), then the time of the next run.
+     *
+     * @param {Camera} camera - Camera
+     * @param {import('./lib/schedule').Schedule} schedule - Its schedule
+     */
+    async _runSchedule(camera, schedule) {
+        /** @type {Trigger} */
+        const trigger = {
+            stateId: `${this.namespace}.cameras.${camera.id}.schedule`,
+            camera,
+            action: schedule.action,
+            duration: 0,
+            format: '',
+            condition: 'truthy',
+            cooldown: 0,
+            profiles: parseNames(schedule.profiles),
+            onlyIf: null,
+        };
+        try {
+            await this._fire(trigger);
+        } catch (err) {
+            this.log.warn(`Schedule of camera "${camera.name}": ${err.message}`);
+        }
+        const entry = this.schedules.get(camera.id);
+        if (entry) {
+            await this.setState(`cameras.${camera.id}.schedule.next`, nextRun(entry.schedule, entry.cron), true);
         }
     }
 
@@ -1044,6 +1209,15 @@ class CamRecorder extends utils.Adapter {
         if (!state || state.ack || !id.startsWith(`${this.namespace}.cameras.`)) {
             return;
         }
+        const scheduled = /\.cameras\.([^.]+)\.schedule\.([a-z]+)$/.exec(id);
+        if (scheduled) {
+            const camera = this.cameras.find(c => c.id === scheduled[1]);
+            if (camera && scheduled[2] in SCHEDULE_DEFAULTS) {
+                // confirm the value, then check and apply the whole schedule
+                void this.setState(id, state.val, true).then(() => this._loadSchedule(camera));
+            }
+            return;
+        }
         const match = /\.cameras\.([^.]+)\.(record|snapshot|timelapse)$/.exec(id);
         const camera = match && this.cameras.find(c => c.id === match[1]);
         if (!match || !camera || !state.val) {
@@ -1172,6 +1346,10 @@ class CamRecorder extends utils.Adapter {
                 this.reachTimer = undefined;
             }
             this.pulses.stop();
+            if (this.scheduleTimer) {
+                this.clearTimeout(this.scheduleTimer);
+                this.scheduleTimer = undefined;
+            }
             for (const live of this.livePictures) {
                 live.stop();
             }

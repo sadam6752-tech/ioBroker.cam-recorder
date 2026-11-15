@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "cam-recorder",
-        "version": "0.7.1",
+        "version": "0.8.0",
         "news": {
+            "0.8.0": {
+                "en": "Schedule: the buttons Interval and Schedule on the camera cards take snapshots or clips every few minutes or at fixed times (cron) and send them; scripts and AI agents can set it through states",
+                "de": "Zeitplan: die Schaltflächen Intervall und Zeitplan auf den Kamerakarten nehmen alle paar Minuten oder zu festen Zeiten (Cron) Schnappschüsse oder Clips auf und senden sie; Skripte und KI-Agenten können ihn über Datenpunkte setzen",
+                "ru": "Расписание: кнопки «Интервал» и «Расписание» на карточках камер делают снимки или клипы каждые несколько минут или в заданное время (cron) и отправляют их; скрипты и ИИ-агенты могут задавать его через состояния",
+                "pt": "Agendamento: os botões Intervalo e Agendamento nos cartões das câmeras tiram instantâneos ou clipes a cada poucos minutos ou em horários fixos (cron) e enviam-nos; scripts e agentes de IA podem defini-lo através de estados",
+                "nl": "Planning: de knoppen Interval en Planning op de camerakaarten maken elke paar minuten of op vaste tijden (cron) momentopnamen of clips en versturen ze; scripts en AI-agenten kunnen hem via datapunten instellen",
+                "fr": "Planification : les boutons Intervalle et Planification des cartes de caméra prennent des photos ou des clips toutes les quelques minutes ou à heures fixes (cron) et les envoient ; scripts et agents IA peuvent la régler via des états",
+                "it": "Pianificazione: i pulsanti Intervallo e Pianificazione sulle schede delle telecamere scattano istantanee o clip ogni pochi minuti o a orari fissi (cron) e le inviano; script e agenti IA possono impostarla tramite stati",
+                "es": "Programación: los botones Intervalo y Programación de las tarjetas de cámara toman instantáneas o clips cada pocos minutos o a horas fijas (cron) y los envían; scripts y agentes de IA pueden ajustarla mediante estados",
+                "pl": "Harmonogram: przyciski Interwał i Harmonogram na kartach kamer co kilka minut lub o stałych godzinach (cron) robią zdjęcia lub klipy i je wysyłają; skrypty i agenci AI mogą go ustawiać przez stany",
+                "uk": "Розклад: кнопки «Інтервал» і «Розклад» на картках камер кожні кілька хвилин або у визначений час (cron) роблять знімки чи кліпи й надсилають їх; скрипти та ШІ-агенти можуть задавати його через стани",
+                "zh-cn": "计划：摄像机卡片上的“间隔”和“计划”按钮每隔几分钟或在固定时间（cron）拍摄快照或片段并发送；脚本和 AI 代理可通过状态设置"
+            },
             "0.7.1": {
                 "en": "Cameras: new column Live (s) writes a live picture from the pre-recording into the file storage every few seconds, for an image widget of vis",
                 "de": "Kameras: neue Spalte Live (s) schreibt alle paar Sekunden ein Live-Bild aus der Voraufnahme in die Dateiablage, für ein Bild-Widget in vis",
@@ -80,19 +93,6 @@
                 "pl": "Kontrola AI: na nowej karcie Kontrola AI kryteria własnymi słowami (osoba, zwierzę w ogrodzie) wskazują profile; z ioBroker.pi-agent zdjęcie zdarzenia jest sprawdzane, a profil, którego kryterium jest spełnione, dostaje dodatkową wiadomość z tym, co widać, podczas gdy pliki wychodzą jak dotąd. Adapter odpowiada na wiadomość help dla agentów AI",
                 "uk": "ШІ-перевірка: на новій вкладці «ШІ-перевірка» критерії своїми словами (людина, тварина в саду) пов’язуються з профілями; з ioBroker.pi-agent знімок події перевіряється, і профіль, чий критерій виконано, отримує додаткове повідомлення з тим, що було помічено, а файли надсилаються як раніше. Адаптер відповідає на повідомлення help для ШІ-агентів",
                 "zh-cn": "AI 检查：在新的 AI 检查选项卡中，用自己的话写的标准（一个人、花园里的动物）对应配置文件；借助 ioBroker.pi-agent 检查事件的快照，符合标准的配置文件会额外收到一条描述所见内容的消息，文件仍照常发送。适配器为 AI 代理回答 help 消息"
-            },
-            "0.5.2": {
-                "en": "Sound: a new column Sound in the camera table takes the sound of the camera into mp4 clips. Device Manager: a camera that is off no longer shows as online, every camera is checked on the network every minute",
-                "de": "Ton: eine neue Spalte Ton in der Kameratabelle nimmt den Ton der Kamera in mp4-Clips auf. Device Manager: eine ausgeschaltete Kamera erscheint nicht mehr als online, jede Kamera wird jede Minute im Netzwerk geprüft",
-                "ru": "Звук: новая колонка «Звук» в таблице камер записывает звук камеры в клипы mp4. Device Manager: выключенная камера больше не показывается как онлайн, каждая камера проверяется в сети раз в минуту",
-                "pt": "Som: uma nova coluna Som na tabela de câmaras grava o som da câmara nos clips mp4. Device Manager: uma câmara desligada já não aparece como online, cada câmara é verificada na rede a cada minuto",
-                "nl": "Geluid: een nieuwe kolom Geluid in de cameratabel neemt het geluid van de camera op in mp4-clips. Device Manager: een uitgeschakelde camera verschijnt niet meer als online, elke camera wordt elke minuut in het netwerk gecontroleerd",
-                "fr": "Son : une nouvelle colonne Son dans le tableau des caméras enregistre le son de la caméra dans les clips mp4. Device Manager : une caméra éteinte n'apparaît plus en ligne, chaque caméra est vérifiée sur le réseau chaque minute",
-                "it": "Audio: una nuova colonna Audio nella tabella delle telecamere registra l'audio della telecamera nei clip mp4. Device Manager: una telecamera spenta non appare più online, ogni telecamera viene controllata in rete ogni minuto",
-                "es": "Sonido: una nueva columna Sonido en la tabla de cámaras graba el sonido de la cámara en los clips mp4. Device Manager: una cámara apagada ya no aparece en línea, cada cámara se comprueba en la red cada minuto",
-                "pl": "Dźwięk: nowa kolumna Dźwięk w tabeli kamer nagrywa dźwięk kamery w klipach mp4. Device Manager: wyłączona kamera nie jest już pokazywana jako online, każda kamera jest sprawdzana w sieci co minutę",
-                "uk": "Звук: нова колонка «Звук» у таблиці камер записує звук камери в кліпи mp4. Device Manager: вимкнена камера більше не показується як онлайн, кожна камера перевіряється в мережі щохвилини",
-                "zh-cn": "声音：摄像头表格中新增“声音”列，将摄像头的声音录入 mp4 片段。设备管理器：关闭的摄像头不再显示为在线，每台摄像头每分钟在网络上检查一次"
             }
         },
         "titleLang": {

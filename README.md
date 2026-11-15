@@ -358,12 +358,43 @@ instance settings and under _Devices_ in the menu of the admin:
 - **Recording now:** a red dot with _Recording_ or _Taking a snapshot_ while ffmpeg works for this camera.
 - **Last clip** and **last snapshot** with date and time, and the pre-recording seconds if it is on.
 - **Picture:** the last snapshot, when _Copy the newest file into the ioBroker file storage_ is on (tab _Storage_).
-- **Record now** and **Snapshot:** the same as the buttons `cameras.<camera>.record` and `.snapshot` — a clip with
+- **Record video** and **Snapshot:** the same as the buttons `cameras.<camera>.record` and `.snapshot` — a clip with
   the length and format of the _Recording_ tab, or a picture, without notifications. The dialog shows the file name
   or the error, then the card is updated.
 
 The cameras, triggers and all other settings stay in the settings of the instance; the Device Manager only shows
 them and starts recordings.
+
+## Schedule
+
+Besides triggers, a camera can take pictures or clips on its own: every few minutes, or at fixed times. The schedule
+lives in the states `cam-recorder.0.cameras.<camera>.schedule.*`, not in the instance settings, so it changes without
+a restart and scripts, Blockly, scenes and AI agents (ioBroker.pi-agent reads its description through `help`) can set
+it like the card does. The states are kept in backups.
+
+On the tab _Devices_ each camera card has two buttons:
+
+- **Interval**: every _N_ minutes, counted from midnight (30 = at :00 and :30), optionally only between two times
+  (22:00 to 06:00 works over midnight).
+- **Schedule**: fixed times as a cron pattern with the cron dialog of the admin, e.g. `0 7,19 * * *` for 7:00 and
+  19:00 or `*/15 * * * 1-5` for every 15 minutes on weekdays.
+
+Both forms share _Active_, the action (snapshot, clip or both) and the profiles to send to. Each run works like a
+trigger: the files are saved and sent, and the AI check runs for profiles with criteria. The card shows the next run.
+
+| State      | Example          | Meaning                                         |
+| ---------- | ---------------- | ----------------------------------------------- |
+| `enabled`  | `true`           | main switch                                     |
+| `interval` | `30`             | every N minutes, 0 = off                        |
+| `from`     | `22:00`          | the interval only from … (both empty = all day) |
+| `to`       | `06:00`          | … until                                         |
+| `cron`     | `0 7,19 * * *`   | fixed times, empty = off                        |
+| `action`   | `snapshot`       | `snapshot`, `record` or `both`                  |
+| `profiles` | `Alex, Telegram` | send profiles, empty = only saved               |
+| `next`     | (read only)      | time of the next run, 0 = none                  |
+
+A wrong value (a cron pattern with a typo, a time like `25:00`) is reported in the log and on the card, and that part
+does not run.
 
 ## States
 
@@ -449,6 +480,14 @@ adapter.
     ### **WORK IN PROGRESS**
 -->
 
+### 0.8.0 (2026-11-15)
+
+- (sadam6752-tech) Schedule: the buttons _Interval_ and _Schedule_ on the camera cards take snapshots or clips every
+  few minutes (optionally between two times) or at fixed times (cron) and send them; the states
+  `cameras.<camera>.schedule.*` can also be set by scripts and AI agents
+- (sadam6752-tech) Device Manager: the record button is called _Record video_, so the four buttons fit in two
+  columns
+
 ### 0.7.1 (2026-11-14)
 
 - (sadam6752-tech) Cameras: the new column _Live (s)_ writes a live picture from the pre-recording into the file
@@ -473,11 +512,6 @@ adapter.
 
 - (sadam6752-tech) Pre-recording: the warning of a stopped buffer tells how long the stream ran (or that no data came at
   all) and the last warnings of ffmpeg, repeated ones counted, to find why a camera stops sending
-
-### 0.6.1 (2026-11-12)
-
-- (sadam6752-tech) AI check: the question to pi-agent names the date and time of the snapshot instead of
-  "just now", so the chat of pi-agent shows when each picture came
 
 Older changes are in [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 
