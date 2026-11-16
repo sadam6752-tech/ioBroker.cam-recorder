@@ -125,5 +125,12 @@
     "Profiles of the report": "Profielen van het verslag",
     "Cameras (empty = all)": "Camera's (leeg = alle)",
     "Wishes for pi-agent (optional)": "Wensen voor pi-agent (optioneel)",
-    "e.g. only people and vehicles, no animals": "bv. alleen personen en voertuigen, geen dieren"
+    "e.g. only people and vehicles, no animals": "bv. alleen personen en voertuigen, geen dieren",
+    "Online state": "Online-status",
+    "Online state: optional state that tells whether the camera is online (true, 1, connected, online …), e.g. of an NVR adapter. Without it the adapter connects to host and port of the URL, which only shows the NVR, not the camera behind it (UniFi Protect, Frigate, Synology). Cameras of UniFi Protect can also use the login below.": "Online-status: optionele status die aangeeft of de camera online is (true, 1, connected, online …), bijv. van een NVR-adapter. Zonder deze verbindt de adapter met host en poort van de URL, wat alleen de NVR toont, niet de camera erachter (UniFi Protect, Frigate, Synology). Camera's van UniFi Protect kunnen ook de aanmelding hieronder gebruiken.",
+    "UniFi Protect login": "Aanmelding bij UniFi Protect",
+    "Cameras of UniFi Protect (URL rtsp://<console>:7447/… or rtsps://<console>:7441/…) stream through the console, which answers while a camera is off. With a local user of the console (role View Only is enough) the adapter reads every minute whether each camera is connected. Empty user = off.": "Camera's van UniFi Protect (URL rtsp://<console>:7447/… of rtsps://<console>:7441/…) streamen via de console, die ook antwoordt als een camera uit is. Met een lokale gebruiker van de console (rol Alleen bekijken volstaat) leest de adapter elke minuut of elke camera verbonden is. Lege gebruiker = uit.",
+    "Console user": "Gebruiker van de console",
+    "Console password": "Wachtwoord van de console",
+    "HTTPS port of the console": "HTTPS-poort van de console"
 }

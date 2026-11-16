@@ -313,6 +313,28 @@ describe('Device Manager', () => {
         assert.equal(context.log[2][1].de, 'Fehlgeschlagen: camera "Door" is not reachable');
     });
 
+    it('greys out record and snapshot of an offline camera, and refuses them on an old card', async () => {
+        const adapter = fakeAdapter();
+        const [oldCard] = await load(adapter);
+        adapter.states['cameras.door.reachable'] = false;
+        const [door, garden] = await load(adapter);
+        for (const id of ['record', 'snapshot']) {
+            assert.equal(action(door, id), undefined, id);
+            assert.equal(door.actions.find((/** @type {any} */ a) => a.id === id).description, DM_TEXTS.offlineHint);
+            assert.equal(typeof action(garden, id), 'function', id);
+        }
+        // the schedule stays editable
+        assert.equal(typeof action(door, 'interval'), 'function');
+        const context = fakeContext();
+        const answer = await action(oldCard, 'snapshot')('door', context);
+        assert.deepEqual(adapter.taken, []);
+        assert.deepEqual(context.log, [['message', DM_TEXTS.offlineHint]]);
+        assert.equal(action(answer.update, 'snapshot'), undefined);
+        adapter.states['cameras.door.reachable'] = true;
+        const [again] = await load(adapter);
+        assert.equal(typeof action(again, 'record'), 'function');
+    });
+
     it('answers a camera that was removed meanwhile', async () => {
         const adapter = fakeAdapter();
         const [door] = await load(adapter);

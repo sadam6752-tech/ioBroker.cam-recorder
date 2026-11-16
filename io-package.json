@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "cam-recorder",
-        "version": "0.8.3",
+        "version": "0.8.4",
         "news": {
+            "0.8.4": {
+                "en": "Cameras: column Online state and a login for UniFi Protect, so a camera behind an NVR shows offline when it is off; Devices: Record video and Snapshot greyed out while the camera is offline",
+                "de": "Kameras: Spalte Online-Zustand und eine Anmeldung für UniFi Protect, damit eine Kamera hinter einem NVR offline angezeigt wird, wenn sie aus ist; Geräte: Videoaufnahme und Schnappschuss ausgegraut, solange die Kamera offline ist",
+                "ru": "Камеры: колонка «Состояние онлайн» и вход в UniFi Protect, чтобы камера за NVR показывалась офлайн, когда она выключена; Устройства: «Видеозапись» и «Снимок» неактивны, пока камера офлайн",
+                "pt": "Câmaras: coluna Estado online e um login para o UniFi Protect, para que uma câmara atrás de um NVR apareça offline quando está desligada; Dispositivos: Gravar vídeo e Instantâneo desativados enquanto a câmara está offline",
+                "nl": "Camera's: kolom Online-status en een aanmelding voor UniFi Protect, zodat een camera achter een NVR offline wordt getoond als hij uit is; Apparaten: Video opnemen en Momentopname uitgeschakeld zolang de camera offline is",
+                "fr": "Caméras : colonne État en ligne et une connexion pour UniFi Protect, pour qu'une caméra derrière un NVR apparaisse hors ligne quand elle est éteinte; Appareils : Enregistrer une vidéo et Instantané grisés tant que la caméra est hors ligne",
+                "it": "Telecamere: colonna Stato online e un accesso per UniFi Protect, così una telecamera dietro un NVR appare offline quando è spenta; Dispositivi: Registra video e Istantanea disattivati finché la telecamera è offline",
+                "es": "Cámaras: columna Estado en línea y un inicio de sesión para UniFi Protect, para que una cámara detrás de un NVR aparezca desconectada cuando está apagada; Dispositivos: Grabar vídeo e Instantánea desactivados mientras la cámara está desconectada",
+                "pl": "Kamery: kolumna Stan online i logowanie do UniFi Protect, aby kamera za NVR była pokazywana jako offline, gdy jest wyłączona; Urządzenia: Nagraj wideo i Zdjęcie wyszarzone, gdy kamera jest offline",
+                "uk": "Камери: колонка «Стан онлайн» і вхід до UniFi Protect, щоб камера за NVR показувалася офлайн, коли вона вимкнена; Пристрої: «Відеозапис» і «Знімок» неактивні, поки камера офлайн",
+                "zh-cn": "摄像头：新增“在线状态”列和 UniFi Protect 登录，使 NVR 后面的摄像头关闭时显示为离线；设备：摄像头离线时“录像”和“快照”按钮变灰"
+            },
             "0.8.3": {
                 "en": "AI check: a daily report, written by pi-agent from what its checks saw since the last one and sent through chosen profiles; state report.send and command report",
                 "de": "KI-Prüfung: ein täglicher Bericht, den pi-agent aus dem schreibt, was seine Prüfungen seit dem letzten Bericht gesehen haben, verschickt über gewählte Profile; Zustand report.send und Befehl report",
@@ -80,19 +93,6 @@
                 "pl": "Kamery: obrót obrazu o 90°, 180°, 270° lub odbicie lustrzane (kolumna ↻). Zapis i NAS: opcjonalne foldery miesięczne kamera/rrrr-mm, które zachowują wszystkie pliki",
                 "uk": "Камери: поворот зображення на 90°, 180°, 270° або дзеркальне відображення (стовпець ↻). Сховище та NAS: папки за місяцями камера/рррр-мм за бажанням, усі файли зберігаються",
                 "zh-cn": "摄像机：将画面旋转 90°、180°、270° 或镜像（↻ 列）。存储和 NAS：可选的月份文件夹 摄像机/yyyy-mm，保留所有文件"
-            },
-            "0.6.3": {
-                "en": "AI check: a criterion with State gives each camera a state that is true for some seconds after a match, for scripts and scenes. The log names triggers whose result goes nowhere",
-                "de": "KI-Prüfung: Ein Kriterium mit Datenpunkt gibt jeder Kamera einen Datenpunkt, der nach einem Treffer einige Sekunden true ist, für Skripte und Szenen. Das Log nennt Auslöser, deren Ergebnis nirgends hingeht",
-                "ru": "ИИ-проверка: критерий с состоянием даёт каждой камере состояние, которое после совпадения на несколько секунд становится true, для скриптов и сцен. Лог называет триггеры, результат которых никуда не уходит",
-                "pt": "Verificação por IA: um critério com estado dá a cada câmera um estado que fica true alguns segundos após uma correspondência, para scripts e cenas. O log indica gatilhos cujo resultado não vai a lado nenhum",
-                "nl": "AI-controle: een criterium met status geeft elke camera een datapunt dat na een treffer enkele seconden true is, voor scripts en scènes. Het log noemt triggers waarvan het resultaat nergens heen gaat",
-                "fr": "Vérification par IA : un critère avec état donne à chaque caméra un état qui reste true quelques secondes après une correspondance, pour les scripts et les scènes. Le journal nomme les déclencheurs dont le résultat ne va nulle part",
-                "it": "Controllo IA: un criterio con stato dà a ogni telecamera uno stato che resta true per alcuni secondi dopo una corrispondenza, per script e scene. Il log indica gli attivatori il cui risultato non va da nessuna parte",
-                "es": "Comprobación por IA: un criterio con estado da a cada cámara un estado que queda en true unos segundos tras una coincidencia, para scripts y escenas. El log indica los disparadores cuyo resultado no va a ninguna parte",
-                "pl": "Kontrola AI: kryterium ze stanem daje każdej kamerze stan, który po trafieniu przez kilka sekund ma wartość true, dla skryptów i scen. Log wskazuje wyzwalacze, których wynik nigdzie nie trafia",
-                "uk": "ШІ-перевірка: критерій зі станом дає кожній камері стан, який після збігу на кілька секунд стає true, для скриптів і сцен. Лог називає тригери, результат яких нікуди не йде",
-                "zh-cn": "AI 检查：带状态的条件会为每台摄像机提供一个状态，匹配后在几秒内为 true，供脚本和场景使用。日志会列出结果无处可去的触发器"
             }
         },
         "titleLang": {
@@ -121,8 +121,19 @@
             "uk": "Записує короткі відеокліпи (mp4, gif) і знімки з камер RTSP за допомогою ffmpeg у комплекті",
             "zh-cn": "使用捆绑的 ffmpeg 录制来自 RTSP 摄像机的短视频剪辑（mp4、gif）和快照"
         },
-        "authors": ["sadam6752-tech <sadam6752@gmail.com>"],
-        "keywords": ["camera", "rtsp", "ffmpeg", "video", "doorbell", "recording", "snapshot", "telegram"],
+        "authors": [
+            "sadam6752-tech <sadam6752@gmail.com>"
+        ],
+        "keywords": [
+            "camera",
+            "rtsp",
+            "ffmpeg",
+            "video",
+            "doorbell",
+            "recording",
+            "snapshot",
+            "telegram"
+        ],
         "licenseInformation": {
             "type": "free",
             "license": "MIT"
@@ -198,7 +209,10 @@
         "remoteDirectory": "/cam-recorder",
         "remoteMonthFolders": false,
         "remoteHostKey": "",
-        "remoteKeepDays": 0
+        "remoteKeepDays": 0,
+        "unifiUser": "",
+        "unifiPassword": "",
+        "unifiPort": 443
     },
     "objects": [],
     "instanceObjects": [
@@ -323,6 +337,13 @@
             "native": {}
         }
     ],
-    "protectedNative": ["cameras", "remotePassword"],
-    "encryptedNative": ["remotePassword"]
+    "protectedNative": [
+        "cameras",
+        "remotePassword",
+        "unifiPassword"
+    ],
+    "encryptedNative": [
+        "remotePassword",
+        "unifiPassword"
+    ]
 }

@@ -125,5 +125,12 @@
     "Profiles of the report": "报告的配置文件",
     "Cameras (empty = all)": "摄像机（留空 = 全部）",
     "Wishes for pi-agent (optional)": "对 pi-agent 的要求（可选）",
-    "e.g. only people and vehicles, no animals": "例如：只关注人和车辆，不包括动物"
+    "e.g. only people and vehicles, no animals": "例如：只关注人和车辆，不包括动物",
+    "Online state": "在线状态",
+    "Online state: optional state that tells whether the camera is online (true, 1, connected, online …), e.g. of an NVR adapter. Without it the adapter connects to host and port of the URL, which only shows the NVR, not the camera behind it (UniFi Protect, Frigate, Synology). Cameras of UniFi Protect can also use the login below.": "在线状态：可选的状态，表示摄像头是否在线（true、1、connected、online …），例如来自 NVR 适配器。没有它时，适配器连接 URL 的主机和端口，这只能显示 NVR，而不是其后的摄像头（UniFi Protect、Frigate、Synology）。UniFi Protect 的摄像头也可以使用下面的登录。",
+    "UniFi Protect login": "UniFi Protect 登录",
+    "Cameras of UniFi Protect (URL rtsp://<console>:7447/… or rtsps://<console>:7441/…) stream through the console, which answers while a camera is off. With a local user of the console (role View Only is enough) the adapter reads every minute whether each camera is connected. Empty user = off.": "UniFi Protect 的摄像头（URL rtsp://<控制台>:7447/… 或 rtsps://<控制台>:7441/…）通过控制台传输视频，即使摄像头关闭，控制台也会应答。使用控制台的本地用户（“仅查看”角色即可），适配器每分钟读取每个摄像头是否已连接。用户为空 = 关闭。",
+    "Console user": "控制台用户",
+    "Console password": "控制台密码",
+    "HTTPS port of the console": "控制台 HTTPS 端口"
 }

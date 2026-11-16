@@ -24,6 +24,7 @@ const { removePartials } = require('./lib/storage');
 const { supportsDisplayMatrix } = require('./lib/orientation');
 const { LivePicture } = require('./lib/live');
 const { CHECK_INTERVAL_MS, probeTarget, isReachable } = require('./lib/reachability');
+const { unifiStream, onlineValue, UnifiConsole } = require('./lib/unifi');
 const { triggerDecision, formatCaption } = require('./lib/triggers');
 const { maskSecrets } = require('./lib/mask');
 const { NAMES } = require('./lib/names');
@@ -230,6 +231,12 @@ class CamRecorder extends utils.Adapter {
         /** @type {ioBroker.Interval | undefined} check of the cameras on the network */
         this.reachTimer = undefined;
         this.reachRunning = false;
+        /** @type {Map<string, Camera[]>} cameras whose online state comes from a foreign state, by state id */
+        this.onlineStates = new Map();
+        /** @type {Map<string, UnifiConsole>} UniFi Protect consoles by host */
+        this.unifiConsoles = new Map();
+        /** @type {Map<string, string>} last problem of the online check by camera or console, logged once */
+        this.reachNotes = new Map();
         /** copies to the SFTP server run one after the other */
         this.remoteQueue = Promise.resolve();
         this.settings = normalizeSettings({});
@@ -450,13 +457,10 @@ class CamRecorder extends utils.Adapter {
     }
 
     /**
-     * Starts the pre-recording of every camera that has seconds set, if the main switch is on.
-     *
-     * @param {string} ffmpegPath - Path of ffmpeg
-     */
-    /**
-     * Checks every camera on the network: a TCP connection to the host and port of its URL,
-     * without login and without ffmpeg. The result goes into `cameras.<camera>.reachable`.
+     * Online or offline of every camera, at once and every minute. A camera with an online state (column of the
+     * cameras) follows that state; a camera behind UniFi Protect follows `isConnected` of the console when a login is
+     * set; every other camera is checked with a TCP connection to the host and port of its URL, without login and
+     * without ffmpeg. The result goes into `cameras.<camera>.reachable`.
      */
     async _checkReachable() {
         if (this.reachRunning) {
@@ -464,24 +468,25 @@ class CamRecorder extends utils.Adapter {
         }
         this.reachRunning = true;
         try {
-            await Promise.all(
-                this.cameras.map(async camera => {
-                    const target = probeTarget(camera.url);
-                    if (!target) {
-                        return;
-                    }
-                    const ok = await isReachable(target, this.settings.rtspTimeout * 1000);
-                    const id = `cameras.${camera.id}.reachable`;
-                    const before = await this.getStateAsync(id);
-                    if (before?.val !== ok) {
-                        if (before && before.val !== null) {
-                            const how = ok ? 'is reachable again' : `is not reachable (${target.host}:${target.port})`;
-                            this.log[ok ? 'info' : 'warn'](`Camera "${camera.name}" ${how}`);
-                        }
-                        await this.setState(id, ok, true);
-                    }
-                }),
-            );
+            const byState = new Set([...this.onlineStates.values()].flat().map(c => c.id));
+            /** @type {Map<string, Array<{camera: Camera, alias: string}>>} */
+            const unifi = new Map();
+            /** @type {Camera[]} */
+            const tcp = [];
+            for (const camera of this.cameras.filter(c => !byState.has(c.id))) {
+                const stream = this.settings.unifi.username ? unifiStream(camera.url) : null;
+                if (stream) {
+                    const list = unifi.get(stream.host) || [];
+                    list.push({ camera, alias: stream.alias });
+                    unifi.set(stream.host, list);
+                } else {
+                    tcp.push(camera);
+                }
+            }
+            for (const [host, list] of unifi) {
+                tcp.push(...(await this._checkUnifi(host, list)));
+            }
+            await Promise.all(tcp.map(camera => this._checkTcp(camera)));
         } catch (err) {
             this.log.debug(`Check of the cameras failed: ${err.message}`);
         } finally {
@@ -489,6 +494,148 @@ class CamRecorder extends utils.Adapter {
         }
     }
 
+    /**
+     * @param {Camera} camera - Camera
+     */
+    async _checkTcp(camera) {
+        const target = probeTarget(camera.url);
+        if (!target) {
+            return;
+        }
+        const ok = await isReachable(target, this.settings.rtspTimeout * 1000);
+        await this._setReachable(camera, ok, `${target.host}:${target.port}`);
+    }
+
+    /**
+     * Asks a UniFi Protect console which of its cameras are connected.
+     *
+     * @param {string} host - Console
+     * @param {Array<{camera: Camera, alias: string}>} list - Cameras of the console with the alias of their URL
+     * @returns {Promise<Camera[]>} The cameras to check by TCP instead, because the console did not answer
+     */
+    async _checkUnifi(host, list) {
+        let nvr = this.unifiConsoles.get(host);
+        if (!nvr) {
+            nvr = new UnifiConsole({
+                host,
+                port: this.settings.unifi.port,
+                username: this.settings.unifi.username,
+                password: this.settings.unifi.password,
+                timeoutMs: this.settings.rtspTimeout * 1000,
+            });
+            this.unifiConsoles.set(host, nvr);
+        }
+        const key = `unifi:${host}`;
+        let states;
+        try {
+            states = await nvr.cameraStates();
+        } catch (err) {
+            this._note(key, `UniFi Protect ${host}: ${err.message}; its cameras are checked by TCP meanwhile`);
+            return list.map(e => e.camera);
+        }
+        this._note(key, '', `UniFi Protect ${host}: the online state of its cameras comes from the console again`);
+        for (const { camera, alias } of list) {
+            const ok = states.get(alias);
+            this._note(
+                `alias:${camera.id}`,
+                ok === undefined
+                    ? `Camera "${camera.name}": UniFi Protect ${host} has no stream with the alias of its URL ` +
+                          '(RTSP switched off for the camera, or the URL changed), shown as not reachable'
+                    : '',
+            );
+            await this._setReachable(camera, ok === true, `UniFi Protect ${host}: not connected`);
+        }
+        return [];
+    }
+
+    /**
+     * Logs a problem of the online check once, until it is gone.
+     *
+     * @param {string} key - Camera or console
+     * @param {string} problem - Problem, empty when there is none
+     * @param {string} [solved] - Info logged when a problem is gone
+     */
+    _note(key, problem, solved) {
+        const before = this.reachNotes.get(key) || '';
+        if (problem === before) {
+            return;
+        }
+        if (problem) {
+            this.log.warn(problem);
+            this.reachNotes.set(key, problem);
+        } else {
+            this.reachNotes.delete(key);
+            if (solved) {
+                this.log.info(solved);
+            }
+        }
+    }
+
+    /**
+     * @param {Camera} camera - Camera
+     * @param {boolean} ok - Online
+     * @param {string} where - What was checked, for the log
+     */
+    async _setReachable(camera, ok, where) {
+        const id = `cameras.${camera.id}.reachable`;
+        const before = await this.getStateAsync(id);
+        if (before?.val !== ok) {
+            if (before && before.val !== null) {
+                const how = ok ? 'is reachable again' : `is not reachable (${where})`;
+                this.log[ok ? 'info' : 'warn'](`Camera "${camera.name}" ${how}`);
+            }
+            await this.setState(id, ok, true);
+        }
+    }
+
+    /**
+     * Cameras with an online state (column of the cameras): subscribes the states and takes their values. A state
+     * that does not exist is reported once, and the camera is checked as before instead.
+     */
+    async _startOnlineStates() {
+        for (const camera of this.cameras) {
+            const stateId = camera.onlineState;
+            if (!stateId) {
+                continue;
+            }
+            const obj = await this.getForeignObjectAsync(stateId).catch(() => null);
+            if (!obj || obj.type !== 'state') {
+                this.log.warn(
+                    `Camera "${camera.name}": the online state ${stateId} does not exist, the camera is checked as before`,
+                );
+                continue;
+            }
+            const list = this.onlineStates.get(stateId) || [];
+            list.push(camera);
+            this.onlineStates.set(stateId, list);
+        }
+        for (const [stateId, list] of this.onlineStates) {
+            await this.subscribeForeignStatesAsync(stateId);
+            const state = await this.getForeignStateAsync(stateId).catch(() => null);
+            await this._takeOnlineState(stateId, list, state);
+        }
+    }
+
+    /**
+     * @param {string} stateId - Online state
+     * @param {Camera[]} list - Its cameras
+     * @param {ioBroker.State | null | undefined} state - Its value
+     */
+    async _takeOnlineState(stateId, list, state) {
+        const ok = onlineValue(state?.val);
+        if (ok === null) {
+            return;
+        }
+        for (const camera of list) {
+            await this._setReachable(camera, ok, `${stateId} = ${String(state?.val)}`);
+        }
+    }
+
+    /**
+     * Starts the pre-recording of every camera that has seconds set, if the main switch is on.
+     *
+     * @param {string} ffmpegPath - Path of ffmpeg
+     */
     async _startPrebuffers(ffmpegPath) {
         const wanted = this.cameras.filter(c => c.prebuffer > 0);
         if (!wanted.length) {
@@ -735,7 +882,8 @@ class CamRecorder extends utils.Adapter {
             await this._createAiStates(camera);
             await this._createScheduleStates(camera);
         }
-        // online or offline on the cards: a TCP connection to the camera, at once and every minute
+        // online or offline on the cards: online state, UniFi Protect or a TCP connection, at once and every minute
+        await this._startOnlineStates();
         await this._checkReachable();
         this.reachTimer = this.setInterval(() => void this._checkReachable(), CHECK_INTERVAL_MS);
         await this.extendObjectAsync('report', { type: 'channel', common: { name: NAMES.report }, native: {} });
@@ -1540,6 +1688,10 @@ class CamRecorder extends utils.Adapter {
      * @param {ioBroker.State | null | undefined} state - State object
      */
     onStateChange(id, state) {
+        const online = this.onlineStates.get(id);
+        if (online) {
+            void this._takeOnlineState(id, online, state);
+        }
         const triggers = this.triggers.get(id);
         if (triggers) {
             const now = Date.now();

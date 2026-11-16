@@ -1,5 +1,10 @@
 # Older changes
 
+### 0.7.1 (2026-11-14)
+
+- (sadam6752-tech) Cameras: the new column _Live (s)_ writes a live picture from the pre-recording into the file
+  storage every few seconds, for vis
+
 ### 0.7.0 (2026-11-13)
 
 - (sadam6752-tech) Cameras: the new column _↻_ turns the picture by 90°, 180° or 270° or mirrors it, for cameras that

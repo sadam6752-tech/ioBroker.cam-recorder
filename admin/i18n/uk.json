@@ -125,5 +125,12 @@
     "Profiles of the report": "Профілі звіту",
     "Cameras (empty = all)": "Камери (порожньо = усі)",
     "Wishes for pi-agent (optional)": "Побажання до pi-agent (необов'язково)",
-    "e.g. only people and vehicles, no animals": "наприклад, лише люди й автомобілі, без тварин"
+    "e.g. only people and vehicles, no animals": "наприклад, лише люди й автомобілі, без тварин",
+    "Online state": "Стан онлайн",
+    "Online state: optional state that tells whether the camera is online (true, 1, connected, online …), e.g. of an NVR adapter. Without it the adapter connects to host and port of the URL, which only shows the NVR, not the camera behind it (UniFi Protect, Frigate, Synology). Cameras of UniFi Protect can also use the login below.": "Стан онлайн: необов'язковий стан, який показує, чи камера в мережі (true, 1, connected, online …), наприклад від адаптера NVR. Без нього адаптер підключається до хоста й порту з URL, а це показує лише NVR, а не камеру за ним (UniFi Protect, Frigate, Synology). Камери UniFi Protect можуть також використовувати вхід нижче.",
+    "UniFi Protect login": "Вхід до UniFi Protect",
+    "Cameras of UniFi Protect (URL rtsp://<console>:7447/… or rtsps://<console>:7441/…) stream through the console, which answers while a camera is off. With a local user of the console (role View Only is enough) the adapter reads every minute whether each camera is connected. Empty user = off.": "Камери UniFi Protect (URL rtsp://<консоль>:7447/… або rtsps://<консоль>:7441/…) передають потік через консоль, а вона відповідає й тоді, коли камера вимкнена. З локальним користувачем консолі (досить ролі «Лише перегляд») адаптер щохвилини читає, чи підключена кожна камера. Порожній користувач = вимкнено.",
+    "Console user": "Користувач консолі",
+    "Console password": "Пароль консолі",
+    "HTTPS port of the console": "HTTPS-порт консолі"
 }

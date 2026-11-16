@@ -35,6 +35,7 @@ One row per camera: a name, the RTSP URL, user and password. Examples of RTSP UR
 | DoorBird           | `rtsp://192.168.1.20:554/mpeg/media.amp`              |
 | Hikvision          | `rtsp://192.168.1.40:554/Streaming/Channels/101`      |
 | Reolink            | `rtsp://192.168.1.41:554/h264Preview_01_main`         |
+| UniFi Protect      | `rtsp://<console>:7447/<alias>` (see below)           |
 | Most ONVIF cameras | see the manual of the camera or the ONVIF device tool |
 
 A login typed into the URL (`rtsp://user:password@host/...`) is moved into the user and password fields at the next
@@ -62,6 +63,28 @@ not have this gap.
 
 The camera name becomes the object id: `Front Door` → `cam-recorder.0.cameras.front_door`. Letters with
 diacritics are transliterated (`ü` → `ue`, `é` → `e`), other special characters become `_`.
+
+#### Online or offline
+
+Every minute the adapter checks whether each camera is online and writes it into `cameras.<camera>.reachable` (the
+status of the card in the Device Manager). Without further settings it opens a TCP connection to host and port of
+the URL. With a camera behind an NVR (UniFi Protect, Frigate, go2rtc, Synology Surveillance Station) this only shows
+the NVR: it accepts the connection while the camera behind it is off. Two ways out:
+
+- **Online state** (column of the camera): any state that tells whether the camera is online, e.g. of the adapter of
+  the NVR. `true`, a number other than 0, `connected`, `online`, `on`, `ok`, `yes`, `up` count as online, every other
+  value as offline. The adapter follows its changes at once; a state that does not exist is reported at the start and
+  the camera is checked as before.
+- **UniFi Protect login** (below the table): cameras of UniFi Protect stream through the console (`rtsp://<console>:7447/<alias>`
+  or `rtsps://<console>:7441/<alias>`, the URL from _Protect → camera → Settings → Advanced → RTSP_). With a local user
+  of the console the adapter logs in to the console every minute, reads the camera list once for all cameras, and
+  takes `isConnected` of the camera whose stream has the alias of the URL. No further adapter is needed. Create a
+  local user (not a UI account with two-factor login) in _UniFi OS → Admins & Users_; the role _View Only_ for
+  Protect is enough. The HTTPS port is 443 on UniFi OS consoles (UDM, UNVR, Cloud Key Gen2+ with UniFi OS).
+  When the console does not answer or refuses the login, a warning is logged once and its cameras are checked by TCP
+  meanwhile; after a refused login the adapter waits 15 minutes before it tries again, so a wrong password does not
+  lock the user. A camera whose alias the console does not know (RTSP switched off for it, or the URL changed after a
+  reset) shows as not reachable, with a warning.
 
 ### Triggers
 
@@ -394,14 +417,17 @@ With admin 7 or newer, the Device Manager shows one card per configured camera, 
 instance settings and under _Devices_ in the menu of the admin:
 
 - **Status:** online or offline. The adapter opens a TCP connection to the host and port of the camera URL at the
-  start and every minute (no login, no ffmpeg) and writes the result into `cameras.<camera>.reachable`. The last
-  error appears as a warning on the card.
+  start and every minute (no login, no ffmpeg), or follows the online state or the UniFi Protect console (see
+  _Online or offline_), and writes the result into `cameras.<camera>.reachable`. The last error appears as a warning
+  on the card.
 - **Recording now:** a red dot with _Recording_ or _Taking a snapshot_ while ffmpeg works for this camera.
 - **Last clip** and **last snapshot** with date and time, and the pre-recording seconds if it is on.
 - **Picture:** the last snapshot, when _Copy the newest file into the ioBroker file storage_ is on (tab _Storage_).
 - **Record video** and **Snapshot:** the same as the buttons `cameras.<camera>.record` and `.snapshot` — a clip with
   the length and format of the _Recording_ tab, or a picture, without notifications. The dialog shows the file name
-  or the error, then the card is updated.
+  or the error, then the card is updated. While the camera is offline both buttons are greyed out; the admin does
+  not update the buttons by itself, so a card that was opened before shows them until the page is loaded again, and
+  a click then only answers that the camera is offline.
 
 The cameras, triggers and all other settings stay in the settings of the instance; the Device Manager only shows
 them and starts recordings.
@@ -464,7 +490,7 @@ Per camera below `cam-recorder.0.cameras.<camera>`:
 | `status`             | `idle`, `recording`, `snapshot` or `error`      |
 | `lastError`          | Text of the last error, empty after a success   |
 | `description`        | What the AI check saw in the newest snapshot    |
-| `reachable`          | Answers on the network (checked each minute)    |
+| `reachable`          | Online (see _Online or offline_)                |
 | `prebuffer`          | `off`, `starting`, `running` or `restarting`    |
 | `timelapse`          | Button: make the timelapse video now            |
 | `lastTimelapse`      | Path of the newest timelapse video              |
@@ -520,6 +546,8 @@ clip); `duration` is always the time after the event, and the answer's `duration
   container this is usually acceptable; give the camera a user that may only view the stream.
 - Recorded files are not encrypted. Files copied into the ioBroker file storage can be opened by every admin user and,
   depending on its settings, through a `web` instance.
+- The password of the UniFi Protect console is stored encrypted (`encryptedNative`). The console has a certificate
+  of its own that nobody signed, so its certificate is not checked; use a user with the role _View Only_.
 - The SFTP password is stored encrypted (`encryptedNative`). A connection test with an empty password field uses the
   saved password only for the saved server, so no script can send it to another host.
 
@@ -535,6 +563,12 @@ adapter.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+
+### 0.8.4 (2026-11-16)
+
+- (sadam6752-tech) Cameras: column _Online state_ and a login for UniFi Protect, so a camera behind an NVR shows
+  offline when it is off (the TCP check only reached the NVR)
+- (sadam6752-tech) Devices: _Record video_ and _Snapshot_ are greyed out on the card of an offline camera
 
 ### 0.8.3 (2026-11-15)
 
@@ -559,11 +593,6 @@ adapter.
   `cameras.<camera>.schedule.*` can also be set by scripts and AI agents
 - (sadam6752-tech) Device Manager: the record button is called _Record video_, so the four buttons fit in two
   columns
-
-### 0.7.1 (2026-11-14)
-
-- (sadam6752-tech) Cameras: the new column _Live (s)_ writes a live picture from the pre-recording into the file
-  storage every few seconds, for vis
 
 Older changes are in [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 

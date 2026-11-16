@@ -24,6 +24,8 @@ export interface Camera {
     orientation?: Orientation;
     /** Seconds between two live pictures from the pre-recording, 0 = off; missing = off */
     live?: number;
+    /** Foreign state that tells whether the camera is online, instead of the check on the network; missing = none */
+    onlineState?: string;
 }
 
 /** Clockwise rotation in degrees, or a mirror image (h = left↔right, v = top↔bottom) */
@@ -193,6 +195,8 @@ export interface Settings {
     agentChecks: AgentCheck[];
     /** Report of the AI checks (tab AI check) */
     report: ReportSettings;
+    /** Login to a UniFi Protect console, for the online state of its cameras */
+    unifi: UnifiSettings;
     /** Copy to an SFTP server */
     remote: RemoteSettings;
 }
@@ -267,4 +271,14 @@ export interface RunOptions {
     timeoutMs: number;
     /** Values to hide in error messages */
     secrets?: Array<string | undefined>;
+}
+
+/** Login to a UniFi Protect console; an empty user switches the check off */
+export interface UnifiSettings {
+    /** Local user of the console */
+    username: string;
+    /** Password in plain text (encryptedNative) */
+    password: string;
+    /** HTTPS port of the console */
+    port: number;
 }
