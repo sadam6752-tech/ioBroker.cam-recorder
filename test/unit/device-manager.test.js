@@ -362,7 +362,7 @@ describe('Device Manager', () => {
 
     it('is announced in io-package.json together with the own messages', () => {
         const io = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'io-package.json'), 'utf8'));
-        assert.deepEqual(io.common.supportedMessages, { custom: true, deviceManager: true });
+        assert.deepEqual(io.common.supportedMessages, { custom: true, deviceManager: true, help: true });
         const main = fs.readFileSync(path.join(__dirname, '..', '..', 'main.js'), 'utf8');
         // the own onMessage must leave the "dm:" messages alone
         assert.match(main, /startsWith\('dm:'\)/);

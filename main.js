@@ -66,7 +66,7 @@ const {
     receiversAfterCheck,
     matchText,
 } = require('./lib/agent-check');
-const { HELP } = require('./lib/help');
+const { helpAnswer } = require('./lib/help');
 const { CameraDeviceManagement } = require('./lib/device-manager');
 const { Pulses } = require('./lib/pulse');
 const { SCHEDULE_DEFAULTS, normalizeSchedule, runsAt, nextRun } = require('./lib/schedule');
@@ -1770,7 +1770,7 @@ class CamRecorder extends utils.Adapter {
         await this.ready;
         try {
             if (obj.command === 'help') {
-                reply({ help: HELP });
+                reply(helpAnswer());
                 return;
             }
             if (obj.command === 'listCameras') {

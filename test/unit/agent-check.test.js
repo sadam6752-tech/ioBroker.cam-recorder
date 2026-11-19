@@ -1,6 +1,8 @@
 'use strict';
 
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
 const {
     INSTRUCTIONS,
     needsAgent,
@@ -12,7 +14,7 @@ const {
 } = require('../../lib/agent-check');
 const { buildMessage } = require('../../lib/notify');
 const { normalizeSettings } = require('../../lib/config');
-const { HELP } = require('../../lib/help');
+const { HELP, helpAnswer } = require('../../lib/help');
 
 const settings = normalizeSettings({
     profiles: [
@@ -125,5 +127,18 @@ describe('help for AI agents', () => {
             );
         }
         assert.ok(HELP.length < 6000);
+    });
+
+    it('answers help with the text and every command of onMessage, write true only where it sends or saves', () => {
+        const answer = helpAnswer();
+        assert.equal(answer.help, HELP);
+        const main = fs.readFileSync(path.join(__dirname, '../../main.js'), 'utf8');
+        const handled = [...main.matchAll(/obj\.command [!=]== '([A-Za-z]+)'/g)].map(m => m[1]);
+        assert.deepEqual([...new Set(handled)].sort(), answer.commands.map(c => c.command).sort());
+        const writes = answer.commands.filter(c => c.write).map(c => c.command);
+        assert.deepEqual(writes.sort(), ['record', 'report', 'snapshot', 'timelapse']);
+        const io = JSON.parse(fs.readFileSync(path.join(__dirname, '../../io-package.json'), 'utf8'));
+        assert.equal(io.common.supportedMessages.help, true);
+        assert.equal(io.common.messagebox, true);
     });
 });

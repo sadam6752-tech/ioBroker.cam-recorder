@@ -564,6 +564,11 @@ adapter.
     ### **WORK IN PROGRESS**
 -->
 
+### 0.8.5 (2026-11-19)
+
+- (sadam6752-tech) The message `help` is declared (`supportedMessages.help`) and lists every command with `write`, so
+  AI agents know which commands only read
+
 ### 0.8.4 (2026-11-16)
 
 - (sadam6752-tech) Cameras: column _Online state_ and a login for UniFi Protect, so a camera behind an NVR shows
@@ -585,14 +590,6 @@ adapter.
 
 - (sadam6752-tech) Schedule: _Send only on an AI match_ sends a scheduled snapshot or clip only to the profiles whose
   criterion pi-agent sees, and _Only if_ runs it only while a state meets a condition (e.g. nobody at home)
-
-### 0.8.0 (2026-11-15)
-
-- (sadam6752-tech) Schedule: the buttons _Interval_ and _Schedule_ on the camera cards take snapshots or clips every
-  few minutes (optionally between two times) or at fixed times (cron) and send them; the states
-  `cameras.<camera>.schedule.*` can also be set by scripts and AI agents
-- (sadam6752-tech) Device Manager: the record button is called _Record video_, so the four buttons fit in two
-  columns
 
 Older changes are in [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 

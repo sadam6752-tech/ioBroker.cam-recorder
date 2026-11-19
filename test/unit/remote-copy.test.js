@@ -158,7 +158,10 @@ describe('SFTP copy: real server', function () {
         disk.directories.add('/cam-recorder/door');
         disk.files.set('/cam-recorder/door/door_2020-01-01_09-00-00.mp4', Buffer.from('old'));
         disk.files.set('/cam-recorder/door/my-video.mp4', Buffer.from('foreign'));
-        const file = path.join(dir, 'door_2026-10-18_09-00-00.jpg');
+        // a file of yesterday: within keepDays whatever day the test runs
+        const day = new Date(Date.now() - 86_400_000);
+        const stamp = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, '0')}-${String(day.getDate()).padStart(2, '0')}`;
+        const file = path.join(dir, `door_${stamp}_09-00-00.jpg`);
         fs.writeFileSync(file, 'new');
         const result = await copyFileToRemote(
             connectSsh2,

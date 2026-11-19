@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "cam-recorder",
-        "version": "0.8.4",
+        "version": "0.8.5",
         "news": {
+            "0.8.5": {
+                "en": "The message help is declared and lists every command with whether it changes something, for AI agents",
+                "de": "Die Nachricht help ist angemeldet und nennt jeden Befehl mit der Angabe, ob er etwas ändert, für KI-Agenten",
+                "ru": "Сообщение help объявлено и перечисляет все команды с пометкой, меняют ли они что-то, для ИИ-агентов",
+                "pt": "A mensagem help está declarada e lista cada comando, indicando se altera algo, para agentes de IA",
+                "nl": "Het bericht help is aangemeld en noemt elk commando met de vermelding of het iets wijzigt, voor AI-agents",
+                "fr": "Le message help est déclaré et liste chaque commande en indiquant si elle modifie quelque chose, pour les agents IA",
+                "it": "Il messaggio help è dichiarato ed elenca ogni comando indicando se modifica qualcosa, per gli agenti IA",
+                "es": "El mensaje help está declarado y enumera cada comando indicando si cambia algo, para agentes de IA",
+                "pl": "Wiadomość help jest zadeklarowana i wymienia każde polecenie z informacją, czy coś zmienia, dla agentów AI",
+                "uk": "Повідомлення help оголошено, воно перелічує всі команди з позначкою, чи змінюють вони щось, для ШІ-агентів",
+                "zh-cn": "已声明 help 消息，列出每个命令并说明它是否会更改内容，供 AI 代理使用"
+            },
             "0.8.4": {
                 "en": "Cameras: column Online state and a login for UniFi Protect, so a camera behind an NVR shows offline when it is off; Devices: Record video and Snapshot greyed out while the camera is offline",
                 "de": "Kameras: Spalte Online-Zustand und eine Anmeldung für UniFi Protect, damit eine Kamera hinter einem NVR offline angezeigt wird, wenn sie aus ist; Geräte: Videoaufnahme und Schnappschuss ausgegraut, solange die Kamera offline ist",
@@ -80,19 +93,6 @@
                 "pl": "Kamery: nowa kolumna Na żywo (s) co kilka sekund zapisuje obraz na żywo z nagrywania wstępnego do magazynu plików, dla widżetu obrazu w vis",
                 "uk": "Камери: новий стовпець Наживо (с) кожні кілька секунд записує живе зображення з попереднього запису у файлове сховище для віджета зображення у vis",
                 "zh-cn": "摄像机：新列 实时（秒）每隔几秒将预录中的实时图片写入文件存储，供 vis 的图片组件使用"
-            },
-            "0.7.0": {
-                "en": "Cameras: turn the picture by 90°, 180°, 270° or mirror it (column ↻). Storage and NAS: optional month folders camera/yyyy-mm, which keep all files",
-                "de": "Kameras: Bild um 90°, 180°, 270° drehen oder spiegeln (Spalte ↻). Speicherung und NAS: optionale Monatsordner Kamera/jjjj-mm, die alle Dateien behalten",
-                "ru": "Камеры: поворот изображения на 90°, 180°, 270° или зеркальное отражение (столбец ↻). Хранилище и NAS: папки по месяцам камера/гггг-мм по желанию, все файлы сохраняются",
-                "pt": "Câmeras: rodar a imagem 90°, 180°, 270° ou espelhá-la (coluna ↻). Armazenamento e NAS: pastas por mês opcionais câmera/aaaa-mm, que mantêm todos os ficheiros",
-                "nl": "Camera's: beeld 90°, 180°, 270° draaien of spiegelen (kolom ↻). Opslag en NAS: optionele maandmappen camera/jjjj-mm, die alle bestanden bewaren",
-                "fr": "Caméras : faire pivoter l'image de 90°, 180°, 270° ou la mettre en miroir (colonne ↻). Stockage et NAS : dossiers mensuels optionnels caméra/aaaa-mm, qui conservent tous les fichiers",
-                "it": "Telecamere: ruotare l'immagine di 90°, 180°, 270° o specchiarla (colonna ↻). Archiviazione e NAS: cartelle mensili opzionali telecamera/aaaa-mm, che conservano tutti i file",
-                "es": "Cámaras: girar la imagen 90°, 180°, 270° o reflejarla (columna ↻). Almacenamiento y NAS: carpetas mensuales opcionales cámara/aaaa-mm, que conservan todos los archivos",
-                "pl": "Kamery: obrót obrazu o 90°, 180°, 270° lub odbicie lustrzane (kolumna ↻). Zapis i NAS: opcjonalne foldery miesięczne kamera/rrrr-mm, które zachowują wszystkie pliki",
-                "uk": "Камери: поворот зображення на 90°, 180°, 270° або дзеркальне відображення (стовпець ↻). Сховище та NAS: папки за місяцями камера/рррр-мм за бажанням, усі файли зберігаються",
-                "zh-cn": "摄像机：将画面旋转 90°、180°、270° 或镜像（↻ 列）。存储和 NAS：可选的月份文件夹 摄像机/yyyy-mm，保留所有文件"
             }
         },
         "titleLang": {
@@ -166,7 +166,8 @@
         "messagebox": true,
         "supportedMessages": {
             "custom": true,
-            "deviceManager": true
+            "deviceManager": true,
+            "help": true
         }
     },
     "native": {

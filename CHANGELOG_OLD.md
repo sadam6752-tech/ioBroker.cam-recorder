@@ -1,5 +1,13 @@
 # Older changes
 
+### 0.8.0 (2026-11-15)
+
+- (sadam6752-tech) Schedule: the buttons _Interval_ and _Schedule_ on the camera cards take snapshots or clips every
+  few minutes (optionally between two times) or at fixed times (cron) and send them; the states
+  `cameras.<camera>.schedule.*` can also be set by scripts and AI agents
+- (sadam6752-tech) Device Manager: the record button is called _Record video_, so the four buttons fit in two
+  columns
+
 ### 0.7.1 (2026-11-14)
 
 - (sadam6752-tech) Cameras: the new column _Live (s)_ writes a live picture from the pre-recording into the file
