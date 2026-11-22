@@ -8,6 +8,29 @@ const { tests } = require('@iobroker/testing');
 const ffmpegPath = require('ffmpeg-static');
 const { startServer } = require('./helpers/sftp-server');
 
+/**
+ * Stops the adapter of the harness. js-controller 8 (dev builds from 2026-11-22) obeys sigKill only from the
+ * controller of its own host, @iobroker/testing 6.3.2 sends it from system.host.testing: send it once more from the
+ * host of the instance, otherwise stopAdapter never ends.
+ *
+ * @param {any} harness - Test harness, undefined when "before" failed early
+ */
+async function stopAdapter(harness) {
+    if (!harness) {
+        return;
+    }
+    const stopped = harness.stopAdapter();
+    const host = (await harness.objects.getObjectAsync('system.adapter.cam-recorder.0'))?.common?.host;
+    if (host && harness.isAdapterRunning()) {
+        await harness.states.setStateAsync('system.adapter.cam-recorder.0.sigKill', {
+            val: -1,
+            ack: false,
+            from: `system.host.${host}`,
+        });
+    }
+    await stopped;
+}
+
 // Run integration tests - See https://github.com/ioBroker/testing for a detailed explanation and further options
 tests.integration(path.join(__dirname, '..'), {
     defineAdditionalTests({ suite }) {
@@ -114,7 +137,7 @@ tests.integration(path.join(__dirname, '..'), {
                 // the unload must end the ffmpeg of the pre-recording; on Windows a running
                 // process would keep the source file locked and the removal would fail
                 // when "before" failed early, there is nothing to stop
-                await harness?.stopAdapter();
+                await stopAdapter(harness);
                 sftp?.close();
                 fs.rmSync(dir, { recursive: true, force: true, maxRetries: 5, retryDelay: 500 });
             });
@@ -378,7 +401,7 @@ tests.integration(path.join(__dirname, '..'), {
 
             after(async function () {
                 this.timeout(30_000);
-                await harness?.stopAdapter();
+                await stopAdapter(harness);
             });
 
             it('writes the profiles once into the instance object and keeps the old keys', async function () {
