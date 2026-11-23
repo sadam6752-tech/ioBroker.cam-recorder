@@ -1,5 +1,10 @@
 # Older changes
 
+### 0.8.1 (2026-11-15)
+
+- (sadam6752-tech) Schedule: _Send only on an AI match_ sends a scheduled snapshot or clip only to the profiles whose
+  criterion pi-agent sees, and _Only if_ runs it only while a state meets a condition (e.g. nobody at home)
+
 ### 0.8.0 (2026-11-15)
 
 - (sadam6752-tech) Schedule: the buttons _Interval_ and _Schedule_ on the camera cards take snapshots or clips every

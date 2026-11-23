@@ -315,6 +315,98 @@ describe('pre-recording with a live test source (real ffmpeg)', function () {
         assert.deepEqual(fs.readdirSync(broken), ['garbage.ts']);
     });
 
+    it('cuts the clip from the segments of before a restart while the buffer restarts', async () => {
+        const settings = normalizeSettings({ rtspTimeout: 2 });
+        const folder = path.join(dir, 'restarting');
+        fs.mkdirSync(folder, { recursive: true });
+        const video = path.join(folder, 'segment.mkv');
+        execFileSync(ffmpegPath, [
+            ...['-hide_banner', '-loglevel', 'error', '-f', 'lavfi', '-i', 'testsrc=size=160x120:rate=10', '-t', '6'],
+            ...['-c:v', 'libx264', '-g', '10', '-pix_fmt', 'yuv420p', '-y', video],
+        ]);
+        const warnings = [];
+        let covers = true;
+        const fake = /** @type {any} */ ({
+            seconds: 3,
+            dir: folder,
+            status: 'restarting',
+            isRunning: () => false,
+            covers: async () => covers,
+            collect: async (/** @type {number} */ from) => ({
+                files: [video],
+                first: from,
+                offset: 0,
+                complete: true,
+                release: () => undefined,
+            }),
+        });
+        const recorder = new Recorder({
+            runner: new FfmpegRunner({ ffmpegPath, maxParallel: 2, timers }),
+            outputDir: fs.mkdtempSync(path.join(dir, 'out-')),
+            settings,
+            withPassword: c => c,
+            getPrebuffer: () => fake,
+            onWarning: m => warnings.push(m),
+        });
+        const clip = await recorder.record(camera(), { duration: 1 });
+        assert.equal(clip.pre, 3);
+        assert.equal(clip.fromBuffer, true);
+        assert.deepEqual(warnings, []);
+        // nothing of before the event on disk: live, with the warning
+        covers = false;
+        const live = await recorder.record(camera(), { duration: 1 });
+        assert.equal(live.pre, 0);
+        assert.deepEqual(warnings, [
+            'Camera "Cam": the pre-recording is not ready (restarting), the clip starts at the event',
+        ]);
+    });
+
+    it('keeps the segments of a clip when another clip of the same window is done, and extends both', async () => {
+        const folder = path.join(dir, 'holds');
+        fs.mkdirSync(folder, { recursive: true });
+        const now = Date.now();
+        const stamp = (/** @type {number} */ ms) => {
+            const d = new Date(ms);
+            const p = (/** @type {number} */ n) => String(n).padStart(2, '0');
+            return `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}.mkv`;
+        };
+        for (const back of [8, 6, 4, 2]) {
+            fs.writeFileSync(path.join(folder, stamp(now - back * 1000)), 'x');
+        }
+        const buffer = new Prebuffer({
+            camera: camera(),
+            settings: normalizeSettings({}),
+            seconds: 3,
+            dir: folder,
+            ffmpegPath,
+            timers,
+        });
+        assert.equal(await buffer.covers(now - 5000), true);
+        assert.equal(await buffer.covers(now - 20_000), false);
+        const from = now - 5000;
+        const gif = await buffer.collect(from, () => now - 3000, 0);
+        const mp4 = await buffer.collect(from, () => now - 3000, 0);
+        gif.release();
+        assert.equal(buffer.holds.size, 1, 'the mp4 still holds its window');
+        mp4.release();
+        assert.equal(buffer.holds.size, 0);
+
+        const recorder = new Recorder({
+            runner: new FfmpegRunner({ ffmpegPath, maxParallel: 1, timers }),
+            outputDir: folder,
+            settings: normalizeSettings({}),
+            withPassword: c => c,
+        });
+        const calls = [];
+        recorder.extenders.set('cam', new Set([s => calls.push(['gif', s]) > 0, s => calls.push(['mp4', s]) > 0]));
+        assert.equal(recorder.extend('cam', 5), true);
+        assert.deepEqual(calls, [
+            ['gif', 5],
+            ['mp4', 5],
+        ]);
+        assert.equal(recorder.extend('other', 5), false);
+    });
+
     it('does not restart a buffer whose camera sends a key frame only every 25 s', async function () {
         this.timeout(90_000);
         const longGop = path.join(dir, 'long-gop.ts');
@@ -371,7 +463,14 @@ describe('pre-recording with a live test source (real ffmpeg)', function () {
         ]);
         const cam = { ...camera(), url: withSound, audio: true, prebuffer: 2 };
         const settings = normalizeSettings({ rtspTimeout: 2 });
-        const buffer = new Prebuffer({ camera: cam, settings, seconds: 2, dir: path.join(dir, 'sound'), ffmpegPath, timers });
+        const buffer = new Prebuffer({
+            camera: cam,
+            settings,
+            seconds: 2,
+            dir: path.join(dir, 'sound'),
+            ffmpegPath,
+            timers,
+        });
         await buffer.start();
         try {
             await waitFor(() => buffer.isRunning(), 20_000);

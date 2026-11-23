@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "cam-recorder",
-        "version": "0.8.5",
+        "version": "0.8.6",
         "news": {
+            "0.8.6": {
+                "en": "Pre-recording: a clip keeps the seconds before the event while the buffer restarts; a gif and an mp4 of the same event no longer get in each other's way",
+                "de": "Voraufnahme: ein Clip behält die Sekunden vor dem Ereignis, während der Puffer neu startet; GIF und MP4 desselben Ereignisses behindern sich nicht mehr",
+                "ru": "Предзапись: клип сохраняет секунды до события, пока буфер перезапускается; GIF и MP4 одного события больше не мешают друг другу",
+                "pt": "Pré-gravação: um clipe mantém os segundos antes do evento enquanto o buffer reinicia; um GIF e um MP4 do mesmo evento já não se atrapalham",
+                "nl": "Vooropname: een clip behoudt de seconden voor de gebeurtenis terwijl de buffer herstart; een GIF en een MP4 van dezelfde gebeurtenis hinderen elkaar niet meer",
+                "fr": "Pré-enregistrement : un clip garde les secondes avant l'événement pendant le redémarrage du tampon ; un GIF et un MP4 du même événement ne se gênent plus",
+                "it": "Preregistrazione: una clip mantiene i secondi prima dell'evento mentre il buffer si riavvia; GIF e MP4 dello stesso evento non si ostacolano più",
+                "es": "Pregrabación: un clip conserva los segundos anteriores al evento mientras el búfer se reinicia; un GIF y un MP4 del mismo evento ya no se estorban",
+                "pl": "Nagrywanie wstępne: klip zachowuje sekundy przed zdarzeniem podczas restartu bufora; GIF i MP4 tego samego zdarzenia już sobie nie przeszkadzają",
+                "uk": "Попередній запис: кліп зберігає секунди до події, поки буфер перезапускається; GIF і MP4 однієї події більше не заважають одне одному",
+                "zh-cn": "预录：缓冲区重启期间，片段仍保留事件前的几秒；同一事件的 GIF 和 MP4 不再相互干扰"
+            },
             "0.8.5": {
                 "en": "The message help is declared and lists every command with whether it changes something, for AI agents",
                 "de": "Die Nachricht help ist angemeldet und nennt jeden Befehl mit der Angabe, ob er etwas ändert, für KI-Agenten",
@@ -80,19 +93,6 @@
                 "pl": "Harmonogram: przyciski Interwał i Harmonogram na kartach kamer co kilka minut lub o stałych godzinach (cron) robią zdjęcia lub klipy i je wysyłają; skrypty i agenci AI mogą go ustawiać przez stany",
                 "uk": "Розклад: кнопки «Інтервал» і «Розклад» на картках камер кожні кілька хвилин або у визначений час (cron) роблять знімки чи кліпи й надсилають їх; скрипти та ШІ-агенти можуть задавати його через стани",
                 "zh-cn": "计划：摄像机卡片上的“间隔”和“计划”按钮每隔几分钟或在固定时间（cron）拍摄快照或片段并发送；脚本和 AI 代理可通过状态设置"
-            },
-            "0.7.1": {
-                "en": "Cameras: new column Live (s) writes a live picture from the pre-recording into the file storage every few seconds, for an image widget of vis",
-                "de": "Kameras: neue Spalte Live (s) schreibt alle paar Sekunden ein Live-Bild aus der Voraufnahme in die Dateiablage, für ein Bild-Widget in vis",
-                "ru": "Камеры: новый столбец Live (с) каждые несколько секунд записывает живую картинку из предзаписи в файловое хранилище для виджета изображения в vis",
-                "pt": "Câmeras: nova coluna Ao vivo (s) grava a cada poucos segundos uma imagem ao vivo da pré-gravação no armazenamento de ficheiros, para um widget de imagem do vis",
-                "nl": "Camera's: nieuwe kolom Live (s) schrijft elke paar seconden een livebeeld uit de vooropname naar de bestandsopslag, voor een afbeeldingswidget in vis",
-                "fr": "Caméras : nouvelle colonne Direct (s), écrit toutes les quelques secondes une image en direct du préenregistrement dans le stockage de fichiers, pour un widget image de vis",
-                "it": "Telecamere: nuova colonna Live (s) che scrive ogni pochi secondi un'immagine dal vivo della pre-registrazione nell'archivio file, per un widget immagine di vis",
-                "es": "Cámaras: nueva columna En vivo (s) que escribe cada pocos segundos una imagen en vivo de la pregrabación en el almacenamiento de archivos, para un widget de imagen de vis",
-                "pl": "Kamery: nowa kolumna Na żywo (s) co kilka sekund zapisuje obraz na żywo z nagrywania wstępnego do magazynu plików, dla widżetu obrazu w vis",
-                "uk": "Камери: новий стовпець Наживо (с) кожні кілька секунд записує живе зображення з попереднього запису у файлове сховище для віджета зображення у vis",
-                "zh-cn": "摄像机：新列 实时（秒）每隔几秒将预录中的实时图片写入文件存储，供 vis 的图片组件使用"
             }
         },
         "titleLang": {
